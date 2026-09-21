@@ -14,6 +14,8 @@ function assert(cond,msg){ if(!cond) throw new Error(msg); }
 try {
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForSelector('.main-nav',{timeout:10000});
+  await page.waitForTimeout(250);
+  if(pageErrors.length) throw new Error('Startup page errors: '+pageErrors.join(' | '));
 
   const navViews = await page.locator('.nav-button').evaluateAll(btns=>btns.map(b=>b.dataset.view));
   for(const view of navViews){
@@ -41,6 +43,7 @@ try {
 
   await page.locator('[data-view="lab"]').click();
   const simCount=await page.locator('#simTabs .sim-tab').count();
+  if(pageErrors.length) throw new Error('Page errors before simulation audit: '+pageErrors.join(' | '));
   assert(simCount===20,'Expected 20 simulations, found '+simCount);
   for(let i=0;i<simCount;i++){
     await page.locator('#simTabs .sim-tab').nth(i).click();
