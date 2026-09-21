@@ -33,3 +33,14 @@ jobs:
           grep -q '3.4.2.2' app.js
           grep -q 'Required Practical 3' app.js
           grep -q 'Required Practical 4' app.js
+      - name: Check expanded learning features
+        run: |
+          grep -q "const lessonExtensions" app.js
+          grep -q "mechanicsLessonAnswers" app.js
+          grep -q "id:'terminal'" app.js
+          grep -q "id:'impulse'" app.js
+          grep -q "id:'workgraph'" app.js
+          grep -q "id:'stressstrain'" app.js
+          grep -q "id:'density'" app.js
+          grep -q "<strong>12</strong><span>interactive models</span>" index.html
+          grep -q "<strong>18</strong><span>formula tools</span>" index.html
