@@ -12,7 +12,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Check required files
         run: |
           test -f index.html
@@ -60,5 +60,17 @@ jobs:
           grep -q "structuredProblems" app.js
           grep -q "lessonReadinessState" app.js
           grep -q "readinessHtml" app.js
-          grep -Fq "$$('[data-practical]').forEach" app.js
-          grep -Fq "$$('[data-practice-check]'" app.js
+          node <<'NODE'
+          const fs = require('fs');
+          const src = fs.readFileSync('app.js','utf8');
+          const required = [
+            "$('[data-practical]').forEach",
+            "$('[data-practice-check]'",
+            "$('.mini-option'"
+          ];
+          const missing = required.filter(x => !src.includes(x));
+          if (missing.length) {
+            console.error('Missing expected multi-element selectors:', missing);
+            process.exit(1);
+          }
+          NODE
