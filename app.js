@@ -594,6 +594,147 @@ const lessonExtensions = {
 lessons.forEach(l=>Object.assign(l, lessonExtensions[l.id] || {}));
 
 
+
+const lessonDeepening = {
+ vectors:{
+  connections:[
+   'Scale-vector drawings are still examinable even though perpendicular vectors can be calculated. A measured vector answer should include a sensible scale and direction.',
+   'Force, velocity, acceleration and displacement are vectors because their direction changes the physical situation; energy, mass, time and speed are scalars.',
+   'A vector can be moved parallel to itself on a diagram without changing the vector, provided its magnitude and direction are unchanged.'
+  ],
+  worked2:{q:'Two perpendicular forces of 24 N east and 10 N north act at a point. Find the resultant.',a:'R = √(24²+10²) = 26 N. Direction = tan⁻¹(10/24) = 22.6° north of east.'}
+ },
+ resolution:{
+  connections:[
+   'For an object on an inclined plane, resolving parallel/perpendicular to the plane normally eliminates the need to resolve the normal contact force.',
+   'Three-force equilibrium can be solved either by components or a closed vector triangle; both methods describe the same zero-resultant condition.',
+   'Constant velocity is an equilibrium state because acceleration is zero even though the object is moving.'
+  ],
+  worked2:{q:'A 12 kg block rests on a smooth 25° slope. Find the component of weight down the slope.',a:'W = mg = 117.7 N. Parallel component = mg sin25° = 49.7 N down the slope.'}
+ },
+ moments:{
+  connections:[
+   'A couple produces rotation without translation because its two equal and opposite forces give zero resultant force but a non-zero net moment.',
+   'For a uniform regular solid, the centre of mass lies at its geometric centre. Stability depends on whether the line of action of weight stays within the base.',
+   'When solving equilibrium problems, choosing the pivot through an unknown reaction force can remove that unknown from the moment equation.'
+  ],
+  worked2:{q:'A couple consists of two 18 N forces separated by 0.30 m. Find the moment of the couple.',a:'Couple moment = F × separation = 18 × 0.30 = 5.4 N m.'}
+ },
+ kinematics:{
+  connections:[
+   'A bouncing-ball graph is a useful test of whether you understand sign: velocity changes suddenly during the collision, while between bounces acceleration is approximately constant at −g if upward is positive.',
+   'A curved displacement–time graph has changing velocity; the tangent gradient gives instantaneous velocity.',
+   'Area under an acceleration–time graph gives change in velocity, so adding that area to the initial velocity gives final velocity.'
+  ],
+  worked2:{q:'A velocity–time graph is a triangle from 0 to 12 m s⁻¹ over 5.0 s. Find the displacement.',a:'Displacement = area = ½ × 5.0 × 12 = 30 m.'}
+ },
+ suvat:{
+  connections:[
+   'SUVAT is a model: it is only valid over an interval where acceleration is constant.',
+   'If motion changes in stages, solve each stage separately and carry the final velocity from one stage into the next.',
+   'For free fall near Earth with negligible air resistance, acceleration is independent of mass.'
+  ],
+  worked2:{q:'A car at 8.0 m s⁻¹ accelerates uniformly at 3.0 m s⁻² over 20 m. Find its final speed.',a:'v²=u²+2as = 8² + 2×3×20 = 184, so v = 13.6 m s⁻¹.'}
+ },
+ rp3:{
+  connections:[
+   'A best-fit gradient usually uses the whole trend more effectively than averaging separately calculated values of g.',
+   'A non-zero intercept can indicate a systematic offset in distance or timing, depending on the graph used.',
+   'Larger measured times reduce percentage timing uncertainty for a timing resolution of fixed absolute size.'
+  ],
+  worked2:{q:'A best-fit h against t² graph has gradient 4.95 m s⁻² and intercept close to zero. Find g.',a:'h=(g/2)t², so g=2×4.95=9.90 m s⁻².'}
+ },
+ projectiles:{
+  connections:[
+   'With air resistance, the horizontal velocity is no longer constant and the descending path is not a mirror image of the ascent.',
+   'For a vehicle at high speed, resistive forces increase with speed. Maximum steady speed occurs when driving force equals total resistance.',
+   'Lift acts approximately perpendicular to relative airflow while drag acts approximately parallel and opposite to it.'
+  ],
+  worked2:{q:'A projectile is launched at 18 m s⁻¹ at 30° above horizontal. Find its initial components.',a:'uₓ=18cos30°=15.6 m s⁻¹; uᵧ=18sin30°=9.0 m s⁻¹.'}
+ },
+ newton:{
+  connections:[
+   'Newton II can be verified by measuring acceleration for different resultant forces at fixed mass, or different masses at fixed force.',
+   'Normal contact force is not automatically equal to weight; that equality only follows in particular vertical-equilibrium situations.',
+   'For connected objects, a shared tension may act in opposite directions on the two different bodies.'
+  ],
+  worked2:{q:'A 6.0 kg object is pulled right by 42 N while friction is 12 N left. Find acceleration.',a:'Resultant force = 42−12 = 30 N. a=30/6.0=5.0 m s⁻² right.'}
+ },
+ momentum:{
+  connections:[
+   'Elastic and inelastic collisions both conserve momentum in a closed system; only an elastic collision also conserves total kinetic energy.',
+   'In an explosion, internal energy can become kinetic energy while total momentum remains unchanged.',
+   'Transport safety features increase the time over which momentum changes, reducing average force for a similar change in momentum.'
+  ],
+  worked2:{q:'A 2.0 kg object initially at rest explodes into 0.50 kg moving at +12 m s⁻¹ and a second fragment. Find the second fragment velocity.',a:'Initial momentum = 0. After: 0.50×12 + 1.50v = 0, so v = −4.0 m s⁻¹.'}
+ },
+ work:{
+  connections:[
+   'For variable force, the area under a force–displacement graph is the energy transferred by mechanical work.',
+   'The motor-efficiency practical links electrical input energy or power to useful gravitational potential energy gained by a lifted mass.',
+   'P=Fv is a special form of power when force is parallel to velocity.'
+  ],
+  worked2:{q:'A motor lifts 15 kg through 2.0 m in 3.0 s. Find useful output power.',a:'Useful energy = mgh = 15×9.81×2.0 = 294.3 J. P = 294.3/3.0 = 98.1 W.'}
+ },
+ energy:{
+  connections:[
+   'Work done against resistance transfers energy away from the mechanical stores into internal energy and the surroundings.',
+   'Energy methods are often efficient when only initial and final states matter, because the detailed time history is unnecessary.',
+   'The specification includes estimation contexts, so checking the order of magnitude of energy answers is important.'
+  ],
+  worked2:{q:'A 3.0 kg object falls 4.0 m and loses 25 J to resistance. Find its kinetic-energy gain.',a:'GPE decrease = 3×9.81×4 = 117.7 J. KE gain = 117.7−25 = 92.7 J.'}
+ },
+ 'density-hooke':{
+  connections:[
+   'Estimating density can involve estimating volume from dimensions before applying ρ=m/V.',
+   'Analogue and digital meters can differ in resolution and how readings are judged; uncertainty should reflect the measuring instrument used.',
+   'Hooke’s law describes the proportional region. Beyond that region force and extension may no longer be proportional even before permanent deformation becomes significant.'
+  ],
+  worked2:{q:'A 0.84 kg block has dimensions 0.10 m × 0.060 m × 0.025 m. Find its density.',a:'V = 1.50×10⁻⁴ m³. ρ = 0.84/(1.50×10⁻⁴) = 5.60×10³ kg m⁻³.'}
+ },
+ 'stress-strain':{
+  connections:[
+   'Stress and strain remove the direct effect of sample dimensions, making them more suitable than force and extension for comparing materials.',
+   'Area under a force–extension graph is energy for that sample; area under a stress–strain graph is energy transferred per unit volume.',
+   'Breaking stress is a strength measure, whereas Young modulus measures stiffness.'
+  ],
+  worked2:{q:'A wire of area 3.0×10⁻⁷ m² carries 75 N. Calculate tensile stress.',a:'σ=F/A=75/(3.0×10⁻⁷)=2.5×10⁸ Pa.'}
+ },
+ 'material-behaviour':{
+  connections:[
+   'Brittle materials fracture after relatively little plastic deformation, while ductile materials can sustain much greater plastic strain.',
+   'Unloading from the plastic region leaves a permanent strain: the material does not return to its original dimensions.',
+   'A large breaking stress does not necessarily imply a large Young modulus; strength and stiffness are distinct.'
+  ],
+  worked2:{q:'Material A has a steeper initial stress–strain gradient than B. What can be concluded?',a:'A has the larger Young modulus and is stiffer. This alone does not prove that A has the larger breaking stress.'}
+ },
+ young:{
+  connections:[
+   'Young modulus is only obtained from the initial linear elastic stress–strain region.',
+   'For geometrically similar wires of the same material, changing length or cross-sectional area changes extension but not the material Young modulus.',
+   'Because area depends on diameter squared, small fractional uncertainty in diameter can dominate the uncertainty in E.'
+  ],
+  worked2:{q:'A material has stress 9.0×10⁷ Pa at strain 4.5×10⁻⁴ in the linear region. Find E.',a:'E=stress/strain=(9.0×10⁷)/(4.5×10⁻⁴)=2.0×10¹¹ Pa.'}
+ },
+ rp4:{
+  connections:[
+   'A long test wire gives a larger extension for the same strain, making the extension easier to resolve as a percentage of its value.',
+   'Repeated diameter measurements at different positions and orientations help detect non-uniformity and reduce random variation in the mean.',
+   'A stress–strain gradient method uses many data points and should be restricted to the straight-line elastic region.'
+  ],
+  worked2:{q:'A stress–strain best-fit line has gradient 1.95×10¹¹ Pa. State the measured Young modulus.',a:'Young modulus is the gradient, so E = 1.95×10¹¹ Pa.'}
+ },
+ mastery:{
+  connections:[
+   'Decide first whether the most direct principle is force, energy, momentum, moments or a material relationship.',
+   'Translate diagrams and graphs into physics quantities before choosing equations.',
+   'State assumptions such as negligible drag, constant acceleration or a closed system when they matter to the model.'
+  ],
+  worked2:{q:'A vehicle rolls down a hill then collides and sticks to a stationary trolley. Which two major principles are likely to be useful?',a:'Energy conservation for the downhill speed (with any resistive work included), then momentum conservation for the short collision.'}
+ }
+};
+lessons.forEach(l=>Object.assign(l,lessonDeepening[l.id]||{}));
+
 const lessonSkillMap = {
  vectors:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
  resolution:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
@@ -801,14 +942,15 @@ function renderLesson(){
  let core='<div class="textbook-note"><strong>Core explanation</strong><p>Work through each statement slowly. These notes are aligned to the AQA specification point shown above.</p></div><ul>'+l.core.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
  let terms='<div class="term-grid">'+(l.keyTerms||[]).map(t=>'<article class="term-card"><strong>'+t[0]+'</strong><span>'+t[1]+'</span></article>').join('')+'</div>';
  let depth='<div class="depth-list">'+(l.depth||[]).map((x,i)=>'<article class="depth-card"><span class="depth-number">'+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
- let worked='<p><strong>Question:</strong> '+l.worked.q+'</p><button class="text-button reveal-answer">Show worked answer</button><div class="answer-reveal">'+l.worked.a+'</div>';
+ let connections='<div class="connection-grid">'+(l.connections||[]).map((x,i)=>'<article class="connection-card"><span class="eyebrow">Connection '+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
+ let worked='<p><strong>Example 1:</strong> '+l.worked.q+'</p><button class="text-button reveal-answer">Show worked answer</button><div class="answer-reveal">'+l.worked.a+'</div>'+(l.worked2?'<hr class="soft-rule"><p><strong>Example 2:</strong> '+l.worked2.q+'</p><button class="text-button reveal-answer">Show second worked answer</button><div class="answer-reveal">'+l.worked2.a+'</div>':'');
  let practice=renderLessonPractice(l);
  let task='<p>'+l.task+'</p><textarea class="student-answer" data-answer-key="'+answerKey('task')+'" placeholder="Record your working, prediction or explanation...">'+(saved[answerKey('task')]||'')+'</textarea>';
  let technique='<div class="exam-grid"><article class="exam-tip"><h4>Exam technique</h4><ul>'+(l.exam||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article><article class="exam-tip warning"><h4>Common traps</h4><ul>'+(l.pitfalls||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article></div>';
  let check='<div class="mini-question"><p><strong>'+l.check.q+'</strong></p><div class="mini-options">'+l.check.choices.map((x,i)=>'<button class="mini-option" data-mini="'+i+'">'+x+'</button>').join('')+'</div><div class="feedback hidden" data-mini-feedback></div></div>';
  let exit='<p>'+l.exit+'</p><textarea class="student-answer" data-answer-key="'+answerKey('exit')+'" placeholder="Write your exit-ticket answer...">'+(saved[answerKey('exit')]||'')+'</textarea>';
  const chunks=[
-  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['worked','6 · Worked example'],['practice','7 · Auto-mark practice'],['task','8 · Apply it'],['technique','9 · Exam technique'],['check','10 · Check'],['exit','11 · Exit']
+  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['connections','6 · Connections'],['worked','7 · Worked examples'],['practice','8 · Auto-mark practice'],['task','9 · Apply it'],['technique','10 · Exam technique'],['check','11 · Check'],['exit','12 · Exit']
  ];
  $('#lessonPanel').innerHTML =
   '<span class="eyebrow">'+l.code+'</span><h2>'+l.title+'</h2><p class="lesson-lead">'+l.lead+'</p>'+
@@ -820,7 +962,8 @@ function renderLesson(){
   lessonChunk('Core teaching','core',core)+
   lessonChunk('Key vocabulary','terms',terms)+
   lessonChunk('AQA specification depth','depth',depth)+
-  lessonChunk('Worked example','worked',worked)+
+  lessonChunk('AQA applications and connections','connections',connections)+
+  lessonChunk('Worked examples','worked',worked)+
   lessonChunk('Auto-marked practice','practice',practice)+
   lessonChunk('Apply it','task',task)+
   lessonChunk('Exam technique and misconceptions','technique',technique)+
@@ -881,10 +1024,19 @@ const sims = [
  {key:'force',label:'Applied force / N',min:10,max:120,step:5,value:60},
  {key:'distance',label:'Perpendicular distance / m',min:.1,max:1.2,step:.05,value:.6}
 ],simple:'Moment increases when either force or perpendicular distance from the pivot increases.',exam:'Moment about a point = force × perpendicular distance from the point to the force’s line of action.',mistake:'The distance is to the line of action, not simply the distance to where the force is applied.',check:['What happens to the moment if distance doubles at fixed force?','The moment doubles.'],investigate:'Keep the moment at about 36 N m using at least three different force–distance combinations.'},
+{id:'couplecom',code:'3.4.1.2',title:'Couples + centre of mass',subtitle:'Compare a pure couple with weight acting through a movable centre of mass.',controls:[
+ {key:'force',label:'Couple force / N',min:5,max:80,step:5,value:30},
+ {key:'sep',label:'Force separation / m',min:.10,max:1.00,step:.05,value:.50},
+ {key:'com',label:'Centre-of-mass offset / m',min:-.50,max:.50,step:.05,value:0}
+],simple:'A couple has zero resultant force but causes rotation. Weight acts through the centre of mass and can create a moment if its line of action misses the pivot.',exam:'Moment of a couple = one force × perpendicular separation. For a uniform regular solid, centre of mass is at the geometric centre.',mistake:'Do not multiply a couple moment by two; F × separation already gives the total couple moment.',check:['Does a pure couple have a resultant force?','No. It has zero resultant force but a non-zero moment.'],investigate:'Double the separation while keeping force fixed, then move the centre of mass either side of the pivot.'},
 {id:'motion',code:'3.4.1.3',title:'Motion + graph links',subtitle:'Watch position and velocity evolve while the live velocity–time graph builds.',controls:[
  {key:'u',label:'Initial velocity / m s⁻¹',min:-10,max:25,step:1,value:4},
  {key:'a',label:'Acceleration / m s⁻²',min:-5,max:5,step:.5,value:2}
 ],simple:'Constant acceleration changes velocity by the same amount each second. The live graph shows this as a straight line.',exam:'For constant acceleration, v = u + at and s = ut + ½at². Gradient of the v–t graph is acceleration; area is displacement.',mistake:'SUVAT is not valid over an interval in which acceleration changes.',check:['If a = 0, what happens to the velocity–time graph?','It becomes horizontal because velocity is constant.'],investigate:'Try positive, zero and negative acceleration. Predict the graph gradient and whether the object changes direction.'},
+{id:'bounce',code:'3.4.1.3',title:'Bouncing-ball graphs',subtitle:'Link repeated bounces to velocity–time and acceleration ideas.',controls:[
+ {key:'drop',label:'Initial drop height / m',min:.5,max:5,step:.25,value:2.5},
+ {key:'retain',label:'Speed retained after bounce / %',min:30,max:95,step:5,value:70}
+],simple:'Between impacts the ball accelerates downward at approximately g. At each collision the velocity reverses rapidly and usually has a smaller magnitude.',exam:'On a velocity–time graph, free-flight sections have constant gradient −g if upward is positive. The collision gives a rapid velocity change and large impulse.',mistake:'Velocity can change sign instantly in an idealised collision model; acceleration between impacts is still due to gravity.',check:['What is the gradient of the free-flight sections of a v–t graph if upward is positive?','Approximately −g.'],investigate:'Reduce the retained-speed percentage and observe how bounce heights and successive velocity peaks change.'},
 {id:'projectile',code:'3.4.1.4',title:'Projectile motion + drag',subtitle:'Compare ideal motion with a simple linear-drag model and inspect velocity components.',controls:[
  {key:'speed',label:'Launch speed / m s⁻¹',min:5,max:35,step:1,value:20},
  {key:'angle',label:'Launch angle / °',min:5,max:85,step:1,value:45},
@@ -894,6 +1046,12 @@ const sims = [
  {key:'mass',label:'Mass / kg',min:.2,max:5,step:.2,value:1.2},
  {key:'k',label:'Linear drag coefficient / N s m⁻¹',min:.5,max:12,step:.5,value:3}
 ],simple:'As speed increases, drag grows. The resultant force becomes smaller until drag equals weight and acceleration becomes zero.',exam:'Terminal speed occurs when the resistive force balances the driving force, so resultant force and acceleration are zero.',mistake:'Terminal speed does not mean no forces act; the forces are balanced.',check:['At terminal speed, what is the resultant force?','Zero.'],investigate:'Increase mass, then increase drag coefficient. Predict which change increases the terminal speed in this teaching model.'},
+{id:'vehicle',code:'3.4.1.4',title:'Vehicle maximum speed',subtitle:'See resistive force rise with speed until it balances the driving force.',controls:[
+ {key:'drive',label:'Driving force / N',min:500,max:8000,step:250,value:3500},
+ {key:'drag',label:'Drag coefficient / N per (m s⁻¹)²',min:.5,max:12,step:.5,value:4},
+ {key:'roll',label:'Rolling resistance / N',min:0,max:1000,step:50,value:350},
+ {key:'mass',label:'Vehicle mass / kg',min:500,max:2200,step:100,value:1200}
+],simple:'As speed rises, aerodynamic drag rises strongly. Maximum steady speed occurs when total resistance equals driving force.',exam:'At maximum steady speed the resultant force is zero, so acceleration is zero even though velocity is not.',mistake:'Maximum speed is not reached because the driving force becomes zero; it is reached when driving force and resistance balance.',check:['At maximum steady speed, what is the acceleration?','Zero.'],investigate:'Increase drag coefficient or rolling resistance and observe how the maximum speed changes.'},
 {id:'newton',code:'3.4.1.5',title:'Newton’s laws + free-body view',subtitle:'See driving force, resistance, resultant force and acceleration together.',controls:[
  {key:'drive',label:'Driving force / N',min:0,max:5000,step:100,value:3000},
  {key:'resist',label:'Resistance / N',min:0,max:2500,step:100,value:800},
@@ -920,6 +1078,23 @@ const sims = [
  {key:'f1',label:'Final force / N',min:0,max:120,step:5,value:80},
  {key:'distance',label:'Displacement / m',min:.5,max:8,step:.5,value:4}
 ],simple:'When force changes with displacement, work is found from the area under the force–displacement graph.',exam:'For a straight-line change in force, the area is a trapezium: W = ½(F₀ + F₁)s.',mistake:'Do not multiply the final force by distance unless the force is constant at that value.',check:['What does area under an F–s graph represent?','Work done / energy transferred.'],investigate:'Set F₀ = F₁ to recover the constant-force case, then compare with a changing-force case.'},
+{id:'motor',code:'3.4.1.7',title:'Motor efficiency lifting a mass',subtitle:'Compare electrical input power with useful gravitational output power.',controls:[
+ {key:'mass',label:'Lifted mass / kg',min:1,max:30,step:1,value:10},
+ {key:'height',label:'Lift height / m',min:.5,max:5,step:.25,value:2},
+ {key:'time',label:'Lift time / s',min:1,max:12,step:.5,value:4},
+ {key:'input',label:'Electrical input power / W',min:100,max:1500,step:50,value:650}
+],simple:'The motor transfers electrical energy. Some becomes useful gravitational potential energy and the rest is dissipated, mainly as heating and sound.',exam:'Useful output power = mgh/t. Efficiency = useful output power ÷ input power.',mistake:'Efficiency compares like with like: power/power or energy/energy.',check:['Can efficiency exceed 100% for an ordinary motor?','No. Useful output cannot exceed total input.'],investigate:'Change the lift time and input power while keeping mass and height fixed. Identify conditions that raise or lower calculated efficiency.'},
+{id:'springenergy',code:'3.4.2.1',title:'Spring energy + Hooke’s law',subtitle:'Build a force–extension graph and connect its area to elastic strain energy.',controls:[
+ {key:'k',label:'Spring constant / N m⁻¹',min:20,max:500,step:20,value:160},
+ {key:'ext',label:'Extension / m',min:0,max:.30,step:.01,value:.12},
+ {key:'limit',label:'Proportional limit / m',min:.05,max:.25,step:.01,value:.18}
+],simple:'In the Hookean region, force is proportional to extension and elastic strain energy is the triangular area under the force–extension graph.',exam:'For a linear spring E = ½FΔL = ½k(ΔL)². Beyond the proportional region, the simple linear equation is no longer valid.',mistake:'Extension is the change in length, not the total stretched length.',check:['What does area under a force–extension graph represent?','Work done / elastic strain energy transferred to the spring.'],investigate:'Change k and extension. Then move beyond the proportional limit and compare the curve with the straight Hookean region.'},
+{id:'collisiontypes',code:'3.4.1.6',title:'Elastic, inelastic + explosion',subtitle:'Compare momentum and kinetic energy across different interaction types.',controls:[
+ {key:'m1',label:'Mass 1 / kg',min:.5,max:4,step:.5,value:1},
+ {key:'m2',label:'Mass 2 / kg',min:.5,max:4,step:.5,value:1.5},
+ {key:'speed',label:'Initial/launch speed scale / m s⁻¹',min:1,max:8,step:.5,value:4},
+ {key:'mode',label:'Interaction mode: 0 stick, 1 elastic, 2 explosion',min:0,max:2,step:1,value:1}
+],simple:'Momentum is conserved in all three closed-system interactions. Kinetic energy is conserved only in the ideal elastic collision; an explosion can increase kinetic energy by converting internal energy.',exam:'Apply signed momentum before = momentum after. Then compare kinetic energies separately to classify the interaction.',mistake:'Momentum conservation does not require kinetic-energy conservation.',check:['Which interaction conserves total kinetic energy as well as momentum?','An ideal elastic collision.'],investigate:'Switch among modes 0, 1 and 2 and compare total momentum and kinetic energy before/after.'},
 {id:'density',code:'3.4.2.1',title:'Density and sample dimensions',subtitle:'Relate mass and volume and see how dimensions determine bulk density.',controls:[
  {key:'mass',label:'Mass / g',min:20,max:1000,step:10,value:270},
  {key:'length',label:'Length / cm',min:1,max:12,step:.5,value:5},
@@ -966,14 +1141,20 @@ function updateReadout(){
  if(s==='vectors'){const x=v.mag*Math.cos(v.angle*Math.PI/180),y=v.mag*Math.sin(v.angle*Math.PI/180);txt='Fₓ = '+fmt(x)+' N   |   Fᵧ = '+fmt(y)+' N';}
  if(s==='equilibrium'){const r1=v.a1*Math.PI/180,r2=v.a2*Math.PI/180,x=v.f1*Math.cos(r1)+v.f2*Math.cos(r2),y=v.f1*Math.sin(r1)+v.f2*Math.sin(r2),f3=Math.hypot(x,y),ang=(Math.atan2(-y,-x)*180/Math.PI+360)%360;txt='Balancing force = '+fmt(f3)+' N at '+fmt(ang)+'° from +x';}
  if(s==='moments'){txt='Moment = '+fmt(v.force*v.distance)+' N m';}
+ if(s==='couplecom'){const M=v.force*v.sep,weight=20*9.81,comM=weight*v.com;txt='couple moment = '+fmt(M)+' N m   |   COM weight moment = '+fmt(comM)+' N m';}
  if(s==='motion'){const t=simTime%8,vel=v.u+v.a*t,pos=v.u*t+.5*v.a*t*t;txt='t = '+fmt(t)+' s   |   v = '+fmt(vel)+' m s⁻¹   |   s = '+fmt(pos)+' m';}
+ if(s==='bounce'){const e=v.retain/100,h0=v.drop,n=Math.floor(simTime/1.5)%5,hn=h0*Math.pow(e*e,n);txt='bounce '+(n+1)+'   |   approximate peak height = '+fmt(hn)+' m   |   retained speed = '+v.retain+'%';}
  if(s==='projectile'){const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r);txt='uₓ = '+fmt(ux)+' m s⁻¹   |   uᵧ = '+fmt(uy)+' m s⁻¹   |   drag constant = '+fmt(v.drag)+' s⁻¹';}
  if(s==='terminal'){const vt=v.mass*9.81/v.k,t=simTime%8,speed=vt*(1-Math.exp(-v.k*t/v.mass)),drag=v.k*speed,result=v.mass*9.81-drag;txt='vₜ ≈ '+fmt(vt)+' m s⁻¹   |   v = '+fmt(speed)+' m s⁻¹   |   drag = '+fmt(drag)+' N   |   ΣF = '+fmt(result)+' N';}
+ if(s==='vehicle'){const vmax=Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag)),t=simTime%12,speed=vmax*(1-Math.exp(-t/3)),resist=v.roll+v.drag*speed*speed,result=v.drive-resist;txt='v = '+fmt(speed)+' m s⁻¹   |   resistance = '+fmt(resist)+' N   |   ΣF = '+fmt(result)+' N   |   max steady v ≈ '+fmt(vmax)+' m s⁻¹';}
  if(s==='newton'){const r=v.drive-v.resist,a=r/v.mass;txt='Resultant force = '+fmt(r)+' N   |   a = '+fmt(a)+' m s⁻²';}
  if(s==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,fin=p/(v.m1+v.m2),kei=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kef=.5*(v.m1+v.m2)*fin*fin;txt='Total p = '+fmt(p)+' kg m s⁻¹   |   final v = '+fmt(fin)+' m s⁻¹   |   KE change = '+fmt(kef-kei)+' J';}
  if(s==='impulse'){const J=.5*v.peak*v.time,dv=J/v.mass;txt='Impulse = area = '+fmt(J)+' N s   |   |Δp| = '+fmt(J)+' kg m s⁻¹   |   |Δv| = '+fmt(dv)+' m s⁻¹';}
  if(s==='energy'){const gpe=v.mass*9.81*v.height,ke=gpe*(1-v.loss/100),speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='Initial GPE = '+fmt(gpe)+' J   |   final KE available = '+fmt(ke)+' J   |   final v ≈ '+fmt(speed)+' m s⁻¹';}
  if(s==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;txt='Work = area = ½('+fmt(v.f0)+' + '+fmt(v.f1)+') × '+fmt(v.distance)+' = '+fmt(W)+' J';}
+ if(s==='motor'){const usefulE=v.mass*9.81*v.height,usefulP=usefulE/v.time,eff=100*usefulP/v.input;txt='useful E = '+fmt(usefulE)+' J   |   useful P = '+fmt(usefulP)+' W   |   efficiency = '+fmt(eff)+'%';}
+ if(s==='springenergy'){const linear=v.ext<=v.limit,F=linear?v.k*v.ext:v.k*v.limit+v.k*.35*(v.ext-v.limit),E=linear?.5*v.k*v.ext*v.ext:.5*v.k*v.limit*v.limit+(v.ext-v.limit)*(v.k*v.limit+F)/2;txt='force ≈ '+fmt(F)+' N   |   stored/transferred energy ≈ '+fmt(E)+' J   |   '+(linear?'Hookean region':'non-linear region');}
+ if(s==='collisiontypes'){let p0=0,k0=0,p1=0,k1=0;if(v.mode===0){const u1=v.speed,u2=0,V=v.m1*u1/(v.m1+v.m2);p0=v.m1*u1;p1=(v.m1+v.m2)*V;k0=.5*v.m1*u1*u1;k1=.5*(v.m1+v.m2)*V*V;}else if(v.mode===1){const u1=v.speed,u2=0,a=(v.m1-v.m2)/(v.m1+v.m2)*u1,b=(2*v.m1)/(v.m1+v.m2)*u1;p0=v.m1*u1;p1=v.m1*a+v.m2*b;k0=.5*v.m1*u1*u1;k1=.5*v.m1*a*a+.5*v.m2*b*b;}else{const a=v.speed,b=-v.m1*a/v.m2;p0=0;p1=v.m1*a+v.m2*b;k0=0;k1=.5*v.m1*a*a+.5*v.m2*b*b;}txt='p before = '+fmt(p0)+'   p after = '+fmt(p1)+' kg m s⁻¹   |   KE before = '+fmt(k0)+' J   KE after = '+fmt(k1)+' J';}
  if(s==='density'){const Vcm=v.length*v.width*v.height,V=Vcm*1e-6,rho=(v.mass/1000)/V;txt='Volume = '+fmt(Vcm)+' cm³   |   density = '+fmt(rho)+' kg m⁻³';}
  if(s==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;txt='stress = '+stress.toExponential(2)+' Pa   |   strain = '+strain.toExponential(2)+'   |   ΔL = '+(ext*1000).toFixed(3)+' mm';}
  if(s==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,broken=v.strain>=v.break,stress=broken?0:(v.strain<=epsY?E*v.strain:y+(v.yield*.22e6)*Math.log1p((v.strain-epsY)*120));const region=broken?'fractured':(v.strain<=epsY?'linear elastic':'plastic');txt='region: '+region+'   |   stress ≈ '+(stress/1e6).toFixed(1)+' MPa   |   elastic strain limit ≈ '+epsY.toExponential(2);}
@@ -1032,6 +1213,15 @@ function drawSim(){
   ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,py+70);ctx.lineTo(fx,py+70);ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText(v.distance.toFixed(2)+' m',(cx+fx)/2-15,py+92);
   ctx.fillText('M = '+fmt(v.force*v.distance)+' N m',w*.68,h*.18);
  }
+ if(id==='couplecom'){
+  const cx=w*.48,cy=h*.48,beam=Math.min(w*.62,520),left=cx-beam/2,right=cx+beam/2;
+  ctx.strokeStyle='#aebccc';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(left,cy);ctx.lineTo(right,cy);ctx.stroke();
+  ctx.fillStyle='#788aa0';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx-25,cy+44);ctx.lineTo(cx+25,cy+44);ctx.closePath();ctx.fill();
+  const sepPx=clamp(v.sep,0.1,1)*beam*.55,fx1=cx-sepPx/2,fx2=cx+sepPx/2;
+  arrow(fx1,cy+85,fx1,cy+15,'F','#67c7ff');arrow(fx2,cy-85,fx2,cy-15,'F','#67c7ff');
+  const comX=cx+v.com*beam*.45;ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(comX,cy-12,9,0,Math.PI*2);ctx.fill();arrow(comX,cy-20,comX,cy+65,'W','#ff7b87');
+  ctx.fillStyle='#dceaff';ctx.fillText('couple M = '+fmt(v.force*v.sep)+' N m',30,34);ctx.fillText('centre of mass',comX-42,cy-38);
+ }
  if(id==='motion'){
   const t=simTime%8,pos=v.u*t+.5*v.a*t*t,min=-80,max=220,x=40+(clamp(pos,min,max)-min)/(max-min)*(w-80),trackY=h*.32;
   ctx.strokeStyle='#6f8197';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(30,trackY+28);ctx.lineTo(w-30,trackY+28);ctx.stroke();ctx.fillStyle='#67c7ff';ctx.fillRect(x-34,trackY-20,68,36);ctx.fillStyle='#0b1726';ctx.beginPath();ctx.arc(x-22,trackY+20,11,0,Math.PI*2);ctx.arc(x+22,trackY+20,11,0,Math.PI*2);ctx.fill();
@@ -1040,6 +1230,15 @@ function drawSim(){
   ctx.strokeStyle='#ffd56a';ctx.lineWidth=3;ctx.beginPath();
   for(let i=0;i<=80;i++){const tt=8*i/80,vv=v.u+v.a*tt,px=gx+gw*tt/8,py=gy+gh*.5-vv*gh/60;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
   const py=gy+gh*.5-(v.u+v.a*t)*gh/60;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(gx+gw*t/8,py,5,0,Math.PI*2);ctx.fill();
+ }
+ if(id==='bounce'){
+  const g=9.81,e=v.retain/100,base=h*.42,x=w*.25,t=simTime%6;let tt=t,vy=0,height=v.drop,cycle=0;
+  while(cycle<5){const fall=Math.sqrt(2*height/g),up=e*Math.sqrt(2*g*height)/g*2;if(tt<=fall){height=Math.max(0,v.drop*Math.pow(e*e,cycle)-.5*g*tt*tt);vy=-g*tt;break;}tt-=fall;if(tt<=up){const vup=e*Math.sqrt(2*g*v.drop*Math.pow(e*e,cycle)),tau=tt;height=Math.max(0,vup*tau-.5*g*tau*tau);vy=vup-g*tau;break;}tt-=up;cycle++;}
+  const scale=(h*.30)/Math.max(.5,v.drop),ballY=base-height*scale;ctx.strokeStyle='#6f8197';ctx.beginPath();ctx.moveTo(35,base+12);ctx.lineTo(w*.45,base+12);ctx.stroke();ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,ballY,11,0,Math.PI*2);ctx.fill();
+  const gx=w*.53,gy=55,gw=w*.40,gh=h-110;drawAxes(gx,gy,gw,gh,'t','v');
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;ctx.beginPath();let time=0,hp=v.drop,vlaunch=0,first=true;
+  for(let b=0;b<4;b++){const tf=Math.sqrt(2*hp/g);for(let i=0;i<=20;i++){const q=tf*i/20,vv=(b===0?0:vlaunch)-g*q,px=gx+gw*Math.min(1,time/6),py=gy+gh*.5-vv*gh/35;if(first){ctx.moveTo(px,py);first=false}else ctx.lineTo(px,py);time+=tf/20;}vlaunch=e*Math.sqrt(2*g*hp);hp=hp*e*e;}
+  ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText('free-flight gradient ≈ −g',gx+8,gy+18);
  }
  if(id==='projectile'){
   const T=projectileFlight(v),pts=[];let maxX=1,maxY=1;
@@ -1058,6 +1257,13 @@ function drawSim(){
   const gx=w*.52,gy=55,gw=w*.40,gh=h-110;drawAxes(gx,gy,gw,gh,'t','speed');
   ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=100;i++){const tt=8*i/100,ss=vt*(1-Math.exp(-v.k*tt/v.mass)),px=gx+gw*i/100,py=gy+gh-(ss/(vt*1.1))*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();
   ctx.setLineDash([5,5]);ctx.strokeStyle='#ffd56a';const vy=gy+gh-(vt/(vt*1.1))*gh;ctx.beginPath();ctx.moveTo(gx,vy);ctx.lineTo(gx+gw,vy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#dceaff';ctx.fillText('terminal speed',gx+8,vy-8);
+ }
+ if(id==='vehicle'){
+  const vmax=Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag)),t=simTime%12,speed=vmax*(1-Math.exp(-t/3)),res=v.roll+v.drag*speed*speed,x=w*.32,y=h*.46;
+  ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-28,140,48);ctx.fillStyle='#081422';ctx.beginPath();ctx.arc(x-45,y+23,15,0,Math.PI*2);ctx.arc(x+45,y+23,15,0,Math.PI*2);ctx.fill();
+  arrow(x-20,y-62,x+clamp(v.drive/30,30,180),y-62,'drive','#63d9a4');arrow(x+15,y-100,x-clamp(res/30,20,160),y-100,'resistance','#ff7b87');
+  const gx=w*.55,gy=55,gw=w*.37,gh=h-110;drawAxes(gx,gy,gw,gh,'speed','force');
+  const maxV=Math.max(5,vmax*1.25),maxF=Math.max(v.drive,v.roll+v.drag*maxV*maxV)*1.12;ctx.strokeStyle='#63d9a4';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx,gy+gh-v.drive/maxF*gh);ctx.lineTo(gx+gw,gy+gh-v.drive/maxF*gh);ctx.stroke();ctx.strokeStyle='#ff7b87';ctx.beginPath();for(let i=0;i<=80;i++){const ss=maxV*i/80,rr=v.roll+v.drag*ss*ss,px=gx+gw*i/80,py=gy+gh-rr/maxF*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText('intersection = maximum steady speed',gx+5,gy+18);
  }
  if(id==='newton'){
   const y=h*.52,x=w*.5,r=v.drive-v.resist,a=r/v.mass;ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-30,140,50);ctx.fillStyle='#07111f';ctx.beginPath();ctx.arc(x-45,y+24,16,0,Math.PI*2);ctx.arc(x+45,y+24,16,0,Math.PI*2);ctx.fill();
@@ -1087,6 +1293,22 @@ function drawSim(){
   ctx.fillStyle='rgba(99,217,164,.20)';ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.lineTo(gx+gw,gy+gh);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#63d9a4';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.stroke();
   ctx.fillStyle='#dceaff';ctx.fillText('Area = work = '+fmt(.5*(v.f0+v.f1)*v.distance)+' J',gx+20,gy+30);
+ }
+ if(id==='motor'){
+  const ground=h-65,x=w*.30,top=60,p=Math.min(1,(simTime%Math.max(v.time,1))/Math.max(v.time,1)),blockY=ground-(ground-top)*p,usefulE=v.mass*9.81*v.height,usefulP=usefulE/v.time,inputE=v.input*v.time,loss=Math.max(0,inputE-usefulE),eff=100*usefulP/v.input;
+  ctx.strokeStyle='#aebccc';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,top-20);ctx.lineTo(x,ground);ctx.stroke();ctx.fillStyle='#60748a';ctx.fillRect(x-42,blockY-20,84,40);ctx.fillStyle='#fff';ctx.fillText(v.mass+' kg',x-18,blockY+5);
+  ctx.fillStyle='#dceaff';ctx.fillText('input energy = '+fmt(inputE)+' J',w*.56,h*.26);ctx.fillText('useful GPE = '+fmt(usefulE)+' J',w*.56,h*.36);ctx.fillText('dissipated = '+fmt(loss)+' J',w*.56,h*.46);ctx.fillText('efficiency = '+fmt(eff)+'%',w*.56,h*.56);
+ }
+ if(id==='springenergy'){
+  const gx=70,gy=55,gw=w*.56,gh=h-110,maxX=.32,maxF=Math.max(v.k*v.limit*1.35,v.k*v.ext*1.15,10);drawAxes(gx,gy,gw,gh,'extension / m','force / N');
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=100;i++){const x=maxX*i/100,F=x<=v.limit?v.k*x:v.k*v.limit+v.k*.35*(x-v.limit),px=gx+gw*x/maxX,py=gy+gh-F/maxF*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();
+  const F=v.ext<=v.limit?v.k*v.ext:v.k*v.limit+v.k*.35*(v.ext-v.limit),px=gx+gw*v.ext/maxX,py=gy+gh-F/maxF*gh;ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fill();ctx.setLineDash([5,5]);ctx.strokeStyle='#ffd56a';ctx.beginPath();ctx.moveTo(gx+gw*v.limit/maxX,gy);ctx.lineTo(gx+gw*v.limit/maxX,gy+gh);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#dceaff';ctx.fillText('proportional limit',gx+gw*v.limit/maxX+5,gy+18);
+  const sx=w*.75,sy=h*.26;ctx.strokeStyle='#c7d4e2';ctx.lineWidth=3;ctx.beginPath();for(let y=0;y<120;y+=12){ctx.moveTo(sx-18+(y%24?36:0),sy+y);ctx.lineTo(sx+18-(y%24?36:0),sy+y+12)}ctx.stroke();ctx.fillStyle='#60748a';ctx.fillRect(sx-35,sy+135,70,38);
+ }
+ if(id==='collisiontypes'){
+  const mode=Math.round(v.mode),cy=h*.48;let u1=0,u2=0,a=0,b=0,label='';if(mode===0){u1=v.speed;u2=0;a=b=v.m1*u1/(v.m1+v.m2);label='inelastic: stick';}else if(mode===1){u1=v.speed;u2=0;a=(v.m1-v.m2)/(v.m1+v.m2)*u1;b=(2*v.m1)/(v.m1+v.m2)*u1;label='ideal elastic';}else{u1=u2=0;a=v.speed;b=-v.m1*a/v.m2;label='explosion';}
+  const before=(simTime%6)<3,p=simTime%3;if(before){drawCart(w*.30+u1*p*9,cy,Math.max(38,v.m1*18),'1');drawCart(w*.70+u2*p*9,cy,Math.max(38,v.m2*18),'2');}else{drawCart(w*.48+a*p*10,cy,Math.max(38,v.m1*18),'1');drawCart(w*.52+b*p*10,cy+70,Math.max(38,v.m2*18),'2');}
+  const p0=v.m1*u1+v.m2*u2,p1=v.m1*a+v.m2*b,k0=.5*v.m1*u1*u1+.5*v.m2*u2*u2,k1=.5*v.m1*a*a+.5*v.m2*b*b;ctx.fillStyle='#dceaff';ctx.fillText(label,30,35);ctx.fillText('momentum: '+fmt(p0)+' → '+fmt(p1)+' kg m s⁻¹',30,h-58);ctx.fillText('kinetic energy: '+fmt(k0)+' → '+fmt(k1)+' J',30,h-30);
  }
  if(id==='density'){
   const bx=w*.25,by=h*.32,sx=Math.min(180,60+v.length*8),sy=Math.min(120,35+v.height*7),d=Math.min(70,20+v.width*5);
