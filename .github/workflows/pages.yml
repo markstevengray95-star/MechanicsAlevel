@@ -36,6 +36,7 @@ jobs:
       - name: Check expanded learning features
         run: |
           grep -q "const lessonExtensions" app.js
+          grep -q "const lessonDeepening" app.js
           grep -q "mechanicsLessonAnswers" app.js
           grep -q "id:'terminal'" app.js
           grep -q "id:'impulse'" app.js
@@ -43,12 +44,19 @@ jobs:
           grep -q "id:'stressstrain'" app.js
           grep -q "id:'density'" app.js
           grep -q "id:'equilibrium'" app.js
+          grep -q "id:'collisiontypes'" app.js
+          grep -q "id:'springenergy'" app.js
+          grep -q "id:'motor'" app.js
+          grep -q "id:'vehicle'" app.js
+          grep -q "id:'bounce'" app.js
+          grep -q "id:'couplecom'" app.js
           grep -q "mechanicsMastery" app.js
           grep -q "lessonPractice" app.js
           grep -q "drawPracticalGraph" app.js
+          grep -q "const simTeaching" app.js
           grep -q 'id="gGraph"' index.html
           grep -q 'id="yGraph"' index.html
-          grep -q "<strong>14</strong><span>interactive models</span>" index.html
+          grep -q "<strong>20</strong><span>interactive models</span>" index.html
           grep -q "<strong>18</strong><span>formula tools</span>" index.html
 
       - name: Check maths graph and readiness upgrades
