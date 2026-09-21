@@ -9,6 +9,9 @@ Interactive teaching app for **AQA A-level Physics 7408, section 3.4 Mechanics a
 - Required Practical 3 and 4 virtual data collection with automatically plotted best-fit graphs and gradient-based values for g and Young modulus
 - 32-question mixed exam practice bank across all section 3.4 specification points
 - Adaptive topic-mastery tracking with personalised revision recommendations
+- Maths & Graph Skills studio with generated practice for gradients, graph areas, uncertainty, linearisation and significant figures
+- Six original multi-part structured problems covering mechanics, materials and required-practical evaluation
+- Per-lesson readiness tracking based on auto-marked practice and knowledge checks
 - AQA specification checklist plus mathematical/practical skill badges
 - Automatic local saving of lesson answers, progress and mastery data
 - Responsive PWA-style layout matching the companion Nuclear Physics Learning Lab
