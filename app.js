@@ -687,47 +687,66 @@ $$('[data-jump]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.j
 $('#resetProgress').addEventListener('click',()=>{completed.clear();saveProgress();renderCourseList();renderLesson();});
 
 const sims = [
-{id:'vectors',code:'3.4.1.1',title:'Vector components',subtitle:'Resolve a force and see the resultant triangle.',controls:[
+{id:'vectors',code:'3.4.1.1',title:'Vector components',subtitle:'Resolve a vector and see its perpendicular components.',controls:[
  {key:'mag',label:'Vector magnitude / N',min:10,max:100,step:1,value:60},
  {key:'angle',label:'Angle above horizontal / °',min:0,max:90,step:1,value:35}
-],simple:'A vector can be replaced by perpendicular horizontal and vertical components with the same combined effect.',exam:'Resolve the vector using Fₓ = F cosθ and Fᵧ = F sinθ when θ is measured from the horizontal.',mistake:'Do not swap sine and cosine without checking which side is adjacent to the stated angle.',check:['At 0°, which component equals the full vector?','Horizontal component.']},
-{id:'moments',code:'3.4.1.2',title:'Moments and balance',subtitle:'Change force and lever arm to see turning effect.',controls:[
+],simple:'A vector can be replaced by perpendicular horizontal and vertical components with exactly the same combined effect.',exam:'For an angle measured from the horizontal, use Fₓ = F cosθ and Fᵧ = F sinθ. State the direction of the final vector.',mistake:'Do not decide sine/cosine from memory alone; identify the adjacent and opposite sides relative to the stated angle.',check:['At 0°, which component equals the full vector?','The horizontal component.'],investigate:'Set 30°, 45° and 60°. Compare how the two components change while the vector magnitude stays fixed.'},
+{id:'moments',code:'3.4.1.2',title:'Moments and balance',subtitle:'Change force and perpendicular distance to see the turning effect.',controls:[
  {key:'force',label:'Applied force / N',min:10,max:120,step:5,value:60},
  {key:'distance',label:'Perpendicular distance / m',min:.1,max:1.2,step:.05,value:.6}
-],simple:'The further from the pivot a perpendicular force acts, the larger the turning effect.',exam:'Moment about a point = force × perpendicular distance from the point to the force’s line of action.',mistake:'The distance must be perpendicular to the line of action.',check:['What doubles if distance doubles at fixed force?','The moment doubles.']},
-{id:'motion',code:'3.4.1.3',title:'Straight-line motion',subtitle:'Watch position and velocity evolve under constant acceleration.',controls:[
+],simple:'Moment increases when either force or perpendicular distance from the pivot increases.',exam:'Moment about a point = force × perpendicular distance from the point to the force’s line of action.',mistake:'The distance is to the line of action, not simply the distance to where the force is applied.',check:['What happens to the moment if distance doubles at fixed force?','The moment doubles.'],investigate:'Keep the moment at about 36 N m using at least three different force–distance combinations.'},
+{id:'motion',code:'3.4.1.3',title:'Motion + graph links',subtitle:'Watch position and velocity evolve while the live velocity–time graph builds.',controls:[
  {key:'u',label:'Initial velocity / m s⁻¹',min:-10,max:25,step:1,value:4},
  {key:'a',label:'Acceleration / m s⁻²',min:-5,max:5,step:.5,value:2}
-],simple:'Constant acceleration changes velocity by the same amount each second.',exam:'For constant acceleration, v = u + at and s = ut + ½at². The gradient of a velocity–time graph is acceleration.',mistake:'SUVAT equations are not valid if acceleration changes during the interval.',check:['If a = 0, what happens to velocity?','It remains constant.']},
-{id:'projectile',code:'3.4.1.4',title:'Projectile motion',subtitle:'Change speed and angle to see independent horizontal and vertical motion.',controls:[
+],simple:'Constant acceleration changes velocity by the same amount each second. The live graph shows this as a straight line.',exam:'For constant acceleration, v = u + at and s = ut + ½at². Gradient of the v–t graph is acceleration; area is displacement.',mistake:'SUVAT is not valid over an interval in which acceleration changes.',check:['If a = 0, what happens to the velocity–time graph?','It becomes horizontal because velocity is constant.'],investigate:'Try positive, zero and negative acceleration. Predict the graph gradient and whether the object changes direction.'},
+{id:'projectile',code:'3.4.1.4',title:'Projectile motion + drag',subtitle:'Compare ideal motion with a simple linear-drag model and inspect velocity components.',controls:[
  {key:'speed',label:'Launch speed / m s⁻¹',min:5,max:35,step:1,value:20},
  {key:'angle',label:'Launch angle / °',min:5,max:85,step:1,value:45},
- {key:'drag',label:'Teaching drag factor',min:0,max:.04,step:.005,value:0}
-],simple:'Horizontal and vertical velocity components evolve independently; gravity changes only the vertical component in the ideal model.',exam:'Resolve the launch velocity, apply constant-acceleration equations vertically and constant velocity horizontally, using the same time.',mistake:'Do not use the full launch speed as the horizontal speed unless the launch is horizontal.',check:['Without drag, what is horizontal acceleration?','Zero.']},
-{id:'newton',code:'3.4.1.5',title:'Newton’s second law',subtitle:'See how resultant force and mass determine acceleration.',controls:[
+ {key:'drag',label:'Linear drag constant / s⁻¹',min:0,max:.20,step:.01,value:0}
+],simple:'Horizontal and vertical components share the same time. Without drag, only the vertical component accelerates. Drag reduces both components.',exam:'Resolve the launch velocity, solve vertical and horizontal motion separately, and use the same time. Treat lift/drag qualitatively unless a model is supplied.',mistake:'At maximum height vertical velocity is zero, but acceleration is still downward.',check:['Without drag, what is horizontal acceleration?','Zero.'],investigate:'Compare the same launch with drag = 0 and drag > 0. Note the change in range, peak height and symmetry.'},
+{id:'terminal',code:'3.4.1.4',title:'Terminal speed',subtitle:'Watch drag increase with speed until it balances weight.',controls:[
+ {key:'mass',label:'Mass / kg',min:.2,max:5,step:.2,value:1.2},
+ {key:'k',label:'Linear drag coefficient / N s m⁻¹',min:.5,max:12,step:.5,value:3}
+],simple:'As speed increases, drag grows. The resultant force becomes smaller until drag equals weight and acceleration becomes zero.',exam:'Terminal speed occurs when the resistive force balances the driving force, so resultant force and acceleration are zero.',mistake:'Terminal speed does not mean no forces act; the forces are balanced.',check:['At terminal speed, what is the resultant force?','Zero.'],investigate:'Increase mass, then increase drag coefficient. Predict which change increases the terminal speed in this teaching model.'},
+{id:'newton',code:'3.4.1.5',title:'Newton’s laws + free-body view',subtitle:'See driving force, resistance, resultant force and acceleration together.',controls:[
  {key:'drive',label:'Driving force / N',min:0,max:5000,step:100,value:3000},
  {key:'resist',label:'Resistance / N',min:0,max:2500,step:100,value:800},
  {key:'mass',label:'Mass / kg',min:500,max:2000,step:50,value:1200}
-],simple:'Acceleration depends on the resultant force, not the driving force alone.',exam:'Calculate resultant force first, then apply ΣF = ma.',mistake:'Do not put a non-resultant force directly into F = ma when other forces act in the same direction line.',check:['If resultant force is zero, what is acceleration?','Zero.']},
-{id:'momentum',code:'3.4.1.6',title:'Momentum collision',subtitle:'Model a one-dimensional perfectly inelastic collision.',controls:[
+],simple:'Acceleration depends on the resultant force. Equal driving and resistive forces produce zero acceleration, not necessarily zero velocity.',exam:'Construct a free-body diagram, choose a positive direction, calculate ΣF, then use ΣF = ma for constant mass.',mistake:'Do not put the driving force into F = ma without subtracting opposing forces.',check:['If resultant force is zero, what is acceleration?','Zero.'],investigate:'Keep the resultant force fixed while changing mass. Check the inverse relationship between mass and acceleration.'},
+{id:'momentum',code:'3.4.1.6',title:'Momentum collision',subtitle:'Model a one-dimensional perfectly inelastic collision and compare momentum with kinetic energy.',controls:[
  {key:'m1',label:'Mass 1 / kg',min:.5,max:4,step:.5,value:1},
  {key:'v1',label:'Velocity 1 / m s⁻¹',min:-8,max:8,step:1,value:5},
  {key:'m2',label:'Mass 2 / kg',min:.5,max:4,step:.5,value:2},
  {key:'v2',label:'Velocity 2 / m s⁻¹',min:-8,max:8,step:1,value:0}
-],simple:'When the trolleys stick, total momentum is unchanged if external impulse is negligible, but kinetic energy usually decreases.',exam:'Set total momentum before equal to total momentum after: m₁u₁ + m₂u₂ = (m₁+m₂)v.',mistake:'Momentum conservation does not mean kinetic energy is always conserved.',check:['What is conserved in both elastic and inelastic collisions?','Momentum, for a closed system.']},
-{id:'energy',code:'3.4.1.7–8',title:'Energy transfer on a track',subtitle:'Trade gravitational potential energy for kinetic energy.',controls:[
+],simple:'When the trolleys stick, total momentum is unchanged if external impulse is negligible, but kinetic energy usually decreases.',exam:'Use signed velocities: m₁u₁ + m₂u₂ = (m₁+m₂)v for a sticking collision.',mistake:'Momentum conservation does not imply kinetic-energy conservation.',check:['What is conserved in both elastic and inelastic collisions in a closed system?','Total momentum.'],investigate:'Try collisions with one trolley moving in the negative direction. Check that signs are essential.'},
+{id:'impulse',code:'3.4.1.6',title:'Force–time impulse graph',subtitle:'Change peak force and contact time; the shaded area is impulse.',controls:[
+ {key:'peak',label:'Peak force / N',min:100,max:5000,step:100,value:2400},
+ {key:'time',label:'Contact time / s',min:.01,max:.30,step:.01,value:.08},
+ {key:'mass',label:'Object mass / kg',min:.1,max:5,step:.1,value:.8}
+],simple:'Impulse is the area under a force–time graph. For the triangular pulse shown, J = ½ × peak force × contact time.',exam:'Area under an F–t graph = impulse = Δp. For a given Δp, increasing contact time reduces the average force.',mistake:'Area under force–time is not work; work comes from a force–displacement graph.',check:['What physical quantity is represented by area under an F–t graph?','Impulse, equal to change in momentum.'],investigate:'Keep impulse roughly constant while increasing contact time. Observe how the peak force can be reduced.'},
+{id:'energy',code:'3.4.1.7–8',title:'Energy transfer on a track',subtitle:'Track GPE, KE and dissipated energy throughout the motion.',controls:[
  {key:'height',label:'Starting height / m',min:.5,max:8,step:.5,value:4},
  {key:'mass',label:'Mass / kg',min:.5,max:5,step:.5,value:2},
  {key:'loss',label:'Energy dissipated / %',min:0,max:60,step:5,value:10}
-],simple:'As height decreases, gravitational potential energy can transfer to kinetic energy; resistive forces transfer some energy to internal stores.',exam:'Apply conservation of energy and include work done against resistive forces or other dissipative transfers.',mistake:'Mechanical energy can decrease even though total energy is conserved.',check:['If no energy is dissipated, what happens to lost GPE?','It becomes kinetic energy in this model.']},
-{id:'elasticity',code:'3.4.2',title:'Elasticity and Young modulus',subtitle:'Explore force–extension, stress, strain and stiffness.',controls:[
+],simple:'As height decreases, GPE can transfer to KE. Resistive forces transfer some energy to internal stores while total energy is conserved.',exam:'Write an energy balance and include work done against resistive forces. Mechanical energy can decrease while total energy remains conserved.',mistake:'Do not say energy is lost; identify where it is transferred.',check:['If no energy is dissipated, what happens to the lost GPE in this model?','It becomes kinetic energy.'],investigate:'Compare 0%, 20% and 50% dissipation. Relate the final speed to the energy available for KE.'},
+{id:'workgraph',code:'3.4.1.7',title:'Variable force + work graph',subtitle:'The shaded area under force–displacement gives work done.',controls:[
+ {key:'f0',label:'Starting force / N',min:0,max:120,step:5,value:20},
+ {key:'f1',label:'Final force / N',min:0,max:120,step:5,value:80},
+ {key:'distance',label:'Displacement / m',min:.5,max:8,step:.5,value:4}
+],simple:'When force changes with displacement, work is found from the area under the force–displacement graph.',exam:'For a straight-line change in force, the area is a trapezium: W = ½(F₀ + F₁)s.',mistake:'Do not multiply the final force by distance unless the force is constant at that value.',check:['What does area under an F–s graph represent?','Work done / energy transferred.'],investigate:'Set F₀ = F₁ to recover the constant-force case, then compare with a changing-force case.'},
+{id:'elasticity',code:'3.4.2.1–2',title:'Elastic wire + Young modulus',subtitle:'Link force, area and original length to stress, strain and extension.',controls:[
  {key:'force',label:'Tension / N',min:0,max:120,step:5,value:50},
  {key:'length',label:'Original length / m',min:.5,max:3,step:.1,value:1.5},
  {key:'area',label:'Area / mm²',min:.1,max:1.2,step:.05,value:.4},
  {key:'young',label:'Young modulus / GPa',min:20,max:220,step:10,value:200}
-],simple:'Stress compares force with area; strain compares extension with original length. Young modulus measures stiffness of a material.',exam:'In the linear elastic region, E = stress/strain = FL/(AΔL).',mistake:'Do not use mm² directly in SI calculations: convert area to m².',check:['What does a larger Young modulus mean?','A stiffer material.']}
+],simple:'Stress compares force with area; strain compares extension with original length. Young modulus measures stiffness in the linear elastic region.',exam:'E = stress/strain = FL/(AΔL). Young modulus is the gradient of the linear stress–strain region.',mistake:'Convert mm² to m² and keep original length separate from extension.',check:['What does a larger Young modulus mean?','A stiffer material.'],investigate:'Double the original length, then double the area. Predict how extension changes for the same force and material.'},
+{id:'stressstrain',code:'3.4.2.1–2',title:'Stress–strain material behaviour',subtitle:'Move through elastic, plastic and fracture regions on a simplified material curve.',controls:[
+ {key:'strain',label:'Applied strain',min:0,max:.080,step:.001,value:.010},
+ {key:'young',label:'Young modulus / GPa',min:20,max:220,step:10,value:120},
+ {key:'yield',label:'Yield stress / MPa',min:80,max:500,step:20,value:240},
+ {key:'break',label:'Breaking strain',min:.025,max:.100,step:.005,value:.070}
+],simple:'The initial straight region is elastic. Beyond yield, a ductile teaching model shows plastic deformation until fracture.',exam:'Young modulus is the gradient of the initial linear stress–strain graph. Strength and stiffness are different properties.',mistake:'A material with a high Young modulus is stiff, but that alone does not tell you its breaking stress.',check:['What does the initial stress–strain gradient represent?','Young modulus.'],investigate:'Compare high and low Young modulus while keeping yield stress similar. Then change breaking strain to model more or less ductile behaviour.'}
 ];
-
 let activeSim=0, simValues={}, running=true, slow=false, simTime=0, last=performance.now();
 const canvas=$('#simCanvas'), ctx=canvas.getContext('2d');
 
@@ -743,22 +762,27 @@ function renderSim(){
  renderSimTabs();
  $('#simCode').textContent=s.code; $('#simSpec').textContent='AQA '+s.code; $('#simTitle').textContent=s.title; $('#simSubtitle').textContent=s.subtitle;
  $('#simpleExplain').textContent=s.simple; $('#examExplain').textContent=s.exam; $('#mistakeExplain').textContent=s.mistake;
- $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div>';
+ $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div><div class="sim-investigate"><strong>Try this investigation:</strong> '+s.investigate+'</div>';
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
  $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
  $$('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();}));
  updateReadout();
 }
+
 function updateReadout(){
  const s=sims[activeSim].id, v=simValues; let txt='';
  if(s==='vectors'){const x=v.mag*Math.cos(v.angle*Math.PI/180),y=v.mag*Math.sin(v.angle*Math.PI/180);txt='Fₓ = '+fmt(x)+' N   |   Fᵧ = '+fmt(y)+' N';}
  if(s==='moments'){txt='Moment = '+fmt(v.force*v.distance)+' N m';}
  if(s==='motion'){const t=simTime%8,vel=v.u+v.a*t,pos=v.u*t+.5*v.a*t*t;txt='t = '+fmt(t)+' s   |   v = '+fmt(vel)+' m s⁻¹   |   s = '+fmt(pos)+' m';}
- if(s==='projectile'){const rad=v.angle*Math.PI/180,ux=v.speed*Math.cos(rad),uy=v.speed*Math.sin(rad),T=Math.max(0,2*uy/9.81);txt='uₓ = '+fmt(ux)+' m s⁻¹   |   uᵧ = '+fmt(uy)+' m s⁻¹   |   ideal flight time ≈ '+fmt(T)+' s';}
+ if(s==='projectile'){const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r);txt='uₓ = '+fmt(ux)+' m s⁻¹   |   uᵧ = '+fmt(uy)+' m s⁻¹   |   drag constant = '+fmt(v.drag)+' s⁻¹';}
+ if(s==='terminal'){const vt=v.mass*9.81/v.k,t=simTime%8,speed=vt*(1-Math.exp(-v.k*t/v.mass)),drag=v.k*speed,result=v.mass*9.81-drag;txt='vₜ ≈ '+fmt(vt)+' m s⁻¹   |   v = '+fmt(speed)+' m s⁻¹   |   drag = '+fmt(drag)+' N   |   ΣF = '+fmt(result)+' N';}
  if(s==='newton'){const r=v.drive-v.resist,a=r/v.mass;txt='Resultant force = '+fmt(r)+' N   |   a = '+fmt(a)+' m s⁻²';}
- if(s==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,fin=p/(v.m1+v.m2);txt='Total p = '+fmt(p)+' kg m s⁻¹   |   stuck-together v = '+fmt(fin)+' m s⁻¹';}
- if(s==='energy'){const gpe=v.mass*9.81*v.height,ke=gpe*(1-v.loss/100),speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='Initial GPE = '+fmt(gpe)+' J   |   available KE = '+fmt(ke)+' J   |   v ≈ '+fmt(speed)+' m s⁻¹';}
+ if(s==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,fin=p/(v.m1+v.m2),kei=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kef=.5*(v.m1+v.m2)*fin*fin;txt='Total p = '+fmt(p)+' kg m s⁻¹   |   final v = '+fmt(fin)+' m s⁻¹   |   KE change = '+fmt(kef-kei)+' J';}
+ if(s==='impulse'){const J=.5*v.peak*v.time,dv=J/v.mass;txt='Impulse = area = '+fmt(J)+' N s   |   |Δp| = '+fmt(J)+' kg m s⁻¹   |   |Δv| = '+fmt(dv)+' m s⁻¹';}
+ if(s==='energy'){const gpe=v.mass*9.81*v.height,ke=gpe*(1-v.loss/100),speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='Initial GPE = '+fmt(gpe)+' J   |   final KE available = '+fmt(ke)+' J   |   final v ≈ '+fmt(speed)+' m s⁻¹';}
+ if(s==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;txt='Work = area = ½('+fmt(v.f0)+' + '+fmt(v.f1)+') × '+fmt(v.distance)+' = '+fmt(W)+' J';}
  if(s==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;txt='stress = '+stress.toExponential(2)+' Pa   |   strain = '+strain.toExponential(2)+'   |   ΔL = '+(ext*1000).toFixed(3)+' mm';}
+ if(s==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,broken=v.strain>=v.break,stress=broken?0:(v.strain<=epsY?E*v.strain:y+(v.yield*.22e6)*Math.log1p((v.strain-epsY)*120));const region=broken?'fractured':(v.strain<=epsY?'linear elastic':'plastic');txt='region: '+region+'   |   stress ≈ '+(stress/1e6).toFixed(1)+' MPa   |   elastic strain limit ≈ '+epsY.toExponential(2);}
  $('#simReadout').textContent=txt;
 }
 
@@ -775,45 +799,109 @@ function arrow(x1,y1,x2,y2,label,color='#67c7ff'){
 function grid(w,h){
  ctx.strokeStyle='rgba(120,160,200,.10)';ctx.lineWidth=1;for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
 }
+function drawAxes(x,y,w,h,xLabel,yLabel){
+ ctx.strokeStyle='#71849a';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y+h);ctx.lineTo(x+w,y+h);ctx.moveTo(x,y+h);ctx.lineTo(x,y);ctx.stroke();
+ ctx.fillStyle='#9fb2c8';ctx.font='12px system-ui';ctx.fillText(xLabel,x+w-30,y+h-8);ctx.fillText(yLabel,x+7,y+14);
+}
+function projectileState(t,v){
+ const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r),k=v.drag;
+ if(k<1e-6) return {x:ux*t,y:uy*t-.5*9.81*t*t,vx:ux,vy:uy-9.81*t};
+ const e=Math.exp(-k*t);
+ return {x:ux*(1-e)/k,y:(uy+9.81/k)*(1-e)/k-9.81*t/k,vx:ux*e,vy:(uy+9.81/k)*e-9.81/k};
+}
+function projectileFlight(v){
+ let t=.02,last=projectileState(t,v);
+ while(t<20){t+=.02;const p=projectileState(t,v);if(p.y<0&&t>.1)return t;last=p;} return 20;
+}
 function drawSim(){
  const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);grid(w,h);
  const id=sims[activeSim].id,v=simValues;
  ctx.fillStyle='#dceaff';ctx.font='14px system-ui';
  if(id==='vectors'){
-  const o={x:w*.24,y:h*.72}, scale=Math.min(w,h)*.0045,rad=v.angle*Math.PI/180,x=o.x+v.mag*Math.cos(rad)*scale,y=o.y-v.mag*Math.sin(rad)*scale;
-  arrow(o.x,o.y,x,o.y,'Fₓ','#63d9a4');arrow(x,o.y,x,y,'Fᵧ','#ffd56a');arrow(o.x,o.y,x,y,'F','#67c7ff');ctx.setLineDash([5,5]);ctx.strokeStyle='#7389a1';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,o.y);ctx.stroke();ctx.setLineDash([]);
+  const o={x:w*.22,y:h*.72}, scale=Math.min(w,h)*.006,rad=v.angle*Math.PI/180,x=o.x+v.mag*Math.cos(rad)*scale,y=o.y-v.mag*Math.sin(rad)*scale;
+  arrow(o.x,o.y,x,o.y,'Fₓ','#63d9a4');arrow(x,o.y,x,y,'Fᵧ','#ffd56a');arrow(o.x,o.y,x,y,'F','#67c7ff');
+  ctx.setLineDash([5,5]);ctx.strokeStyle='#7389a1';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,o.y);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#dceaff';ctx.fillText('Components form a right-angled vector triangle.',w*.52,h*.2);
  }
  if(id==='moments'){
-  const py=h*.58,cx=w*.5,len=Math.min(w*.72,620);ctx.strokeStyle='#9db1c9';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(cx-len/2,py);ctx.lineTo(cx+len/2,py);ctx.stroke();ctx.fillStyle='#788aa0';ctx.beginPath();ctx.moveTo(cx,py);ctx.lineTo(cx-28,py+48);ctx.lineTo(cx+28,py+48);ctx.closePath();ctx.fill();
-  const fx=cx+clamp(v.distance/1.2,0,1)*len*.42;arrow(fx,py-90,fx,py,'F','#ffd56a');ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,py+70);ctx.lineTo(fx,py+70);ctx.stroke();ctx.fillText(v.distance.toFixed(2)+' m',(cx+fx)/2-15,py+92);
+  const py=h*.52,cx=w*.46,len=Math.min(w*.72,620);ctx.strokeStyle='#9db1c9';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(cx-len/2,py);ctx.lineTo(cx+len/2,py);ctx.stroke();
+  ctx.fillStyle='#788aa0';ctx.beginPath();ctx.moveTo(cx,py);ctx.lineTo(cx-28,py+48);ctx.lineTo(cx+28,py+48);ctx.closePath();ctx.fill();
+  const fx=cx+clamp(v.distance/1.2,0,1)*len*.42;arrow(fx,py-95,fx,py,'F','#ffd56a');
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,py+70);ctx.lineTo(fx,py+70);ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText(v.distance.toFixed(2)+' m',(cx+fx)/2-15,py+92);
+  ctx.fillText('M = '+fmt(v.force*v.distance)+' N m',w*.68,h*.18);
  }
  if(id==='motion'){
-  const t=simTime%8,pos=v.u*t+.5*v.a*t*t,min=-80,max=220,x=40+(clamp(pos,min,max)-min)/(max-min)*(w-80),y=h*.58;ctx.strokeStyle='#6f8197';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(30,y+28);ctx.lineTo(w-30,y+28);ctx.stroke();ctx.fillStyle='#67c7ff';ctx.fillRect(x-34,y-20,68,36);ctx.fillStyle='#0b1726';ctx.beginPath();ctx.arc(x-22,y+20,11,0,Math.PI*2);ctx.arc(x+22,y+20,11,0,Math.PI*2);ctx.fill();arrow(x,y-55,x+clamp((v.u+v.a*t)*5,-120,120),y-55,'v','#63d9a4');
+  const t=simTime%8,pos=v.u*t+.5*v.a*t*t,min=-80,max=220,x=40+(clamp(pos,min,max)-min)/(max-min)*(w-80),trackY=h*.32;
+  ctx.strokeStyle='#6f8197';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(30,trackY+28);ctx.lineTo(w-30,trackY+28);ctx.stroke();ctx.fillStyle='#67c7ff';ctx.fillRect(x-34,trackY-20,68,36);ctx.fillStyle='#0b1726';ctx.beginPath();ctx.arc(x-22,trackY+20,11,0,Math.PI*2);ctx.arc(x+22,trackY+20,11,0,Math.PI*2);ctx.fill();
+  arrow(x,trackY-50,x+clamp((v.u+v.a*t)*5,-120,120),trackY-50,'v','#63d9a4');
+  const gx=65,gy=h*.55,gw=w-120,gh=h*.34;drawAxes(gx,gy,gw,gh,'t / s','v');
+  ctx.strokeStyle='#ffd56a';ctx.lineWidth=3;ctx.beginPath();
+  for(let i=0;i<=80;i++){const tt=8*i/80,vv=v.u+v.a*tt,px=gx+gw*tt/8,py=gy+gh*.5-vv*gh/60;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
+  const py=gy+gh*.5-(v.u+v.a*t)*gh/60;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(gx+gw*t/8,py,5,0,Math.PI*2);ctx.fill();
  }
  if(id==='projectile'){
-  const rad=v.angle*Math.PI/180,ux=v.speed*Math.cos(rad),uy=v.speed*Math.sin(rad),drag=v.drag,T=Math.max(.1,2*uy/9.81),scaleX=(w-80)/(Math.max(1,ux*T)*1.15),scaleY=(h-100)/(Math.max(1,uy*uy/(2*9.81))*1.5),baseY=h-45;
-  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();
-  let lastX=40,lastY=baseY;for(let i=0;i<=120;i++){let t=T*1.2*i/120;let dx=ux*t*(1-drag*t*.8),dy=uy*t-.5*9.81*t*t;let x=40+dx*scaleX,y=baseY-dy*scaleY;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);lastX=x;lastY=y;}ctx.stroke();
-  let t=(simTime%(T*1.2));let dx=ux*t*(1-drag*t*.8),dy=uy*t-.5*9.81*t*t;ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(40+dx*scaleX,baseY-dy*scaleY,10,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#6f8197';ctx.beginPath();ctx.moveTo(20,baseY+10);ctx.lineTo(w-20,baseY+10);ctx.stroke();
+  const T=projectileFlight(v),pts=[];let maxX=1,maxY=1;
+  for(let i=0;i<=160;i++){const tt=T*i/160,p=projectileState(tt,v);pts.push(p);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
+  const sx=(w-90)/(maxX*1.08),sy=(h-105)/(maxY*1.35),base=h-45;
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>{const x=45+p.x*sx,y=base-p.y*sy;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+  const t=simTime%Math.max(.2,T),p=projectileState(t,v),px=45+p.x*sx,py=base-p.y*sy;
+  ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();
+  arrow(px,py,px+clamp(p.vx*3,-85,85),py,'vₓ','#63d9a4');arrow(px,py,px,py-clamp(p.vy*3,-85,85),'vᵧ','#ffb66a');
+  ctx.strokeStyle='#6f8197';ctx.beginPath();ctx.moveTo(20,base+10);ctx.lineTo(w-20,base+10);ctx.stroke();
+ }
+ if(id==='terminal'){
+  const t=simTime%8,vt=v.mass*9.81/v.k,speed=vt*(1-Math.exp(-v.k*t/v.mass)),drag=v.k*speed,weight=v.mass*9.81,result=weight-drag;
+  const x=w*.30,y=70+(h-150)*(t/8);ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();
+  arrow(x-25,y,x-25,y+clamp(weight*3,25,120),'mg','#ff7b87');arrow(x+25,y,x+25,y-clamp(drag*3,5,120),'drag','#63d9a4');
+  const gx=w*.52,gy=55,gw=w*.40,gh=h-110;drawAxes(gx,gy,gw,gh,'t','speed');
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=100;i++){const tt=8*i/100,ss=vt*(1-Math.exp(-v.k*tt/v.mass)),px=gx+gw*i/100,py=gy+gh-(ss/(vt*1.1))*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();
+  ctx.setLineDash([5,5]);ctx.strokeStyle='#ffd56a';const vy=gy+gh-(vt/(vt*1.1))*gh;ctx.beginPath();ctx.moveTo(gx,vy);ctx.lineTo(gx+gw,vy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#dceaff';ctx.fillText('terminal speed',gx+8,vy-8);
  }
  if(id==='newton'){
-  const y=h*.58,x=w*.5;ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-30,140,50);ctx.fillStyle='#07111f';ctx.beginPath();ctx.arc(x-45,y+24,16,0,Math.PI*2);ctx.arc(x+45,y+24,16,0,Math.PI*2);ctx.fill();arrow(x-10,y-60,x+130,y-60,'drive','#63d9a4');arrow(x+10,y-95,x-90,y-95,'resistance','#ff7b87');ctx.fillStyle='#dceaff';ctx.fillText('ΣF = '+fmt(v.drive-v.resist)+' N',x-55,y+80);
+  const y=h*.52,x=w*.5,r=v.drive-v.resist,a=r/v.mass;ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-30,140,50);ctx.fillStyle='#07111f';ctx.beginPath();ctx.arc(x-45,y+24,16,0,Math.PI*2);ctx.arc(x+45,y+24,16,0,Math.PI*2);ctx.fill();
+  arrow(x-10,y-65,x+clamp(v.drive/25,20,180),y-65,'drive','#63d9a4');arrow(x+10,y-105,x-clamp(v.resist/25,10,140),y-105,'resistance','#ff7b87');arrow(x,y+85,x+clamp(a*35,-140,140),y+85,'a','#ffd56a');
+  ctx.fillStyle='#dceaff';ctx.fillText('ΣF = '+fmt(r)+' N',x-55,y+125);
  }
  if(id==='momentum'){
-  const before=(simTime%6)<3,cy=h*.55,sep=w*.23;if(before){
-   const p=simTime%3;let x1=w*.25+v.v1*p*10,x2=w*.75+v.v2*p*10;drawCart(x1,cy,Math.max(36,v.m1*16),'1');drawCart(x2,cy,Math.max(36,v.m2*16),'2');
-  }else{const fin=(v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2),p=(simTime%6)-3;drawCart(w*.5+fin*p*12,cy,Math.max(70,(v.m1+v.m2)*13),'1+2');}
-  ctx.fillStyle='#dceaff';ctx.fillText(before?'Before collision':'After: perfectly inelastic (stick together)',30,35);
+  const before=(simTime%6)<3,cy=h*.48;if(before){const p=simTime%3;drawCart(w*.24+v.v1*p*10,cy,Math.max(36,v.m1*16),'1');drawCart(w*.76+v.v2*p*10,cy,Math.max(36,v.m2*16),'2');}
+  else{const fin=(v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2),p=(simTime%6)-3;drawCart(w*.5+fin*p*12,cy,Math.max(70,(v.m1+v.m2)*13),'1+2');}
+  const pTot=v.m1*v.v1+v.m2*v.v2,fin=pTot/(v.m1+v.m2),kei=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kef=.5*(v.m1+v.m2)*fin*fin;
+  ctx.fillStyle='#dceaff';ctx.fillText(before?'Before collision':'After: perfectly inelastic',30,35);ctx.fillText('p total = '+fmt(pTot)+' kg m s⁻¹',30,h-58);ctx.fillText('KE before = '+fmt(kei)+' J   KE after = '+fmt(kef)+' J',30,h-30);
+ }
+ if(id==='impulse'){
+  const gx=70,gy=55,gw=w-130,gh=h-110;drawAxes(gx,gy,gw,gh,'time / s','force');
+  const px=gx+gw*.5,top=gy+20;ctx.fillStyle='rgba(103,199,255,.20)';ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(px,top);ctx.lineTo(gx+gw,gy+gh);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText('peak '+fmt(v.peak)+' N',px-35,top-10);ctx.fillText('contact time '+fmt(v.time)+' s',gx+gw*.62,gy+gh-12);
  }
  if(id==='energy'){
-  const ground=h-55,left=50,right=w-50,top=70;ctx.strokeStyle='#7d91a9';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(left,top);ctx.quadraticCurveTo(w*.4,ground-20,right,ground);ctx.stroke();
-  let p=(simTime%6)/6,x=left+(right-left)*p,y=top+(ground-top)*(1-Math.pow(1-p,2));ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,y-12,13,0,Math.PI*2);ctx.fill();
-  const gpe=v.mass*9.81*v.height*(1-p),total=v.mass*9.81*v.height,usable=total*(1-v.loss/100),ke=Math.max(0,usable-gpe*(1-v.loss/100));ctx.fillStyle='#dceaff';ctx.fillText('GPE ≈ '+fmt(gpe)+' J',30,h-28);ctx.fillText('KE ≈ '+fmt(ke)+' J',w*.38,h-28);ctx.fillText('dissipated ≈ '+fmt(total*v.loss/100)+' J',w*.68,h-28);
+  const ground=h-70,left=50,right=w*.63,top=70,p=(simTime%6)/6,x=left+(right-left)*p,y=top+(ground-top)*(1-Math.pow(1-p,2));
+  ctx.strokeStyle='#7d91a9';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(left,top);ctx.quadraticCurveTo(w*.32,ground-20,right,ground);ctx.stroke();ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,y-12,13,0,Math.PI*2);ctx.fill();
+  const total=v.mass*9.81*v.height,frac=1-p,gpe=total*frac,usable=total*(1-v.loss/100),ke=Math.max(0,usable-gpe*(1-v.loss/100)),diss=total-ke-gpe;
+  const bx=w*.70,bw=w*.22,maxH=h*.55;[['GPE',gpe,'#67c7ff'],['KE',ke,'#63d9a4'],['diss.',Math.max(0,diss),'#ffd56a']].forEach((b,i)=>{const bh=maxH*(b[1]/Math.max(1,total));ctx.fillStyle=b[2];ctx.fillRect(bx+i*bw/3,ground-bh,bw/4,bh);ctx.fillStyle='#dceaff';ctx.fillText(b[0],bx+i*bw/3,ground+20);});
+ }
+ if(id==='workgraph'){
+  const gx=70,gy=55,gw=w-130,gh=h-110,maxF=Math.max(10,v.f0,v.f1)*1.15;drawAxes(gx,gy,gw,gh,'s / m','F / N');
+  const y0=gy+gh-v.f0/maxF*gh,y1=gy+gh-v.f1/maxF*gh;
+  ctx.fillStyle='rgba(99,217,164,.20)';ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.lineTo(gx+gw,gy+gh);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#63d9a4';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.stroke();
+  ctx.fillStyle='#dceaff';ctx.fillText('Area = work = '+fmt(.5*(v.f0+v.f1)*v.distance)+' J',gx+20,gy+30);
  }
  if(id==='elasticity'){
-  const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length,base=80,pix=Math.min(h*.55,120+ext*1e5);ctx.strokeStyle='#c7d4e2';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(w*.5,base);ctx.lineTo(w*.5,base+pix);ctx.stroke();ctx.fillStyle='#60748a';ctx.fillRect(w*.5-55,base+pix,110,55);ctx.fillStyle='#fff';ctx.fillText(v.force+' N',w*.5-18,base+pix+32);ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w*.25,base);ctx.lineTo(w*.25,base+pix);ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText('extension ≈ '+(ext*1000).toFixed(3)+' mm',w*.25-55,base+pix+28);
+  const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length,base=65,pix=Math.min(h*.48,100+ext*1e5),wireX=w*.30;
+  ctx.strokeStyle='#c7d4e2';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(wireX,base);ctx.lineTo(wireX,base+pix);ctx.stroke();ctx.fillStyle='#60748a';ctx.fillRect(wireX-50,base+pix,100,48);ctx.fillStyle='#fff';ctx.fillText(v.force+' N',wireX-17,base+pix+30);
+  const gx=w*.52,gy=55,gw=w*.40,gh=h-110;drawAxes(gx,gy,gw,gh,'strain','stress');
+  const maxStr=Math.max(.0005,strain*1.5),maxStress=Math.max(1e6,stress*1.5);ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx+gw*(strain/maxStr),gy+gh-gh*(stress/maxStress));ctx.stroke();
+  ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(gx+gw*(strain/maxStr),gy+gh-gh*(stress/maxStress),6,0,Math.PI*2);ctx.fill();
+ }
+ if(id==='stressstrain'){
+  const E=v.young*1e9,yieldPa=v.yield*1e6,epsY=yieldPa/E,br=v.break,maxStress=yieldPa*1.55,gx=70,gy=55,gw=w-130,gh=h-110;drawAxes(gx,gy,gw,gh,'strain','stress');
+  function matStress(e){if(e>=br)return 0;if(e<=epsY)return E*e;return yieldPa+(v.yield*.22e6)*Math.log1p((e-epsY)*120);}
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=120;i++){const e=br*i/120,s=matStress(e),px=gx+gw*(e/(br*1.08)),py=gy+gh-(s/maxStress)*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();
+  const e=Math.min(v.strain,br),s=matStress(e),px=gx+gw*(e/(br*1.08)),py=gy+gh-(s/maxStress)*gh;ctx.fillStyle=v.strain>=br?'#ff7b87':'#ffd56a';ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#dceaff';ctx.fillText('elastic',gx+15,gy+gh-55);ctx.fillText('plastic',gx+gw*.42,gy+55);ctx.fillText('fracture',gx+gw*.82,gy+95);
  }
 }
+
 function drawCart(x,y,width,label){ctx.fillStyle='#67c7ff';ctx.fillRect(x-width/2,y-24,width,38);ctx.fillStyle='#081422';ctx.beginPath();ctx.arc(x-width*.28,y+20,11,0,Math.PI*2);ctx.arc(x+width*.28,y+20,11,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText(label,x-8,y);}
 function animate(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;if(running)simTime+=dt*(slow?.3:1);drawSim();updateReadout();requestAnimationFrame(animate);
