@@ -37,6 +37,7 @@ jobs:
         run: |
           grep -q "const lessonExtensions" app.js
           grep -q "const lessonDeepening" app.js
+          grep -q "const lessonTextbook" app.js
           grep -q "mechanicsLessonAnswers" app.js
           grep -q "id:'terminal'" app.js
           grep -q "id:'impulse'" app.js
@@ -56,8 +57,10 @@ jobs:
           grep -q "const simTeaching" app.js
           grep -q 'id="gGraph"' index.html
           grep -q 'id="yGraph"' index.html
+          grep -q "Formula Coach Pro" index.html
+          grep -q "formulaTopics" app.js
           grep -q "<strong>20</strong><span>interactive models</span>" index.html
-          grep -q "<strong>18</strong><span>formula tools</span>" index.html
+          grep -q "<strong>42</strong><span>formula tools</span>" index.html
 
       - name: Check maths graph and readiness upgrades
         run: |
