@@ -1221,6 +1221,214 @@ function drawPracticalGraph(id,points,xLabel,yLabel){
  const fit=regression(points);if(fit){g.strokeStyle='#67c7ff';g.lineWidth=2;g.beginPath();g.moveTo(px(0),py(Math.max(0,fit.b)));g.lineTo(px(maxX),py(fit.m*maxX+fit.b));g.stroke();}
 }
 
+
+const skillState = JSON.parse(localStorage.getItem('mechanicsSkillState')||'{"correct":0,"attempts":0}');
+let currentSkill=null;
+function rint(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function skillMeta(type){
+ const map={
+  gradient:['MS 3.5–3.7','Gradient links graph shape to a physical rate of change.'],
+  vtarea:['MS 3.5–3.7','Area under a velocity–time graph gives displacement.'],
+  impulse:['3.4.1.6 / MS','Area under a force–time graph gives impulse = change in momentum.'],
+  uncertainty:['PS 3.3','Percentage uncertainty = absolute uncertainty ÷ measured value × 100%.'],
+  poweruncertainty:['PS 3.3 / RP4','For a quantity raised to a power, multiply the percentage uncertainty by that power.'],
+  linearise:['PS 3.1 / MS 3.9','Choose transformed axes so a power-law relationship becomes a straight line.'],
+  sigfig:['MS 1.1','Round the final answer to a sensible number of significant figures.']
+ };return map[type]||['MS / PS',''];
+}
+function generateSkillQuestion(){
+ const type=$('#skillSelect')?.value||'gradient',meta=skillMeta(type);
+ let q={type,code:meta[0],summary:meta[1],kind:'number',answer:0,tol:.01,worked:'',graph:null};
+ if(type==='gradient'){
+  const dx=rint(2,6),m=rint(2,8),b=rint(0,5),x2=dx,y1=b,y2=b+m*dx;
+  q.question='A straight-line graph passes through (0, '+y1+') and ('+x2+', '+y2+'). Calculate its gradient.';
+  q.answer=m;q.tol=.01;q.worked='gradient = Δy/Δx = ('+y2+' − '+y1+') / ('+x2+' − 0) = '+m+'.';
+  q.graph={mode:'line',points:[{x:0,y:y1},{x:x2,y:y2}],x:'x',y:'y'};
+ }else if(type==='vtarea'){
+  const u=rint(1,8),v=u+rint(4,12),t=rint(3,8),s=.5*(u+v)*t;
+  q.question='Velocity increases uniformly from '+u+' m s⁻¹ to '+v+' m s⁻¹ in '+t+' s. Use the area under the velocity–time graph to calculate displacement.';
+  q.answer=s;q.tol=.05;q.worked='Area of trapezium = ½(u+v)t = ½('+u+'+'+v+')×'+t+' = '+s+' m.';
+  q.graph={mode:'trapezium',u,v,t,x:'t / s',y:'v / m s⁻¹'};
+ }else if(type==='impulse'){
+  const peak=rint(4,20)*100,time=rint(4,15)/100,J=.5*peak*time;
+  q.question='A triangular force pulse has peak force '+peak+' N and duration '+time.toFixed(2)+' s. Calculate the impulse.';
+  q.answer=J;q.tol=.05;q.worked='Impulse = area under F–t graph = ½ × '+peak+' × '+time.toFixed(2)+' = '+J.toFixed(2)+' N s.';
+  q.graph={mode:'triangle',peak,time,x:'t / s',y:'F / N'};
+ }else if(type==='uncertainty'){
+  const value=rint(20,120)/10,unc=rint(1,8)/100,pct=100*unc/value;
+  q.question='A length is measured as '+value.toFixed(1)+' ± '+unc.toFixed(2)+' m. Calculate the percentage uncertainty.';
+  q.answer=pct;q.tol=.08;q.worked='percentage uncertainty = ('+unc.toFixed(2)+' / '+value.toFixed(1)+') × 100 = '+pct.toFixed(2)+'%.';
+ }else if(type==='poweruncertainty'){
+  const d=rint(30,80)/100,unc=rint(1,4)/100,pct=2*100*unc/d;
+  q.question='A wire diameter is '+d.toFixed(2)+' ± '+unc.toFixed(2)+' mm. Area depends on d². Estimate the percentage uncertainty in cross-sectional area.';
+  q.answer=pct;q.tol=.12;q.worked='Diameter % uncertainty = ('+unc.toFixed(2)+'/'+d.toFixed(2)+')×100. Because A ∝ d², double it: '+pct.toFixed(2)+'%.';
+ }else if(type==='linearise'){
+  const choose=Math.random()<.5;
+  q.kind='text';
+  if(choose){
+   q.question='For free fall from rest, h = ½gt². To obtain a straight line with h on the y-axis, what should be plotted on the x-axis?';
+   q.keywords=['t','2'];q.worked='Plot h against t². The gradient is g/2.';
+  }else{
+   q.question='Young modulus E = stress/strain. To obtain E directly as a graph gradient, what should be on the y-axis and x-axis?';
+   q.keywords=['stress','strain'];q.worked='Plot stress on the y-axis against strain on the x-axis. The gradient is E in the linear elastic region.';
+  }
+ }else if(type==='sigfig'){
+  const raw=rint(12345,98765)/1000,sf=rint(2,4);
+  const ans=Number(raw.toPrecision(sf));
+  q.question='Round '+raw+' to '+sf+' significant figures.';
+  q.answer=ans;q.tol=Math.max(1e-10,Math.abs(ans)*1e-9);q.worked=raw+' to '+sf+' significant figures is '+ans+'.';
+ }
+ currentSkill=q;
+ $('#skillCode').textContent=q.code;
+ $('#skillQuestion').textContent=q.question;
+ $('#skillSummary').textContent=q.summary;
+ $('#skillAnswer').value='';
+ $('#skillFeedback').className='feedback hidden';
+ $('#skillWorked').className='worked hidden';
+ $('#skillWorked').textContent='';
+ drawSkillGraph(q.graph);
+ renderSkillStats();
+}
+function renderSkillStats(){
+ if(!$('#skillCorrect'))return;
+ $('#skillCorrect').textContent=skillState.correct||0;
+ $('#skillAttempts').textContent=skillState.attempts||0;
+}
+function drawSkillGraph(graph){
+ const canvas=$('#skillCanvas');if(!canvas)return;
+ const r=canvas.getBoundingClientRect(),W=Math.max(320,r.width||620),H=280,dpr=Math.min(2,window.devicePixelRatio||1);
+ canvas.width=W*dpr;canvas.height=H*dpr;const g=canvas.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+ g.fillStyle='#091625';g.fillRect(0,0,W,H);
+ if(!graph){g.fillStyle='#9fb2c8';g.font='13px system-ui';g.fillText('This question is calculation/data-analysis based.',28,42);return;}
+ const L=58,R=20,T=22,B=44,pw=W-L-R,ph=H-T-B;
+ g.strokeStyle='#71849a';g.lineWidth=1.5;g.beginPath();g.moveTo(L,T);g.lineTo(L,H-B);g.lineTo(W-R,H-B);g.stroke();
+ g.fillStyle='#9fb2c8';g.font='12px system-ui';g.fillText(graph.x,W/2,H-12);g.save();g.translate(15,H/2);g.rotate(-Math.PI/2);g.fillText(graph.y,0,0);g.restore();
+ if(graph.mode==='line'){
+  const maxX=Math.max(...graph.points.map(p=>p.x),1)*1.15,maxY=Math.max(...graph.points.map(p=>p.y),1)*1.15;
+  const px=x=>L+x/maxX*pw,py=y=>H-B-y/maxY*ph;g.strokeStyle='#67c7ff';g.lineWidth=3;g.beginPath();
+  graph.points.forEach((p,i)=>i?g.lineTo(px(p.x),py(p.y)):g.moveTo(px(p.x),py(p.y)));g.stroke();
+  g.fillStyle='#ffd56a';graph.points.forEach(p=>{g.beginPath();g.arc(px(p.x),py(p.y),5,0,Math.PI*2);g.fill();});
+ }else if(graph.mode==='trapezium'){
+  const maxY=graph.v*1.15,px=t=>L+t/graph.t*pw,py=v=>H-B-v/maxY*ph;
+  g.fillStyle='rgba(103,199,255,.18)';g.beginPath();g.moveTo(L,H-B);g.lineTo(L,py(graph.u));g.lineTo(W-R,py(graph.v));g.lineTo(W-R,H-B);g.closePath();g.fill();
+  g.strokeStyle='#67c7ff';g.lineWidth=3;g.beginPath();g.moveTo(L,py(graph.u));g.lineTo(W-R,py(graph.v));g.stroke();
+ }else if(graph.mode==='triangle'){
+  const maxY=graph.peak*1.15,py=v=>H-B-v/maxY*ph;
+  g.fillStyle='rgba(255,213,106,.18)';g.beginPath();g.moveTo(L,H-B);g.lineTo(L+pw/2,py(graph.peak));g.lineTo(W-R,H-B);g.closePath();g.fill();
+  g.strokeStyle='#ffd56a';g.lineWidth=3;g.stroke();
+ }
+}
+function checkSkillAnswer(){
+ if(!currentSkill)return;
+ const raw=$('#skillAnswer').value.trim(),fb=$('#skillFeedback'),worked=$('#skillWorked');let ok=false;
+ if(currentSkill.kind==='text'){
+  const t=raw.toLowerCase();ok=(currentSkill.keywords||[]).every(k=>t.includes(k));
+ }else{
+  const v=Number(raw.replace('%',''));ok=Number.isFinite(v)&&Math.abs(v-currentSkill.answer)<=currentSkill.tol;
+ }
+ skillState.attempts=(skillState.attempts||0)+1;if(ok)skillState.correct=(skillState.correct||0)+1;
+ localStorage.setItem('mechanicsSkillState',JSON.stringify(skillState));
+ fb.className='feedback '+(ok?'good':'bad');fb.textContent=ok?'Correct.':'Not quite — compare your method with the worked solution.';
+ worked.className='worked';worked.textContent=currentSkill.worked;
+ const code=currentSkill.type==='impulse'?'3.4.1.6':currentSkill.type==='vtarea'||currentSkill.type==='gradient'?'3.4.1.3':currentSkill.type==='poweruncertainty'?'RP4':currentSkill.type==='linearise'?'RP3':null;
+ if(code)recordMastery(code,ok);
+ renderSkillStats();
+}
+if($('#skillSelect')){
+ $('#skillSelect').addEventListener('change',generateSkillQuestion);
+ $('#newSkillQuestion').addEventListener('click',generateSkillQuestion);
+ $('#checkSkillAnswer').addEventListener('click',checkSkillAnswer);
+ $('#skillAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')checkSkillAnswer();});
+}
+
+const structuredProblems=[
+ {
+  id:'motion-data',code:'3.4.1.3',title:'Motion graph investigation',max:7,
+  stem:'A trolley accelerates uniformly from 2.0 m s⁻¹ to 14.0 m s⁻¹ in 6.0 s, then travels at 14.0 m s⁻¹ for 4.0 s.',
+  parts:[
+   {q:'Calculate the acceleration during the first 6.0 s.',marks:2,guide:'Use a = Δv/Δt. Answer: 2.0 m s⁻².',points:['correct change in velocity','division by 6.0 s with unit']},
+   {q:'Calculate the displacement during the full 10.0 s.',marks:3,guide:'Area under v–t graph: trapezium first 6 s = 48 m; rectangle next 4 s = 56 m; total = 104 m.',points:['first area','second area','correct total with unit']},
+   {q:'Explain what the gradient and area of a velocity–time graph represent.',marks:2,guide:'Gradient represents acceleration; signed area represents displacement.',points:['gradient = acceleration','area = displacement']}
+  ]
+ },
+ {
+  id:'collision',code:'3.4.1.6',title:'Collision + energy',max:8,
+  stem:'A 0.40 kg trolley moving at 5.0 m s⁻¹ collides with a 0.60 kg stationary trolley. They stick together.',
+  parts:[
+   {q:'Calculate their common speed after the collision.',marks:3,guide:'Momentum before = 0.40×5.0 = 2.0 kg m s⁻¹. Total mass = 1.00 kg, so v = 2.0 m s⁻¹.',points:['initial momentum','conservation equation','final speed']},
+   {q:'Calculate the kinetic energy transferred away from the trolleys during the collision.',marks:3,guide:'Initial KE = 5.0 J. Final KE = 2.0 J. Transfer = 3.0 J.',points:['initial KE','final KE','difference']},
+   {q:'State why momentum can be conserved while kinetic energy is not.',marks:2,guide:'Momentum is conserved in a closed system; kinetic energy can be transferred to internal energy, sound and deformation.',points:['closed-system momentum idea','energy transferred to other stores']}
+  ]
+ },
+ {
+  id:'energy-power',code:'3.4.1.7',title:'Motor efficiency + power',max:7,
+  stem:'A motor raises a 12 kg load vertically by 2.5 m in 4.0 s. The electrical input power is 900 W.',
+  parts:[
+   {q:'Calculate the useful increase in gravitational potential energy.',marks:2,guide:'ΔEₚ = mgh = 12×9.81×2.5 = 294 J (3 s.f.).',points:['correct equation/substitution','correct energy with unit']},
+   {q:'Calculate the useful output power.',marks:2,guide:'P = E/t = 294/4.0 = 73.6 W.',points:['energy divided by time','correct power with unit']},
+   {q:'Calculate the efficiency of the motor.',marks:2,guide:'Efficiency = useful power/input power = 73.6/900 = 0.0817 = 8.17%.',points:['correct ratio','correct percentage']},
+   {q:'Give one reason the efficiency is below 100%.',marks:1,guide:'Energy is transferred to other stores, for example heating due to electrical/mechanical resistance.',points:['valid dissipative transfer']}
+  ]
+ },
+ {
+  id:'materials',code:'3.4.2.1–2',title:'Wire stress, strain and Young modulus',max:8,
+  stem:'A wire has original length 1.80 m and diameter 0.50 mm. A tensile force of 35 N produces an extension of 1.60 mm.',
+  parts:[
+   {q:'Calculate the cross-sectional area of the wire.',marks:2,guide:'A=πd²/4 with d=5.0×10⁻⁴ m gives about 1.96×10⁻⁷ m².',points:['diameter converted to metres','correct circular area']},
+   {q:'Calculate the tensile stress.',marks:2,guide:'stress = F/A ≈ 1.78×10⁸ Pa.',points:['F/A','correct value/unit']},
+   {q:'Calculate the tensile strain.',marks:2,guide:'strain = ΔL/L = 1.60×10⁻³ / 1.80 ≈ 8.89×10⁻⁴.',points:['extension converted to metres','correct dimensionless ratio']},
+   {q:'Calculate the Young modulus.',marks:2,guide:'E = stress/strain ≈ 2.00×10¹¹ Pa.',points:['correct relationship','correct value/unit']}
+  ]
+ },
+ {
+  id:'rp3-eval',code:'RP3',title:'Required Practical 3 evaluation',max:8,
+  stem:'A student determines g by measuring drop height h and fall time t, then plots h against t².',
+  parts:[
+   {q:'Explain why h against t² should be a straight line.',marks:2,guide:'For release from rest, h=½gt², so h is directly proportional to t².',points:['correct equation','direct proportionality']},
+   {q:'State how g is obtained from the graph gradient.',marks:2,guide:'gradient = g/2, therefore g = 2 × gradient.',points:['gradient relation','rearrangement to g']},
+   {q:'Explain one random error and one suitable improvement.',marks:2,guide:'For example timing scatter can be reduced with electronic timing/repeats and a mean.',points:['specific random source','linked improvement']},
+   {q:'Explain why repeating readings does not remove a systematic timing offset.',marks:2,guide:'A systematic offset shifts all readings in a similar direction, so averaging preserves the bias.',points:['consistent bias idea','averaging does not remove it']}
+  ]
+ },
+ {
+  id:'rp4-eval',code:'RP4',title:'Required Practical 4 evaluation',max:8,
+  stem:'A student determines Young modulus from a wire using force, original length, extension and diameter measurements.',
+  parts:[
+   {q:'Explain why diameter should be measured several times at different positions and orientations.',marks:2,guide:'The wire may not have perfectly uniform/circular diameter; multiple readings allow a representative mean.',points:['variation/non-circularity','use of mean']},
+   {q:'Explain why diameter uncertainty has a strong effect on Young modulus.',marks:2,guide:'Area A=πd²/4, so percentage uncertainty in d is approximately doubled in A.',points:['area depends on d²','uncertainty consequence']},
+   {q:'Describe how a stress–strain graph can be used to obtain Young modulus.',marks:2,guide:'Plot stress on y-axis against strain on x-axis and take the gradient of the initial straight-line region.',points:['correct axes','gradient of linear region']},
+   {q:'Why should the wire remain in the elastic region during the measurement?',marks:2,guide:'So deformation is recoverable and the linear stress/strain Young-modulus relationship remains valid.',points:['recoverable deformation','valid linear model']}
+  ]
+ }
+];
+let structuredIndex=0;
+const structuredMarks=JSON.parse(localStorage.getItem('mechanicsStructuredMarks')||'{}');
+const structuredAnswers=JSON.parse(localStorage.getItem('mechanicsStructuredAnswers')||'{}');
+function renderStructured(){
+ if(!$('#structuredTabs'))return;
+ $('#structuredTabs').innerHTML=structuredProblems.map((p,i)=>'<button class="sim-tab '+(i===structuredIndex?'active':'')+'" data-structured="'+i+'">'+p.title+'</button>').join('');
+ const p=structuredProblems[structuredIndex];
+ const awarded=(structuredMarks[p.id]||[]);
+ const total=awarded.reduce((a,b)=>a+(Number(b)||0),0);
+ $('#structuredProblem').innerHTML='<div class="structured-head"><span class="eyebrow">'+p.code+'</span><h3>'+p.title+'</h3><p>'+p.stem+'</p><div class="equation">Self-marked score: <strong id="structuredTotal">'+total+' / '+p.max+'</strong></div></div>'+
+  p.parts.map((part,i)=>{
+   const key=p.id+'::'+i,ans=structuredAnswers[key]||'',mark=awarded[i]??'';
+   return '<article class="structured-part"><div class="structured-q"><strong>Part '+String.fromCharCode(97+i)+'.</strong><span>'+part.q+'</span><span class="pill">'+part.marks+' mark'+(part.marks===1?'':'s')+'</span></div><textarea class="student-answer" data-structured-answer="'+i+'" placeholder="Write your answer...">'+ans+'</textarea><button class="text-button" data-structured-reveal="'+i+'">Reveal mark guidance</button><div class="answer-reveal" data-structured-guide="'+i+'"><p>'+part.guide+'</p><ul>'+part.points.map(x=>'<li>'+x+'</li>').join('')+'</ul><label class="field compact-field"><span>Marks awarded</span><input type="number" min="0" max="'+part.marks+'" step="1" data-structured-mark="'+i+'" value="'+mark+'"></label></div></article>';
+  }).join('');
+ $$('[data-structured]').forEach(b=>b.addEventListener('click',()=>{structuredIndex=Number(b.dataset.structured);renderStructured();}));
+ $$('[data-structured-answer]').forEach(t=>t.addEventListener('input',()=>{
+   structuredAnswers[p.id+'::'+t.dataset.structuredAnswer]=t.value;localStorage.setItem('mechanicsStructuredAnswers',JSON.stringify(structuredAnswers));
+ }));
+ $$('[data-structured-reveal]').forEach(b=>b.addEventListener('click',()=>{
+   const guide=$('[data-structured-guide="'+b.dataset.structuredReveal+'"]');guide.classList.toggle('visible');b.textContent=guide.classList.contains('visible')?'Hide mark guidance':'Reveal mark guidance';
+ }));
+ $$('[data-structured-mark]').forEach(inp=>inp.addEventListener('input',()=>{
+   const i=Number(inp.dataset.structuredMark),max=p.parts[i].marks,val=clamp(Number(inp.value)||0,0,max);
+   if(!structuredMarks[p.id])structuredMarks[p.id]=[];structuredMarks[p.id][i]=val;localStorage.setItem('mechanicsStructuredMarks',JSON.stringify(structuredMarks));
+   const t=structuredMarks[p.id].reduce((a,b)=>a+(Number(b)||0),0);$('#structuredTotal').textContent=t+' / '+p.max;
+ }));
+}
+
 let gData=[],yData=[];
 function updatePracticalControls(){
  $('#dropHeightOut').textContent=(Number($('#dropHeight').value)/100).toFixed(2)+' m';
@@ -1254,6 +1462,6 @@ $('#takeYReading').addEventListener('click',()=>{
 });
 $('#clearYData').addEventListener('click',()=>{yData=[];renderY();});
 
-renderCourseList();renderLesson();saveProgress();renderSim();renderFormula();renderQuiz();renderSpec();renderMasteryPanel();updatePracticalControls();renderG();renderY();
+renderCourseList();renderLesson();saveProgress();renderSim();renderFormula();renderQuiz();renderSpec();renderMasteryPanel();generateSkillQuestion();renderStructured();updatePracticalControls();renderG();renderY();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 })();
