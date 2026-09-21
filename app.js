@@ -1246,6 +1246,124 @@ const simTeaching = {
  stressstrain:{watch:'Use the initial gradient for stiffness, the plastic region for ductility and the final point for fracture behaviour.',assume:'The post-yield curve is a simplified ductile-material model for teaching graph interpretation.'}
 };
 
+const simActivities = {
+ vectors:[
+  ['Predict','Before moving the angle slider, predict which component will increase as the angle rises from 20° to 70° while magnitude stays fixed.'],
+  ['Measure','Record Fₓ and Fᵧ at 30°, 45° and 60°. Check that √(Fₓ²+Fᵧ²) returns the original vector magnitude each time.'],
+  ['Apply','Choose values that give nearly equal horizontal and vertical components. Explain why the required angle is close to 45°.']
+ ],
+ equilibrium:[
+  ['Predict','Move one force angle by 20°. Predict how the balancing third force must change before reading the result.'],
+  ['Measure','Create three different closed force triangles and record the balancing force magnitude/direction for each.'],
+  ['Apply','Explain why an object can be moving while the force triangle is still closed.']
+ ],
+ moments:[
+  ['Predict','Double the perpendicular distance while keeping force fixed. Predict the new moment.'],
+  ['Measure','Find three force–distance pairs that all produce the same moment.'],
+  ['Apply','Explain why pushing at the end of a door is more effective than pushing near the hinge.']
+ ],
+ couplecom:[
+  ['Predict','Double the separation of the couple forces. Predict the couple moment.'],
+  ['Measure','Move the centre of mass to either side of the pivot and compare the sign/direction of its weight moment.'],
+  ['Apply','Describe the difference between the translational effect of a single force and the rotational effect of a pure couple.']
+ ],
+ motion:[
+  ['Predict','Set negative acceleration with positive initial velocity. Predict when the object will stop and reverse.'],
+  ['Measure','Use the v–t graph to estimate displacement from area and compare with the live s readout.'],
+  ['Apply','Create a run where final velocity is negative and explain the signs of velocity, acceleration and displacement.']
+ ],
+ bounce:[
+  ['Predict','Reduce retained speed from 90% to 50%. Predict how quickly successive bounce heights decrease.'],
+  ['Measure','Compare two successive peak heights and relate their ratio to the retained-speed setting.'],
+  ['Apply','Use the graph to explain why the collision produces a large acceleration even though the collision time is short.']
+ ],
+ projectile:[
+  ['Predict','At fixed speed compare 30°, 45° and 60° with zero drag. Predict range and maximum height trends.'],
+  ['Measure','Add drag and compare flight time, range and the horizontal velocity component with the no-drag case.'],
+  ['Apply','Explain why the descending branch is not a mirror image of the ascending branch when drag is present.']
+ ],
+ terminal:[
+  ['Predict','Increase mass but keep drag coefficient fixed. Predict terminal speed.'],
+  ['Measure','Record weight, drag and resultant force early in the fall and close to terminal speed.'],
+  ['Apply','Explain why acceleration decreases even though weight remains constant.']
+ ],
+ vehicle:[
+  ['Predict','Increase aerodynamic drag coefficient and predict the maximum steady speed.'],
+  ['Measure','Find the speed where resistance and driving force are approximately equal.'],
+  ['Apply','Explain why a more powerful driving force does not produce constant acceleration at high speed.']
+ ],
+ newton:[
+  ['Predict','Double mass with the same resultant force. Predict acceleration.'],
+  ['Measure','Hold mass fixed and collect three resultant-force/acceleration pairs. Check proportionality.'],
+  ['Apply','Construct a free-body diagram matching one simulator setup and show how ΣF gives the displayed acceleration.']
+ ],
+ momentum:[
+  ['Predict','Give the second trolley a negative velocity and predict the direction of the joined pair after collision.'],
+  ['Measure','Compare total momentum before/after for three setups and then compare kinetic energy.'],
+  ['Apply','Explain why kinetic energy can fall while momentum remains conserved.']
+ ],
+ impulse:[
+  ['Predict','Double contact time while halving peak force. Predict whether impulse changes.'],
+  ['Measure','Create three triangular pulses with nearly the same area and compare peak forces.'],
+  ['Apply','Link the model to a safety feature that increases collision time and explain the force reduction.']
+ ],
+ collisiontypes:[
+  ['Predict','Switch between sticking and ideal elastic modes. Predict which mode retains kinetic energy.'],
+  ['Measure','Record total momentum and total kinetic energy before/after in all three modes.'],
+  ['Apply','Explain how kinetic energy can increase in explosion mode without violating conservation of energy.']
+ ],
+ energy:[
+  ['Predict','Increase the dissipated-energy percentage and predict final speed.'],
+  ['Measure','For three loss settings, record GPE, KE and dissipated energy and check the total accounting.'],
+  ['Apply','Write a conservation-of-energy equation for one run including the dissipated transfer.']
+ ],
+ workgraph:[
+  ['Predict','Set starting and final forces equal. Predict the graph shape and work formula.'],
+  ['Measure','Compare work for the same displacement with increasing, constant and decreasing force.'],
+  ['Apply','Explain why using final force × distance is wrong for a changing force.']
+ ],
+ motor:[
+  ['Predict','Lift the same mass and height in half the time. Predict useful output power.'],
+  ['Measure','Change input power while useful output stays the same and record the efficiency change.'],
+  ['Apply','Write a method for a motor-efficiency investigation and identify one random and one systematic uncertainty.']
+ ],
+ springenergy:[
+  ['Predict','Double extension within the Hookean region. Predict force and stored energy.'],
+  ['Measure','Collect force/extension pairs below the proportional limit and check that F/ΔL is constant.'],
+  ['Apply','Move beyond the proportional limit and explain why the linear energy formula is no longer the complete graph-area calculation.']
+ ],
+ density:[
+  ['Predict','Double one dimension at constant mass. Predict the effect on density.'],
+  ['Measure','Change dimensions to double volume and verify how density changes when mass is unchanged.'],
+  ['Apply','Explain why density is a material/sample property ratio rather than simply “how heavy something is”.']
+ ],
+ elasticity:[
+  ['Predict','Double wire length at fixed force, area and Young modulus. Predict extension.'],
+  ['Measure','Compare extension for two areas and two original lengths while keeping material and force fixed.'],
+  ['Apply','Use E=FL/(AΔL) to explain every trend you observe.']
+ ],
+ stressstrain:[
+  ['Predict','Increase Young modulus while keeping yield stress similar. Predict the initial graph gradient.'],
+  ['Measure','Compare the strain at yield and breaking strain for two settings.'],
+  ['Apply','Identify stiffness, strength and ductility separately from the graph and explain why they are different properties.']
+ ]
+};
+const simActivityProgress=JSON.parse(localStorage.getItem('mechanicsSimActivities')||'{}');
+function simActivitiesHtml(id){
+ const list=simActivities[id]||[];
+ return '<div class="sim-activities"><div class="sim-activity-title"><strong>Guided activities</strong><span>'+list.length+' tasks</span></div>'+list.map((a,i)=>{
+  const key=id+'::'+i,done=!!simActivityProgress[key];
+  return '<label class="sim-activity '+(done?'done':'')+'"><input type="checkbox" data-sim-activity="'+key+'" '+(done?'checked':'')+'><span><b>'+(i+1)+'. '+a[0]+'</b>'+a[1]+'</span></label>';
+ }).join('')+'</div>';
+}
+function bindSimActivities(){
+ $$('[data-sim-activity]').forEach(box=>box.addEventListener('change',()=>{
+  simActivityProgress[box.dataset.simActivity]=box.checked;
+  localStorage.setItem('mechanicsSimActivities',JSON.stringify(simActivityProgress));
+  box.closest('.sim-activity')?.classList.toggle('done',box.checked);
+ }));
+}
+
 let activeSim=0, simValues={}, running=true, slow=false, simTime=0, last=performance.now();
 const canvas=$('#simCanvas'), ctx=canvas.getContext('2d');
 
@@ -1264,8 +1382,9 @@ function renderSim(){
  const teaching=simTeaching[s.id]||{watch:'Change one variable at a time and connect the visual change to the governing physics.',assume:'This is a schematic teaching model; sizes and times may be rescaled.'};
  if($('#watchExplain'))$('#watchExplain').textContent=teaching.watch;
  if($('#assumptionExplain'))$('#assumptionExplain').textContent=teaching.assume;
- $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div><div class="sim-investigate"><strong>Try this investigation:</strong> '+s.investigate+'</div>';
+ $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div><div class="sim-investigate"><strong>Try this investigation:</strong> '+s.investigate+'</div>'+simActivitiesHtml(s.id);
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
+ bindSimActivities();
  $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
  $$('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();}));
  updateReadout();
