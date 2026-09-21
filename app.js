@@ -1094,7 +1094,7 @@ function renderLesson(){
    localStorage.setItem('mechanicsLessonAnswers',JSON.stringify(data));
  }));
  bindLessonPractice(l);
- $('.mini-option',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
+ $$('.mini-option',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
   const all=$$('.mini-option',$('#lessonPanel')); all.forEach(x=>{x.disabled=true;x.classList.remove('correct','wrong')});
   const chosen=Number(b.dataset.mini); b.classList.add(chosen===l.check.answer?'correct':'wrong'); all[l.check.answer].classList.add('correct');
   const fb=$('[data-mini-feedback]',$('#lessonPanel')); fb.classList.remove('hidden'); fb.textContent=(chosen===l.check.answer?'Correct. ':'Not quite. ')+l.check.explain;
@@ -2032,7 +2032,7 @@ function updatePracticalControls(){
 }
 ['dropHeight','loadMass','wireDiameter'].forEach(id=>$('#'+id).addEventListener('input',updatePracticalControls));
 $$('[data-practical]').forEach(b=>b.addEventListener('click',()=>{
- const g=b.dataset.practical==='g';$('#practicalG').classList.toggle('hidden',!g);$('#practicalYoung').classList.toggle('hidden',g);$('[data-practical]').forEach(x=>x.classList.toggle('primary',x===b));requestAnimationFrame(()=>g?renderG():renderY());
+ const g=b.dataset.practical==='g';$('#practicalG').classList.toggle('hidden',!g);$('#practicalYoung').classList.toggle('hidden',g);$$('[data-practical]').forEach(x=>x.classList.toggle('primary',x===b));requestAnimationFrame(()=>g?renderG():renderY());
 }));
 function renderG(){
  $('#gRows').innerHTML=gData.map(r=>'<tr><td>'+r.h.toFixed(2)+'</td><td>'+r.t.toFixed(3)+'</td><td>'+r.t2.toFixed(4)+'</td><td>'+r.g.toFixed(2)+'</td></tr>').join('');
