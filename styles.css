@@ -121,3 +121,32 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
   .chunk-strip{overflow-x:auto;display:flex;flex-wrap:nowrap;padding-bottom:5px;}
   .chunk-button{white-space:nowrap;}
 }
+
+
+/* Mastery, lesson practice and practical graph upgrades */
+.skill-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.skill-badge{font-size:.78rem;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.035);color:var(--muted)}
+.practice-stack{display:grid;gap:14px}
+.practice-question{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+.practice-question p{margin-top:0;line-height:1.55}
+.practice-entry{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.practice-entry input{flex:1;min-width:160px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px}
+.practice-feedback{margin-top:10px;padding:10px 12px;border-radius:10px;line-height:1.45}
+.practice-feedback.good{background:rgba(99,217,164,.1);border:1px solid rgba(99,217,164,.25)}
+.practice-feedback.bad{background:rgba(255,123,135,.08);border:1px solid rgba(255,123,135,.2)}
+.mastery-mini{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);display:grid;gap:5px}
+.mastery-mini strong{font-size:2rem;line-height:1;color:var(--accent)}
+.mastery-mini span:last-child{font-size:.82rem;color:var(--muted);line-height:1.4}
+.mastery-panel{margin-top:16px}
+.section-head.compact{margin-bottom:12px}
+.mastery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.mastery-topic{padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}
+.mastery-topic .mastery-line{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+.mastery-topic strong{font-size:.9rem}
+.mastery-topic small{color:var(--muted)}
+.mastery-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.mastery-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--good));border-radius:inherit}
+.practical-chart{display:block;width:100%;height:260px;margin:16px 0 12px;border:1px solid var(--line);border-radius:14px;background:#091625}
+.spec-card .mastery-chip{display:inline-block;margin-top:8px;font-size:.75rem;color:var(--muted)}
+@media(max-width:1000px){.mastery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.mastery-grid{grid-template-columns:1fr}.practice-entry{align-items:stretch}.practice-entry .button{width:100%}}
