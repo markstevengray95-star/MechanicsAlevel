@@ -72,8 +72,8 @@ jobs:
           const fs = require('fs');
           const src = fs.readFileSync('app.js','utf8');
           const required = [
+            "querySelectorAll('[data-practice-check]')",
             "$('[data-practical]').forEach",
-            "$('[data-practice-check]'",
             "$('.mini-option'"
           ];
           const missing = required.filter(x => !src.includes(x));
