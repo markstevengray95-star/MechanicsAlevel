@@ -50,3 +50,15 @@ jobs:
           grep -q 'id="yGraph"' index.html
           grep -q "<strong>14</strong><span>interactive models</span>" index.html
           grep -q "<strong>18</strong><span>formula tools</span>" index.html
+
+      - name: Check maths graph and readiness upgrades
+        run: |
+          grep -q 'id="view-skills"' index.html
+          grep -q 'id="skillCanvas"' index.html
+          grep -q 'id="structuredProblem"' index.html
+          grep -q "mechanicsSkillState" app.js
+          grep -q "structuredProblems" app.js
+          grep -q "lessonReadinessState" app.js
+          grep -q "readinessHtml" app.js
+          grep -Fq "$$('[data-practical]').forEach" app.js
+          grep -Fq "$$('[data-practice-check]'" app.js
