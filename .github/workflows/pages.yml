@@ -1,4 +1,4 @@
-name: Validate and deploy Mechanics Learning Lab
+name: Validate Mechanics Learning Lab
 
 on:
   push:
@@ -7,12 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
 
 jobs:
   validate:
@@ -32,20 +26,10 @@ jobs:
           grep -q 'styles.css' index.html
           grep -q 'app.js' index.html
           grep -q 'Mechanics' index.html
-
-  deploy:
-    needs: validate
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Check AQA course coverage
+        run: |
+          grep -q '3.4.1.1' app.js
+          grep -q '3.4.1.8' app.js
+          grep -q '3.4.2.2' app.js
+          grep -q 'Required Practical 3' app.js
+          grep -q 'Required Practical 4' app.js
