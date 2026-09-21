@@ -735,6 +735,112 @@ const lessonDeepening = {
 };
 lessons.forEach(l=>Object.assign(l,lessonDeepening[l.id]||{}));
 
+const lessonTextbook = {
+ vectors:[
+  ['Scalar or vector?','A scalar needs only a size and unit. A vector also needs direction. In mechanics, speed and distance are scalars, while velocity and displacement are vectors. Mass is scalar; weight is a force and therefore a vector.','Sort these into scalar/vector without notes: energy, acceleration, time, force, speed, displacement. Then explain one choice.'],
+  ['Adding vectors','Vectors combine head-to-tail. For two perpendicular vectors, Pythagoras gives the resultant magnitude and trigonometry gives its direction. A scale drawing is an alternative method and is especially useful when vectors are not perpendicular.','Draw 7 N east followed by 4 N north using a scale of 1 cm = 1 N. Measure the resultant, then check by calculation.'],
+  ['Direction matters','A vector answer is incomplete if it gives only a magnitude. The direction must be referenced clearly, for example “30° north of east”. Negative components are useful algebraically: they show that a component points opposite to the chosen positive direction.','Take east as positive. Write signed components for 12 N west and 5 N east, then find the resultant.'],
+  ['Exam thinking','Before calculating, identify whether each quantity is scalar or vector and draw a quick arrow diagram. This prevents common errors such as adding magnitudes that act in different directions.','Write one sentence explaining why distance can be large while displacement is zero after a round trip.']
+ ],
+ resolution:[
+  ['Resolving a force','Resolving replaces one vector by perpendicular components with exactly the same combined effect. If an angle is measured from the horizontal, the horizontal component is the adjacent side and uses cosine; the vertical component is the opposite side and uses sine.','Resolve a 75 N force at 40° above horizontal into horizontal and vertical components.'],
+  ['Inclined planes','On a slope, axes parallel and perpendicular to the plane usually make the problem simpler. Weight resolves into mg sinθ down the slope and mg cosθ into the slope when θ is the slope angle.','For a 3.0 kg block on a 25° slope, calculate both components of its weight.'],
+  ['Equilibrium','Equilibrium means zero resultant force. The object can be stationary or move at constant velocity. In two dimensions, horizontal components must balance and vertical components must balance. Three coplanar forces in equilibrium can also be represented by a closed vector triangle.','Sketch three force arrows that could close to form an equilibrium triangle.'],
+  ['Choosing a method','Use components when directions align naturally with convenient axes. Use a scale drawing when angles are awkward or when the question explicitly asks for one. Always state the positive directions used in a calculation.','Explain which method you would choose for a block on a slope and why.']
+ ],
+ moments:[
+  ['Moment of a force','A moment is the turning effect of a force about a point. The equation uses the perpendicular distance from the pivot to the force line of action, not the distance to the object. The SI unit is N m.','A 55 N force acts 0.28 m perpendicularly from a pivot. Calculate the moment.'],
+  ['Principle of moments','For rotational equilibrium, the total clockwise moment about a chosen point equals the total anticlockwise moment. Choosing a pivot through an unknown reaction force can remove that unknown from the calculation.','Balance a 300 N load 1.2 m left of a pivot with a 450 N load on the right. Find the distance.'],
+  ['Couples','A couple is a pair of equal, opposite, parallel forces acting along different lines. The resultant force is zero but the pair still produces rotation. Couple moment equals one force multiplied by the perpendicular separation of the lines of action.','Calculate the moment of a 25 N couple separated by 0.40 m.'],
+  ['Centre of mass','The centre of mass is the point through which the weight of a body can be treated as acting. For a uniform regular solid it is at the geometric centre. Stability changes when the line of action of weight moves outside the base.','Draw a block on a table and mark its centre of mass and weight line of action.']
+ ],
+ kinematics:[
+  ['Motion quantities','Displacement measures change of position with direction. Velocity is rate of change of displacement. Acceleration is rate of change of velocity, so an object can accelerate by changing speed, direction, or both.','Give the sign of velocity and acceleration for an object moving left but slowing down if right is positive.'],
+  ['Displacement–time graphs','The gradient of a displacement–time graph is velocity. A straight line means constant velocity; a curved line means the velocity is changing. Instantaneous velocity on a curve is found from the gradient of a tangent.','Sketch a displacement–time graph for motion away from the origin at constant speed, then stationary, then returning faster.'],
+  ['Velocity–time graphs','The gradient of a velocity–time graph is acceleration. The signed area under it is displacement. An area below the time axis is negative displacement, so total distance may be larger than the magnitude of displacement.','Find displacement from a 6 s triangle that rises from 0 to 12 m s⁻¹.'],
+  ['Acceleration–time graphs','The signed area under an acceleration–time graph is change in velocity. A bouncing ball gives a useful example: between impacts acceleration is nearly constant at g downward, while impact produces a large rapid velocity change.','Explain why a bouncing-ball velocity graph has sudden jumps at impact.']
+ ],
+ suvat:[
+  ['What SUVAT assumes','The SUVAT equations describe motion with constant acceleration. List s, u, v, a and t before choosing an equation. If acceleration changes significantly, split the motion into stages or use another method.','For a car with changing acceleration, explain why one SUVAT calculation over the whole motion may be invalid.'],
+  ['Choosing the equation','Pick the equation containing the required quantity and the quantities you already know. The four main forms are v=u+at, s=½(u+v)t, v²=u²+2as, and s=ut+½at².','If u, v, a and s are involved but time is not, identify the best SUVAT equation.'],
+  ['Signs and gravity','Choose one positive direction and keep it. For vertical motion with upward positive, acceleration due to gravity is −9.81 m s⁻². At the highest point of a throw, velocity is zero for an instant but acceleration is still downward.','A ball is thrown upward at 10 m s⁻¹. Write u, v and a at maximum height using upward positive.'],
+  ['Multi-stage motion','Some problems require separate stages, for example acceleration then braking. The final velocity of the first stage becomes the initial velocity of the next. Avoid rounding intermediate answers too early.','Plan the stages for a car that accelerates for 8 s then brakes to rest.']
+ ],
+ rp3:[
+  ['Aim and relationship','Required Practical 3 determines g by a free-fall method. For release from rest and negligible drag, h=½gt². Plotting h against t² should give a straight line with gradient g/2.','Rearrange h=½gt² to show exactly why the gradient equals g/2.'],
+  ['Measurements','Measure a fall distance and the corresponding fall time over a useful range of heights. Electronic timing reduces reaction-time effects. Keep reference points consistent when measuring distance.','List the independent, dependent and two control variables for a free-fall investigation.'],
+  ['Processing data','Repeat measurements, calculate t², plot h on the y-axis against t² on the x-axis, draw a best-fit line and use a large gradient triangle. Then calculate g=2×gradient.','If the best-fit gradient is 4.86 m s⁻², calculate g and percentage difference from 9.81 m s⁻².'],
+  ['Evaluation','Random uncertainty creates scatter and can be reduced by repeats and a mean. A systematic offset shifts results in a similar direction and is not removed by repeats. A non-zero graph intercept may indicate an offset worth investigating.','Give one random error, one systematic error and a specific improvement for each.']
+ ],
+ projectiles:[
+  ['Independent components','Projectile motion is split into horizontal and vertical components that share the same time. Without drag, horizontal acceleration is zero while vertical acceleration is g downward. Resolve the launch velocity before applying SUVAT to each direction.','Resolve 20 m s⁻¹ at 35° into horizontal and vertical components.'],
+  ['Solving a projectile','Use vertical motion to find a time, height or vertical velocity, then use that same time in the horizontal direction. At maximum height vertical velocity is zero, but vertical acceleration remains g downward.','Explain how you would find the range of a projectile that lands at its launch height.'],
+  ['Drag and trajectory','Air resistance acts opposite to motion and increases with speed. With drag, horizontal speed falls and the path is no longer symmetric. The descending branch is typically steeper than the ideal no-drag case.','Compare the ideal and drag trajectories in the simulator and record two differences.'],
+  ['Terminal and maximum speed','A falling object approaches terminal speed when drag balances weight, giving zero resultant force and zero acceleration. A vehicle reaches maximum steady speed when driving force balances total resistance. Lift is approximately perpendicular to relative airflow; drag is opposite it.','Explain why terminal speed does not mean that no forces act.']
+ ],
+ newton:[
+  ['First law','Newton’s first law says that if resultant force is zero, velocity remains constant. Constant velocity includes being stationary. This is the idea of inertia.','Give one example of an object with forces acting on it but zero acceleration.'],
+  ['Second law','For constant mass, resultant force equals ma. Draw a free-body diagram first, select a positive direction, combine forces to obtain ΣF, then apply ΣF=ma.','A 7 kg object has 50 N right and 15 N left. Calculate its acceleration.'],
+  ['Third law','Third-law forces are equal in magnitude, opposite in direction, same interaction type and act on different objects. Balanced forces on one object are not a third-law pair.','Identify the third-law partner of Earth pulling a falling ball downward gravitationally.'],
+  ['Free-body diagrams','A free-body diagram contains only forces acting on the chosen object. Typical forces include weight, normal contact force, tension, drag/friction and applied forces. Do not draw forces the object exerts on other objects.','Draw a free-body diagram for a hanging lift accelerating upward.']
+ ],
+ momentum:[
+  ['Momentum and signs','Momentum p=mv is a vector. In one-dimensional problems, choose a positive direction and use signed velocities. Total momentum of a closed system is conserved during an interaction when external impulse is negligible.','Calculate momentum of a 0.60 kg trolley moving at −4.0 m s⁻¹.'],
+  ['Force and impulse','Force is rate of change of momentum, F=Δp/Δt. Impulse equals Δp and is also the area under a force–time graph. For the same Δp, increasing contact time reduces average force.','Explain why padding reduces impact force without necessarily changing the total momentum change.'],
+  ['Collisions','Momentum is conserved in both elastic and inelastic collisions. In an ideal elastic collision total kinetic energy is also conserved. In a perfectly inelastic collision objects may stick together and kinetic energy is transferred to other stores.','Use signed momentum to predict the direction of a combined pair after a sticking collision.'],
+  ['Explosions and transport','In an explosion, internal energy can become kinetic energy while total momentum remains constant. Safety design such as crumple zones changes the time profile of force and can reduce peak/average forces.','Explain how a force–time graph could show the benefit of a crumple zone.']
+ ],
+ work:[
+  ['Work done','Work is energy transferred by a force through a displacement. For a constant force at angle θ to displacement, W=Fs cosθ. Only the component of force parallel to displacement does work in this expression.','Calculate work done by 80 N through 5 m at 60° to the displacement.'],
+  ['Kinetic and gravitational energy','Kinetic energy is ½mv², so speed has a strong squared effect. Near Earth, gravitational potential energy change is mgΔh and depends on vertical height change.','Compare the KE of the same car at 10 m s⁻¹ and 20 m s⁻¹.'],
+  ['Power','Power is rate of doing work or transferring energy: P=ΔW/Δt. When a force is parallel to the motion, P=Fv. This form is useful for engines moving at steady speed against resistance.','A car travels at 25 m s⁻¹ against 900 N resistance. Find the required power.'],
+  ['Variable force and efficiency','For a varying force, work is the area under the force–displacement graph. Efficiency is useful output divided by total input and can be written as a decimal or percentage.','Sketch a linearly increasing F–s graph and explain how you would calculate the work done.']
+ ],
+ energy:[
+  ['Conservation principle','Energy cannot be created or destroyed. Define a system, identify the initial and final stores and include energy transferred across the system boundary. In an ideal closed mechanical system, GPE and KE can exchange while their total remains constant.','Write an energy equation for a frictionless object descending a ramp from rest.'],
+  ['Resistive forces','When resistance acts, mechanical energy decreases because energy is transferred to internal energy of the system/surroundings. The work done against resistance is part of the energy accounting, not “lost energy”.','A falling object loses 18 J to drag. Explain where that energy goes.'],
+  ['Using energy efficiently','Energy methods are powerful when only initial and final states matter. They can avoid solving for time or acceleration. Use Newton/SUVAT instead when detailed forces, accelerations or times are required.','Choose between an energy method and SUVAT for finding the speed at the bottom of a frictionless hill and justify your choice.'],
+  ['Estimation','AQA also expects sensible physical estimates. Check the order of magnitude, units and whether your final energy is physically possible.','Estimate the GPE change of a 60 kg person climbing one floor of a building and state your assumed height.']
+ ],
+ 'density-hooke':[
+  ['Density','Density is mass per unit volume, ρ=m/V. In SI, mass is in kg and volume in m³. Estimation questions may require you to estimate dimensions and therefore volume before calculating density.','Estimate the density of a rectangular sample from plausible mass and dimensions.'],
+  ['Hooke’s law','In the proportional region, force is proportional to extension: F=kΔL. Spring constant k measures stiffness for that spring/object and has units N m⁻¹.','A spring extends 30 mm under 9 N. Calculate k in SI units.'],
+  ['Proportional and elastic limits','The limit of proportionality marks where F is no longer proportional to extension. The elastic limit concerns whether the object returns to its original dimensions after unloading. These ideas are related but not identical.','Explain what observation would show that the elastic limit has been exceeded.'],
+  ['Measurement quality','Materials investigations often use rulers, micrometers or other analogue/digital instruments. Resolution, zero error and reading technique affect uncertainty.','Compare one advantage and one limitation of digital and analogue length measurements.']
+ ],
+ 'stress-strain':[
+  ['Tensile stress','Tensile stress is force divided by cross-sectional area. It describes the loading intensity and allows samples of different sizes to be compared. The SI unit is Pa.','Calculate stress for 100 N applied to 4.0×10⁻⁷ m².'],
+  ['Tensile strain','Tensile strain is extension divided by original length. It is dimensionless because it is a ratio of lengths. Original length and extension are different quantities.','A 2.0 m wire extends by 1.0 mm. Calculate strain.'],
+  ['Elastic strain energy','For a linear force–extension relation, elastic strain energy is the triangular area under the graph: ½FΔL. Equivalently for a Hookean spring, E=½k(ΔL)².','Calculate stored energy in a spring with k=200 N m⁻¹ extended by 0.10 m.'],
+  ['Energy per volume','Area under a stress–strain graph represents energy transferred per unit volume. This helps compare deformation energy between materials independently of sample size.','Explain why force–extension and stress–strain graphs answer different comparison questions.']
+ ],
+ 'material-behaviour':[
+  ['Elastic and plastic behaviour','Elastic deformation is recoverable after unloading. Plastic deformation leaves permanent strain. On a stress–strain or force–extension graph, a ductile material can show a substantial plastic region.','Describe what happens to the sample length after unloading from the plastic region.'],
+  ['Brittle fracture','A brittle material fractures with little plastic deformation. Brittle does not automatically mean weak: brittleness describes deformation behaviour before fracture, while breaking stress describes strength.','Compare a brittle and ductile material using the shape of their stress–strain curves.'],
+  ['Strength versus stiffness','Young modulus measures stiffness through the initial stress–strain gradient. Breaking stress measures the stress at failure. A material can be stiff but not especially strong, or strong but relatively flexible.','State which graph feature tells you stiffness and which tells you strength.'],
+  ['Energy and design','The area under a force–extension graph is deformation energy for a specific sample. Materials used in transport structures are selected by balancing stiffness, strength, mass, energy absorption and other constraints.','Explain why a crumple-zone material may be chosen to deform rather than remain perfectly rigid.']
+ ],
+ young:[
+  ['Definition','Young modulus E is tensile stress divided by tensile strain in the linear elastic region. It is a material property measured in Pa. A larger E means a stiffer material.','Calculate E for stress 1.2×10⁸ Pa and strain 6.0×10⁻⁴.'],
+  ['Graph method','On a graph of stress on the y-axis against strain on the x-axis, the initial straight-line gradient is Young modulus. Use two widely separated points on a best-fit line rather than simply joining two raw points.','Explain why the gradient should be taken only from the initial linear section.'],
+  ['Wire form','Combining stress=F/A and strain=ΔL/L gives E=FL/(AΔL). Longer wires extend more for the same stress, while larger cross-sectional area reduces extension for the same force.','Predict what happens to extension if wire length doubles but material, area and force remain unchanged.'],
+  ['Geometry and uncertainty','For a circular wire A=πd²/4. Because d is squared, percentage uncertainty in diameter has roughly twice that effect on area, making diameter measurement especially important.','A diameter has 2% uncertainty. Estimate the percentage uncertainty contribution to area.']
+ ],
+ rp4:[
+  ['Aim and method','Required Practical 4 determines Young modulus by a simple tensile method. Measure original wire length and diameter, apply known tensile forces, measure extension and remain within the linear elastic region.','Identify the independent variable, dependent variable and two important measured dimensions.'],
+  ['Good measurements','Measure diameter at several positions and orientations because real wire may vary or be slightly non-circular. A long test length gives a larger extension for the same strain, improving percentage resolution of extension.','Explain why one diameter reading is weaker than several measurements around the wire.'],
+  ['Processing','Convert force and geometry to stress, convert extension and original length to strain, plot stress against strain and obtain E from the initial best-fit gradient. Alternatively use E=FL/(AΔL) for individual values.','Write the steps from a mass reading to a stress value.'],
+  ['Evaluation and uncertainty','Check zero errors, avoid parallax where relevant, keep the wire within its elastic region and consider the squared effect of diameter uncertainty on area. Repeats reduce random variation but not systematic offsets.','Identify the measurement likely to dominate uncertainty and explain why.']
+ ],
+ mastery:[
+  ['Choose the principle','Before calculating, decide whether the problem is mainly about forces, moments, momentum, energy, kinematics or materials. A clear sketch and labelled variables usually reveal the shortest route.','For a car rolling down a hill before colliding, identify which principle suits each stage.'],
+  ['Model assumptions','Physics equations depend on assumptions: constant acceleration for SUVAT, negligible external impulse for momentum conservation, linear elasticity for Young modulus, or negligible drag for ideal projectile motion. State assumptions when they affect the answer.','Give one equation and the assumption that makes it valid.'],
+  ['Check the answer','A strong final check includes units, sign/direction, significant figures and physical reasonableness. Compare with a simple estimate where possible.','Invent an impossible mechanics answer and explain which check would catch it.'],
+  ['Connect topics','High-level questions often combine topics. Force changes momentum, work changes energy, graph areas encode physical quantities and materials ideas link force/extension to energy and stress/strain.','Create a two-step mechanics problem that uses two different principles, then outline its solution.']
+ ]
+};
+lessons.forEach(l=>l.textbook=lessonTextbook[l.id]||[]);
+
 const lessonSkillMap = {
  vectors:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
  resolution:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
@@ -940,6 +1046,7 @@ function renderLesson(){
  let retrieval=l.retrieval.map((r,i)=>'<div class="mini-question"><p><strong>'+(i+1)+'. '+r.q+'</strong></p><textarea class="student-answer" data-answer-key="'+answerKey('retrieval',i)+'" placeholder="Type your answer here...">'+(saved[answerKey('retrieval',i)]||'')+'</textarea><button class="text-button reveal-answer">Show answer</button><div class="answer-reveal">'+r.a+'</div></div>').join('');
  let objectives='<ul>'+l.objectives.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="skill-row">'+(l.skills||[]).map(x=>'<span class="skill-badge">'+x+'</span>').join('')+'</div>';
  let core='<div class="textbook-note"><strong>Core explanation</strong><p>Work through each statement slowly. These notes are aligned to the AQA specification point shown above.</p></div><ul>'+l.core.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+ let textbook='<div class="guided-textbook">'+(l.textbook||[]).map((s,i)=>'<article class="textbook-chunk"><div class="textbook-chunk-head"><span class="depth-number">'+(i+1)+'</span><h4>'+s[0]+'</h4></div><p>'+s[1]+'</p><div class="textbook-do"><strong>Do:</strong> '+s[2]+'</div></article>').join('')+'</div>';
  let terms='<div class="term-grid">'+(l.keyTerms||[]).map(t=>'<article class="term-card"><strong>'+t[0]+'</strong><span>'+t[1]+'</span></article>').join('')+'</div>';
  let depth='<div class="depth-list">'+(l.depth||[]).map((x,i)=>'<article class="depth-card"><span class="depth-number">'+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
  let connections='<div class="connection-grid">'+(l.connections||[]).map((x,i)=>'<article class="connection-card"><span class="eyebrow">Connection '+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
@@ -950,7 +1057,7 @@ function renderLesson(){
  let check='<div class="mini-question"><p><strong>'+l.check.q+'</strong></p><div class="mini-options">'+l.check.choices.map((x,i)=>'<button class="mini-option" data-mini="'+i+'">'+x+'</button>').join('')+'</div><div class="feedback hidden" data-mini-feedback></div></div>';
  let exit='<p>'+l.exit+'</p><textarea class="student-answer" data-answer-key="'+answerKey('exit')+'" placeholder="Write your exit-ticket answer...">'+(saved[answerKey('exit')]||'')+'</textarea>';
  const chunks=[
-  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['connections','6 · Connections'],['worked','7 · Worked examples'],['practice','8 · Auto-mark practice'],['task','9 · Apply it'],['technique','10 · Exam technique'],['check','11 · Check'],['exit','12 · Exit']
+  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['textbook','4 · Guided textbook'],['terms','5 · Key terms'],['depth','6 · AQA depth'],['connections','7 · Connections'],['worked','8 · Worked examples'],['practice','9 · Auto-mark practice'],['task','10 · Apply it'],['technique','11 · Exam technique'],['check','12 · Check'],['exit','13 · Exit']
  ];
  $('#lessonPanel').innerHTML =
   '<span class="eyebrow">'+l.code+'</span><h2>'+l.title+'</h2><p class="lesson-lead">'+l.lead+'</p>'+
@@ -960,6 +1067,7 @@ function renderLesson(){
   lessonChunk('Retrieval starter', 'retrieval', retrieval, true)+
   lessonChunk('Learning objectives','objectives',objectives)+
   lessonChunk('Core teaching','core',core)+
+  lessonChunk('Guided textbook: teach → think → do','textbook',textbook)+
   lessonChunk('Key vocabulary','terms',terms)+
   lessonChunk('AQA specification depth','depth',depth)+
   lessonChunk('AQA applications and connections','connections',connections)+
