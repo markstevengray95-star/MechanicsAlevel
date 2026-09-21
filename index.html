@@ -42,7 +42,7 @@
       <div class="stat-grid">
         <div><strong>17</strong><span>sequenced lessons</span></div>
         <div><strong>20</strong><span>interactive models</span></div>
-        <div><strong>18</strong><span>formula tools</span></div>
+        <div><strong>36</strong><span>formula tools</span></div>
         <div><strong>2</strong><span>required practicals</span></div>
       </div>
       <button class="text-button" id="resetProgress">Reset progress</button>
@@ -112,20 +112,33 @@
 
   <section class="view" id="view-formula">
     <div class="section-head">
-      <div><span class="eyebrow">Calculation support</span><h2>Formula coach</h2></div>
-      <p class="muted">Choose a relationship, enter values and see substitution, units and a worked result.</p>
+      <div><span class="eyebrow">Full AQA 3.4 calculation support</span><h2>Formula Coach Pro</h2></div>
+      <p class="muted">Learn what each relationship means, when it applies, how to rearrange it, then work through a complete substitution with units and checks.</p>
     </div>
-    <div class="formula-layout">
+    <div class="formula-toolbar panel pad">
+      <label class="field"><span>Topic filter</span><select id="formulaTopic"></select></label>
+      <label class="field formula-search"><span>Search formulas</span><input id="formulaSearch" type="search" placeholder="Try momentum, SUVAT, Young modulus..."></label>
+      <button class="button" id="formulaRandom">Random practice</button>
+    </div>
+    <div class="formula-layout formula-layout-pro">
       <article class="panel pad">
         <label class="field"><span>Choose calculation</span><select id="formulaSelect"></select></label>
+        <div id="formulaInfo" class="formula-info"></div>
         <div class="control-stack" id="formulaInputs"></div>
       </article>
       <article class="panel pad">
-        <h3>Worked result</h3>
+        <div class="formula-result-head"><div><span class="eyebrow">Guided solution</span><h3>Worked result</h3></div><button class="text-button" id="formulaReset">Reset values</button></div>
         <div class="worked" id="formulaWorking"></div>
+        <div id="formulaCheck" class="formula-check"></div>
       </article>
     </div>
-    <div class="formula-cards" id="formulaCards"></div>
+    <article class="panel pad formula-reference-panel">
+      <div class="section-head compact">
+        <div><span class="eyebrow">AQA mechanics equation map</span><h3>Formula reference</h3></div>
+        <p class="muted">Use this to choose an approach before calculating. Each card opens the full coach above.</p>
+      </div>
+      <div class="formula-cards" id="formulaCards"></div>
+    </article>
   </section>
 
 
