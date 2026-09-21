@@ -377,6 +377,222 @@ const lessons = [
 }
 ];
 
+
+const lessonExtensions = {
+ vectors:{
+  keyTerms:[['scalar','A physical quantity with magnitude only.'],['vector','A physical quantity with magnitude and direction.'],['resultant','A single vector with the same effect as two or more vectors combined.'],['displacement','Straight-line change of position in a stated direction.']],
+  depth:[
+   'AQA expects students to distinguish paired scalar/vector quantities, including speed and velocity, distance and displacement, mass and weight, and to recognise acceleration and force as vectors.',
+   'Vector addition can be carried out by calculation or by a scale drawing. Calculations in this part of the specification are limited to two vectors at right angles, although scale drawings can use other angles.',
+   'When using a scale diagram, state the scale, draw arrows accurately head-to-tail, measure the resultant from the start of the first vector to the end of the last, and quote both magnitude and direction.',
+   'For perpendicular components, Pythagoras gives the resultant magnitude. A trigonometric ratio then gives the direction; always state the reference direction, for example 37° north of east.',
+   'A negative component does not mean a negative magnitude: it means the component points opposite to the chosen positive direction.'
+  ],
+  exam:['Write vector answers with both magnitude and direction.','Show the component triangle or equations before calculating.','Check whether the question wants distance or displacement, speed or velocity.'],
+  pitfalls:['Giving only the magnitude of a resultant vector.','Adding vector magnitudes arithmetically when directions differ.']
+ },
+ resolution:{
+  keyTerms:[['component','One of the perpendicular vectors into which a vector is resolved.'],['equilibrium','Zero resultant force; acceleration is zero.'],['coplanar','Acting in the same plane.'],['closed triangle','Three force vectors arranged head-to-tail and returning to the start when in equilibrium.']],
+  depth:[
+   'Resolving means replacing one vector by perpendicular components that together have exactly the same effect.',
+   'If an angle is measured from the horizontal, the adjacent horizontal component is F cosθ and the vertical component is F sinθ. If the angle is measured from another axis, identify adjacent and opposite rather than memorising a diagram.',
+   'For an inclined plane, choosing axes parallel and perpendicular to the slope usually simplifies the problem. Weight resolves to mg sinθ down the slope and mg cosθ perpendicular to the slope.',
+   'For two or three coplanar forces acting at a point in equilibrium, the vector sum is zero. Equilibrium can mean stationary or moving with constant velocity.',
+   'A three-force equilibrium can be solved using components or represented by a closed vector triangle.'
+  ],
+  exam:['Draw a free-body diagram before resolving.','State the positive direction and keep signs consistent.','For equilibrium write ΣFₓ = 0 and ΣFᵧ = 0 explicitly when useful.'],
+  pitfalls:['Assuming equilibrium means the object must be stationary.','Using mg cosθ and mg sinθ without checking how θ is defined.']
+ },
+ moments:{
+  keyTerms:[['moment','Turning effect of a force about a point: force × perpendicular distance.'],['line of action','An imaginary straight line through a force in its direction.'],['couple','Two equal, opposite, parallel forces acting along different lines.'],['centre of mass','Point at which the mass of a body may be considered concentrated for translational motion.']],
+  depth:[
+   'The perpendicular distance in M = Fd is the shortest distance from the pivot to the line of action of the force.',
+   'A couple has zero resultant force but a non-zero turning effect. Its moment is one force multiplied by the perpendicular separation of the two lines of action.',
+   'For rotational equilibrium, the algebraic sum of moments about any point is zero. In many questions this is expressed as total clockwise moment equals total anticlockwise moment.',
+   'The centre of mass of a uniform regular solid lies at its geometric centre. Weight can be treated as acting vertically downward through the centre of mass.',
+   'Choosing the pivot strategically can eliminate unknown forces whose lines of action pass through that pivot.'
+  ],
+  exam:['Mark the pivot and perpendicular distances on the diagram.','Use N m for moments, not J even though the dimensions are the same.','If several forces act, include every force that has a non-zero moment about the chosen pivot.'],
+  pitfalls:['Using the sloping distance instead of the perpendicular distance.','Treating the two forces in a couple as cancelling their turning effect.']
+ },
+ kinematics:{
+  keyTerms:[['average velocity','Total displacement divided by total time.'],['instantaneous velocity','Velocity at a particular instant.'],['acceleration','Rate of change of velocity.'],['gradient','Rate of change of the vertical quantity with respect to the horizontal quantity.']],
+  depth:[
+   'The gradient of a displacement–time graph is velocity. A tangent gives instantaneous velocity on a curved graph.',
+   'The gradient of a velocity–time graph is acceleration. A tangent gives instantaneous acceleration when the graph is curved.',
+   'The signed area under a velocity–time graph is displacement. Areas below the time axis count as negative displacement.',
+   'The signed area under an acceleration–time graph gives change in velocity, not displacement.',
+   'Uniform acceleration produces a straight line on a velocity–time graph. Non-uniform acceleration produces a changing gradient.',
+   'AQA can use unfamiliar graphs such as a bouncing ball. Interpret each region physically rather than relying on the appearance alone.'
+  ],
+  exam:['Put units on every gradient or area result.','Use a tangent for an instantaneous gradient and a sufficiently large triangle.','Distinguish distance from displacement when velocity becomes negative.'],
+  pitfalls:['Saying area under a velocity–time graph is always distance.','Confusing the gradient of a displacement–time graph with acceleration.']
+ },
+ suvat:{
+  keyTerms:[['uniform acceleration','Acceleration that remains constant.'],['free fall','Motion under gravity alone in the idealised model.'],['g','Magnitude of gravitational field acceleration near Earth, approximately 9.81 m s⁻².'],['sign convention','A chosen positive direction used consistently in vector equations.']],
+  depth:[
+   'The SUVAT equations apply only when acceleration is constant over the interval considered.',
+   'List s, u, v, a and t before selecting an equation. Choose an equation containing the required quantity and the values you know.',
+   'Gravity acts downward. If upward is positive, a = −g; if downward is positive, a = +g.',
+   'At the top of a vertical throw, velocity is instantaneously zero but acceleration remains g downward.',
+   'Free-fall questions may combine graph interpretation and SUVAT. Check whether air resistance can be neglected before treating acceleration as constant g.'
+  ],
+  exam:['State the sign convention before substitution in multi-stage problems.','Do not round intermediate values too early.','Check the final sign and whether the magnitude is physically sensible.'],
+  pitfalls:['Setting acceleration to zero at maximum height.','Using SUVAT while acceleration is changing because of significant drag.']
+ },
+ rp3:{
+  keyTerms:[['random error','Unpredictable variation that causes scatter between repeated readings.'],['systematic error','A consistent offset or bias that shifts readings in the same direction.'],['uncertainty','A quantitative estimate of the range within which a measured value is expected to lie.'],['linearisation','Rearranging a relationship so a graph of chosen variables should be a straight line.']],
+  depth:[
+   'AQA Required Practical 3 is determination of g by a free-fall method. The exact apparatus can vary, but the method must produce a measured displacement and corresponding fall time.',
+   'For release from rest with negligible air resistance, h = ½gt². A plot of h against t² should have gradient g/2, so g = 2 × gradient.',
+   'Electronic timing such as light gates reduces reaction-time error. Distances should be measured from consistent reference points and over a useful range.',
+   'Repeat readings to identify anomalies and reduce random uncertainty in mean values. Repetition does not remove a systematic offset.',
+   'A strong evaluation identifies a specific source of error, explains its effect on h, t or g, and proposes a realistic improvement.',
+   'The AQA practical skills include identifying random and systematic errors and determining g from a graph.'
+  ],
+  exam:['Describe how the gradient leads to g rather than just saying “use a graph”.','Separate random uncertainty from systematic error.','For percentage uncertainty, compare absolute uncertainty with the measured value.'],
+  pitfalls:['Averaging values of g without considering whether a graph would use all data more effectively.','Claiming repeats remove systematic error.']
+ },
+ projectiles:{
+  keyTerms:[['projectile','An object moving through a gravitational field after launch, with no continuing propulsion in the ideal model.'],['drag','Resistive force opposite relative motion through a fluid.'],['lift','Force approximately perpendicular to relative fluid flow.'],['terminal speed','Constant speed reached when resistive force balances the driving force such as weight.']],
+  depth:[
+   'Horizontal and vertical components of ideal projectile motion are independent but share the same time.',
+   'With negligible air resistance, horizontal acceleration is zero and horizontal velocity is constant. Vertical acceleration is g downward.',
+   'Resolve the launch velocity first: uₓ = u cosθ and uᵧ = u sinθ when θ is measured above the horizontal.',
+   'Air resistance increases with speed and changes both components of velocity, giving a lower, shorter and generally non-symmetric trajectory than the vacuum model.',
+   'For a falling body, drag increases as speed increases. Terminal speed occurs when drag equals weight, so resultant force and acceleration are zero.',
+   'AQA requires qualitative treatment of friction, lift and drag and qualitative understanding of factors affecting the maximum speed of a vehicle.'
+  ],
+  exam:['Treat horizontal and vertical motion in separate columns and link them with time.','State when air resistance is neglected.','Use force balance, not “no forces”, to explain terminal speed.'],
+  pitfalls:['Assuming acceleration is zero at the top of a projectile path.','Assuming terminal speed means weight has disappeared.']
+ },
+ newton:{
+  keyTerms:[['inertia','Tendency of an object to maintain its velocity unless acted on by a resultant force.'],['resultant force','Vector sum of all forces acting on one object.'],['free-body diagram','Diagram showing only the external forces acting on the chosen object.'],['third-law pair','Equal and opposite forces of the same interaction acting on different objects.']],
+  depth:[
+   'Newton’s first law: if the resultant force is zero, an object remains at rest or continues with constant velocity.',
+   'For constant mass, Newton’s second law is ΣF = ma. The acceleration is in the direction of the resultant force.',
+   'Newton’s third law applies to interactions: if object A exerts a force on B, B exerts an equal and opposite force on A.',
+   'Third-law pairs act on different objects and therefore do not cancel on a single free-body diagram.',
+   'Free-body diagrams should show forces, not motion arrows. Typical forces include weight, normal contact force, tension, thrust, friction and drag.',
+   'On a slope or in connected-body problems, resolve forces along convenient axes before applying ΣF = ma.'
+  ],
+  exam:['Write an equation from the free-body diagram before inserting numbers.','Name both objects when explaining a Newton III pair.','Use resultant force, not total force magnitude.'],
+  pitfalls:['Calling weight and normal reaction on the same object a third-law pair.','Including forces exerted by the object rather than forces acting on it.']
+ },
+ momentum:{
+  keyTerms:[['momentum','Vector quantity p = mv.'],['impulse','Change in momentum; for constant force J = FΔt.'],['closed system','System with negligible resultant external impulse during the interaction.'],['elastic collision','Collision in which total kinetic energy as well as momentum is conserved.']],
+  depth:[
+   'Linear momentum is conserved when the resultant external force on the system is negligible over the interaction time.',
+   'In one-dimensional calculations, choose a positive direction and give velocities signs. Momentum before equals momentum after.',
+   'Force is the rate of change of momentum, F = Δp/Δt for average force and F = dp/dt conceptually.',
+   'The area under a force–time graph is impulse, equal to change in momentum. This remains valid when force varies with time.',
+   'Increasing the contact time for a given momentum change reduces the average impact force. This explains features such as crumple zones and protective packaging.',
+   'Momentum is conserved in elastic and inelastic collisions and in explosions. Kinetic energy is conserved only in elastic collisions.'
+  ],
+  exam:['Define the system before applying momentum conservation.','Keep velocity signs throughout instead of adding directions afterwards.','For force–time graphs, calculate the actual geometric area.'],
+  pitfalls:['Assuming momentum conservation means kinetic energy is conserved.','Using speed rather than signed velocity in a one-dimensional collision.']
+ },
+ work:{
+  keyTerms:[['work done','Energy transferred by a force acting through a displacement.'],['power','Rate of doing work or transferring energy.'],['efficiency','Useful output energy or power divided by total input energy or power.'],['variable force','A force whose magnitude changes with displacement.']],
+  depth:[
+   'For a constant force at angle θ to the displacement, W = Fs cosθ. Only the component parallel to displacement transfers energy by mechanical work.',
+   'Kinetic energy is Eₖ = ½mv² and near Earth gravitational potential energy change is ΔEₚ = mgΔh.',
+   'Power P = W/t. If a constant force acts parallel to the velocity, P = Fv.',
+   'For a variable force, work done is the area under a force–displacement graph.',
+   'Efficiency = useful output / total input and may be expressed as a decimal or percentage.',
+   'The specification includes practical opportunities such as investigating the efficiency of an electric motor lifting a mass; students should be able to discuss random and systematic errors.'
+  ],
+  exam:['If force is angled, use the parallel component.','For graph questions, label the area that represents work.','State whether efficiency is a fraction or percentage and keep numerator/denominator consistent.'],
+  pitfalls:['Using W = Fs when force is not parallel to displacement.','Using the area under a force–time graph for work; that area is impulse.']
+ },
+ energy:{
+  keyTerms:[['conservation of energy','Total energy of a closed system remains constant.'],['dissipation','Transfer of energy into less useful stores, often internal energy of surroundings.'],['resistive force','Force opposing motion and transferring mechanical energy.'],['mechanical energy','Sum of kinetic and potential energies in the chosen mechanical model.']],
+  depth:[
+   'Total energy is conserved even when mechanical energy decreases. Resistive forces transfer energy to internal stores and the surroundings.',
+   'For changes involving height and speed, write an energy balance such as initial GPE + initial KE = final GPE + final KE + energy dissipated.',
+   'Work done against a resistive force is an energy transfer and must be included in the balance.',
+   'Energy methods can be quicker than force-and-acceleration methods when only initial and final states matter.',
+   'AQA expects both quantitative and qualitative applications involving GPE, KE and work done against resistive forces.'
+  ],
+  exam:['Define the system and identify all relevant stores/transfers.','Do not say energy is “lost”; say where it is transferred.','Check that both sides of an energy equation have units of joules.'],
+  pitfalls:['Assuming kinetic plus GPE is always conserved when resistive forces act.','Confusing conservation of energy with conservation of momentum.']
+ },
+ 'density-hooke':{
+  keyTerms:[['density','Mass per unit volume, ρ = m/V.'],['Hooke’s law','Extension is proportional to applied force up to the limit of proportionality.'],['spring constant','Stiffness k = F/ΔL in the linear region.'],['elastic limit','Largest deformation for which the object returns to its original shape when unloaded.']],
+  depth:[
+   'Density links a bulk sample’s mass and volume. Use SI units kg and m³ to obtain kg m⁻³.',
+   'For a Hookean spring or wire, F = kΔL while force is proportional to extension. The gradient of a force–extension graph is k.',
+   'The limit of proportionality is the end of the straight-line F–extension region. The elastic limit concerns whether permanent deformation remains after unloading; these ideas are related but not identical.',
+   'Elastic strain energy is the area under a force–extension graph. In the linear region E = ½FΔL = ½k(ΔL)².',
+   'Spring energy can transform into kinetic or gravitational potential energy, so energy conservation can connect materials and mechanics.'
+  ],
+  exam:['Convert cm³ or mm³ to m³ before density calculations.','Use extension, not total length, in Hooke’s law.','For non-linear force–extension graphs, use area rather than ½FΔL unless justified.'],
+  pitfalls:['Treating the elastic limit and limit of proportionality as exact synonyms.','Using original length in F = kΔL.']
+ },
+ 'stress-strain':{
+  keyTerms:[['tensile stress','Force divided by cross-sectional area, σ = F/A.'],['tensile strain','Extension divided by original length, ε = ΔL/L.'],['breaking stress','Stress at which the material fractures.'],['elastic strain energy','Energy stored during elastic deformation.']],
+  depth:[
+   'Stress allows forces on different-sized samples to be compared by dividing by cross-sectional area. Unit: pascal, Pa.',
+   'Strain compares extension with original length and has no unit because it is a ratio of lengths.',
+   'The area under a force–extension graph is the work done deforming that particular sample.',
+   'For a linearly elastic material, elastic strain energy = ½FΔL. If unloading occurs within the elastic region, this stored energy can be returned.',
+   'Breaking stress describes the stress at fracture. It is a material property only when test conditions and material state are appropriately controlled.'
+  ],
+  exam:['Convert diameter to area using A = πd²/4.','Write strain as a decimal rather than attaching a unit.','Keep sample-level force–extension ideas separate from material-level stress–strain ideas.'],
+  pitfalls:['Using diameter directly as area.','Giving strain in metres or percent without noticing what the question requests.']
+ },
+ 'material-behaviour':{
+  keyTerms:[['plastic behaviour','Deformation that remains after the force is removed.'],['brittle','Fractures with little or no plastic deformation.'],['fracture','Physical breaking of the material.'],['yield','Onset of substantial plastic deformation in a ductile material.']],
+  depth:[
+   'A straight initial stress–strain region indicates stress proportional to strain. If unloading occurs in this region, the material returns to its original dimensions.',
+   'Beyond the elastic region, a ductile material may deform plastically, so extension remains after unloading.',
+   'Brittle materials fracture after relatively little plastic deformation; their stress–strain curves are therefore much shorter in the strain direction.',
+   'The area under a stress–strain curve represents energy transferred per unit volume during deformation.',
+   'Force–extension curves depend on sample dimensions as well as material, whereas stress–strain curves allow more direct comparison of material behaviour.'
+  ],
+  exam:['Use graph shape and labelled regions rather than memorised adjectives alone.','Distinguish stiffness (Young modulus) from strength (stress before failure).','When comparing materials, state which graph feature supports the comparison.'],
+  pitfalls:['Calling a high Young modulus material “strong” without evidence about breaking stress.','Assuming a ductile material must have a larger Young modulus.']
+ },
+ young:{
+  keyTerms:[['Young modulus','Ratio of tensile stress to tensile strain in the linear elastic region.'],['stiffness','Resistance to elastic deformation; larger E means more stress is needed for the same strain.'],['cross-sectional area','Area normal to the tensile force.'],['linear elastic region','Region where stress is proportional to strain and deformation is recoverable.']],
+  depth:[
+   'Young modulus E = stress/strain = FL/(AΔL) in the linear elastic region.',
+   'On a stress–strain graph, Young modulus is the gradient of the initial straight-line section.',
+   'Young modulus is a property of the material, whereas spring constant k depends on the material and the dimensions of the sample.',
+   'For a wire, increasing length increases extension for the same stress; increasing cross-sectional area decreases extension for the same force.',
+   'Because strain is dimensionless, Young modulus has the same unit as stress: Pa.'
+  ],
+  exam:['Use original length L and extension ΔL as different quantities.','Convert mm² to m² and mm to m before substitution.','Take the gradient only from the linear elastic region.'],
+  pitfalls:['Using the gradient of a force–extension graph as Young modulus directly.','Forgetting area is based on diameter squared.']
+ },
+ rp4:{
+  keyTerms:[['micrometer','Instrument suited to measuring small diameters accurately.'],['reference wire','Wire used in some methods to compensate for support or temperature changes.'],['gradient method','Using a best-fit graph to determine a proportionality constant.'],['percentage uncertainty','Absolute uncertainty divided by measured value × 100%.']],
+  depth:[
+   'AQA Required Practical 4 is determination of Young modulus by a simple method. A common approach measures original wire length, diameter, load and extension.',
+   'Measure diameter at several positions and orientations because wire thickness may vary; use the mean diameter to calculate A = πd²/4.',
+   'Load is converted to force using F = mg. Extension is the change in length produced by the load, not the final length.',
+   'A graph can be used to reduce the influence of random scatter. For example, plotting stress against strain gives Young modulus as the gradient in the linear region.',
+   'Keep within the elastic region so the wire returns to its original length and the Young modulus relationship is valid.',
+   'Uncertainty in diameter is especially important because cross-sectional area depends on d².'
+  ],
+  exam:['Describe exactly how extension is measured and how parallax is reduced.','Explain why multiple diameter readings are taken.','Link the graph gradient to E with units.'],
+  pitfalls:['Loading beyond the elastic region and still applying the linear Young modulus model.','Ignoring the squared dependence of area on diameter uncertainty.']
+ },
+ mastery:{
+  keyTerms:[['model selection','Choosing the physics principle that most directly links known and unknown quantities.'],['system','The objects included when applying conservation laws.'],['dimensional check','Checking that equation terms and final answers have compatible units.'],['limiting case','Testing whether a result behaves sensibly when a variable becomes very small, large or zero.']],
+  depth:[
+   'Mechanics problems often combine several ideas. Start with a diagram, define the system and choose axes before choosing equations.',
+   'Use force methods when acceleration or interactions during motion matter; use energy methods when comparing states; use momentum for short interactions; use moments for rotational equilibrium.',
+   'Conservation laws require clear system boundaries. External work or impulse can prevent the simple conservation equation from applying to the chosen subsystem.',
+   'Graphs may encode the required quantity as a gradient or area. Always identify the physical units of that gradient or area.',
+   'A complete A-level solution includes a model assumption, symbolic relationship, substitution with units, numerical answer and physical interpretation.'
+  ],
+  exam:['Write the governing principle before calculation.','Keep enough significant figures until the final line.','Use a reasonableness check and identify assumptions such as negligible drag or constant acceleration.'],
+  pitfalls:['Trying SUVAT automatically without checking acceleration is constant.','Mixing scalar energy equations and vector momentum/force equations without a consistent direction convention.']
+ }
+};
+lessons.forEach(l=>Object.assign(l, lessonExtensions[l.id] || {}));
+
 const completed = new Set(JSON.parse(localStorage.getItem('mechanicsCompleted') || '[]'));
 let activeLesson = 0;
 
@@ -403,25 +619,34 @@ function lessonChunk(title,id,html,active=false){
 }
 function renderLesson(){
  const l=lessons[activeLesson];
- let retrieval=l.retrieval.map((r,i)=>'<div class="mini-question"><p><strong>'+(i+1)+'. '+r.q+'</strong></p><textarea class="student-answer" placeholder="Type your answer here..."></textarea><button class="text-button reveal-answer">Show answer</button><div class="answer-reveal">'+r.a+'</div></div>').join('');
+ const saved=JSON.parse(localStorage.getItem('mechanicsLessonAnswers')||'{}');
+ const answerKey=(kind,i='')=>l.id+'::'+kind+'::'+i;
+ let retrieval=l.retrieval.map((r,i)=>'<div class="mini-question"><p><strong>'+(i+1)+'. '+r.q+'</strong></p><textarea class="student-answer" data-answer-key="'+answerKey('retrieval',i)+'" placeholder="Type your answer here...">'+(saved[answerKey('retrieval',i)]||'')+'</textarea><button class="text-button reveal-answer">Show answer</button><div class="answer-reveal">'+r.a+'</div></div>').join('');
  let objectives='<ul>'+l.objectives.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
- let core='<ul>'+l.core.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+ let core='<div class="textbook-note"><strong>Core explanation</strong><p>Work through each statement slowly. These notes are aligned to the AQA specification point shown above.</p></div><ul>'+l.core.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+ let terms='<div class="term-grid">'+(l.keyTerms||[]).map(t=>'<article class="term-card"><strong>'+t[0]+'</strong><span>'+t[1]+'</span></article>').join('')+'</div>';
+ let depth='<div class="depth-list">'+(l.depth||[]).map((x,i)=>'<article class="depth-card"><span class="depth-number">'+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
  let worked='<p><strong>Question:</strong> '+l.worked.q+'</p><button class="text-button reveal-answer">Show worked answer</button><div class="answer-reveal">'+l.worked.a+'</div>';
- let task='<p>'+l.task+'</p><textarea class="student-answer" placeholder="Record your working, prediction or explanation..."></textarea>';
+ let task='<p>'+l.task+'</p><textarea class="student-answer" data-answer-key="'+answerKey('task')+'" placeholder="Record your working, prediction or explanation...">'+(saved[answerKey('task')]||'')+'</textarea>';
+ let technique='<div class="exam-grid"><article class="exam-tip"><h4>Exam technique</h4><ul>'+(l.exam||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article><article class="exam-tip warning"><h4>Common traps</h4><ul>'+(l.pitfalls||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article></div>';
  let check='<div class="mini-question"><p><strong>'+l.check.q+'</strong></p><div class="mini-options">'+l.check.choices.map((x,i)=>'<button class="mini-option" data-mini="'+i+'">'+x+'</button>').join('')+'</div><div class="feedback hidden" data-mini-feedback></div></div>';
- let exit='<p>'+l.exit+'</p><textarea class="student-answer" placeholder="Write your exit-ticket answer..."></textarea>';
+ let exit='<p>'+l.exit+'</p><textarea class="student-answer" data-answer-key="'+answerKey('exit')+'" placeholder="Write your exit-ticket answer...">'+(saved[answerKey('exit')]||'')+'</textarea>';
  const chunks=[
-  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['worked','4 · Worked example'],['task','5 · Student task'],['check','6 · Knowledge check'],['exit','7 · Exit ticket']
+  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['worked','6 · Worked example'],['task','7 · Apply it'],['technique','8 · Exam technique'],['check','9 · Check'],['exit','10 · Exit']
  ];
  $('#lessonPanel').innerHTML =
   '<span class="eyebrow">'+l.code+'</span><h2>'+l.title+'</h2><p class="lesson-lead">'+l.lead+'</p>'+
   '<div>'+l.formulas.map(f=>'<span class="formula-chip">'+f+'</span>').join('')+'</div>'+
+  '<div class="spec-coverage"><strong>AQA coverage:</strong> This lesson is mapped to '+l.code+' and includes the examinable content, mathematical treatment and practical/graph skills relevant to this part of Mechanics & Materials.</div>'+
   '<div class="chunk-strip">'+chunks.map((c,i)=>'<button class="chunk-button '+(i===0?'active':'')+'" data-chunk="'+c[0]+'">'+c[1]+'</button>').join('')+'</div>'+
   lessonChunk('Retrieval starter', 'retrieval', retrieval, true)+
   lessonChunk('Learning objectives','objectives',objectives)+
   lessonChunk('Core teaching','core',core)+
+  lessonChunk('Key vocabulary','terms',terms)+
+  lessonChunk('AQA specification depth','depth',depth)+
   lessonChunk('Worked example','worked',worked)+
   lessonChunk('Apply it','task',task)+
+  lessonChunk('Exam technique and misconceptions','technique',technique)+
   lessonChunk('Knowledge check','check',check)+
   lessonChunk('Exit ticket','exit',exit)+
   '<div class="lesson-actions"><button class="button primary" id="completeLesson">'+(completed.has(l.id)?'Completed ✓':'Mark lesson complete')+'</button><button class="button" id="openLessonSim">Open linked simulation</button>'+(activeLesson<lessons.length-1?'<button class="button" id="nextLessonBtn">Next lesson →</button>':'')+'</div>';
@@ -434,6 +659,11 @@ function renderLesson(){
  }));
  $$('.reveal-answer',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
   const ans=b.nextElementSibling; ans.classList.toggle('visible'); b.textContent=ans.classList.contains('visible')?'Hide answer':'Show answer';
+ }));
+ $$('.student-answer',$('#lessonPanel')).forEach(t=>t.addEventListener('input',()=>{
+   const data=JSON.parse(localStorage.getItem('mechanicsLessonAnswers')||'{}');
+   data[t.dataset.answerKey]=t.value;
+   localStorage.setItem('mechanicsLessonAnswers',JSON.stringify(data));
  }));
  $$('.mini-option',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
   const all=$$('.mini-option',$('#lessonPanel')); all.forEach(x=>{x.disabled=true;x.classList.remove('correct','wrong')});
