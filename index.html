@@ -41,7 +41,7 @@
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
       <div class="stat-grid">
         <div><strong>17</strong><span>sequenced lessons</span></div>
-        <div><strong>12</strong><span>interactive models</span></div>
+        <div><strong>14</strong><span>interactive models</span></div>
         <div><strong>18</strong><span>formula tools</span></div>
         <div><strong>2</strong><span>required practicals</span></div>
       </div>
@@ -150,6 +150,7 @@
         <article class="panel pad">
           <h3>Results</h3>
           <div class="table-scroll"><table class="data-table"><thead><tr><th>h / m</th><th>t / s</th><th>t² / s²</th><th>g / m s⁻²</th></tr></thead><tbody id="gRows"></tbody></table></div>
+          <canvas class="practical-chart" id="gGraph" aria-label="Graph of drop height against time squared"></canvas>
           <div class="equation" id="gSummary">Collect at least three readings.</div>
         </article>
       </div>
@@ -171,6 +172,7 @@
         <article class="panel pad">
           <h3>Results</h3>
           <div class="table-scroll"><table class="data-table"><thead><tr><th>F / N</th><th>ΔL / mm</th><th>stress / Pa</th><th>strain</th><th>E / Pa</th></tr></thead><tbody id="yRows"></tbody></table></div>
+          <canvas class="practical-chart" id="yGraph" aria-label="Stress strain graph for Young modulus practical"></canvas>
           <div class="equation" id="ySummary">Collect at least three readings.</div>
         </article>
       </div>
@@ -184,13 +186,18 @@
     </div>
     <div class="quiz-layout">
       <aside class="panel quiz-stats pad">
-        <div class="progress-head"><span>Question</span><strong id="quizProgress">1 / 18</strong></div>
+        <div class="progress-head"><span>Question</span><strong id="quizProgress">1 / 32</strong></div>
         <div class="progress-track"><div class="progress-fill" id="quizProgressFill"></div></div>
         <div class="stat-grid">
           <div><strong id="quizScore">0</strong><span>correct</span></div>
           <div><strong id="quizStreak">0</strong><span>streak</span></div>
         </div>
         <button class="button" id="restartQuiz">Restart practice</button>
+        <div class="mastery-mini">
+          <span class="eyebrow">Adaptive mastery</span>
+          <strong id="masteryPercent">0%</strong>
+          <span id="masterySummary">Answer questions to build a topic profile.</span>
+        </div>
       </aside>
       <article class="panel quiz-main pad">
         <span class="eyebrow" id="quizSpec"></span>
@@ -202,6 +209,13 @@
         <button class="button primary hidden" id="nextQuestion">Next question</button>
       </article>
     </div>
+    <article class="panel pad mastery-panel">
+      <div class="section-head compact">
+        <div><span class="eyebrow">Personalised revision</span><h3>Topic mastery</h3></div>
+        <p class="muted" id="nextBestAction">Complete some exam questions to receive a recommended next step.</p>
+      </div>
+      <div class="mastery-grid" id="masteryGrid"></div>
+    </article>
   </section>
 
   <section class="view" id="view-spec">
