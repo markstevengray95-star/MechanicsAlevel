@@ -3,8 +3,8 @@
 Interactive teaching app for **AQA A-level Physics 7408, section 3.4 Mechanics and Materials**.
 
 ## Features
-- 17-lesson teaching sequence with retrieval, objectives, full AQA depth notes, key vocabulary, worked examples, auto-marked practice, application tasks, exam technique, knowledge checks and exit tickets
-- 14 interactive mechanics/materials models including vector equilibrium, motion graphs, projectile drag, terminal speed, impulse, variable-force work, density and stress–strain behaviour
+- 17-lesson teaching sequence with retrieval, objectives, full AQA depth notes, key vocabulary, AQA application/connection notes, two worked examples per lesson, auto-marked practice, application tasks, exam technique, knowledge checks and exit tickets
+- 20 interactive mechanics/materials models including vector equilibrium, couples and centre of mass, motion and bouncing-ball graphs, projectile drag, terminal speed, vehicle maximum speed, Newton's laws, momentum/collision types, impulse, energy, motor efficiency, variable-force work, density, spring energy, Young modulus and stress–strain behaviour
 - 18-tool formula coach with worked substitutions and units
 - Required Practical 3 and 4 virtual data collection with automatically plotted best-fit graphs and gradient-based values for g and Young modulus
 - 32-question mixed exam practice bank across all section 3.4 specification points
