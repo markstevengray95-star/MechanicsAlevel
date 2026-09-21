@@ -237,3 +237,10 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .sim-activity span{display:grid;gap:3px;font-size:.86rem;line-height:1.45;color:var(--muted)}
 .sim-activity span b{color:var(--text)}
 .sim-activity.done{border-color:rgba(99,217,164,.30);background:rgba(99,217,164,.055)}
+
+
+/* Full AQA specification coverage details */
+.spec-detail{margin:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0}
+.spec-detail summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:.86rem}
+.spec-detail ul{margin:10px 0 3px;padding-left:20px;display:grid;gap:6px}
+.spec-detail li{color:var(--muted);line-height:1.4;font-size:.84rem}
