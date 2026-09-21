@@ -150,3 +150,31 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .spec-card .mastery-chip{display:inline-block;margin-top:8px;font-size:.75rem;color:var(--muted)}
 @media(max-width:1000px){.mastery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.mastery-grid{grid-template-columns:1fr}.practice-entry{align-items:stretch}.practice-entry .button{width:100%}}
+
+
+/* Maths/data skills studio + structured exam problems */
+.skills-layout{display:grid;grid-template-columns:minmax(250px,.75fr) minmax(0,1.6fr);gap:16px;align-items:start}
+.skill-summary{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(103,199,255,.06);color:var(--muted);line-height:1.5}
+.skill-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.skill-stat-grid>div{padding:12px;border:1px solid var(--line);border-radius:12px;text-align:center;background:rgba(255,255,255,.025)}
+.skill-stat-grid strong{display:block;font-size:1.5rem;color:var(--accent)}
+.skill-stat-grid span{font-size:.8rem;color:var(--muted)}
+.skills-chart{display:block;width:100%;height:280px;border:1px solid var(--line);border-radius:14px;background:#091625;margin:14px 0}
+.skill-answer-row{margin-top:12px}
+.skill-focus-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.structured-panel{margin-top:16px}
+.structured-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px}
+.structured-head{padding:4px 0 10px}
+.structured-head p{line-height:1.6;color:var(--muted)}
+.structured-part{padding:16px 0;border-top:1px solid var(--line)}
+.structured-q{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;margin-bottom:10px;line-height:1.55}
+.structured-part textarea{min-height:96px}
+.compact-field{margin-top:10px;max-width:210px}
+.compact-field input{width:100%}
+.lesson-readiness{margin:14px 0;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+.lesson-readiness .readiness-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.lesson-readiness .readiness-bar{height:8px;margin-top:10px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.lesson-readiness .readiness-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--good))}
+.lesson-readiness small{display:block;margin-top:8px;color:var(--muted);line-height:1.4}
+@media(max-width:900px){.skills-layout{grid-template-columns:1fr}.skill-focus-cards{grid-template-columns:1fr}}
+@media(max-width:620px){.structured-q{grid-template-columns:1fr}.structured-q .pill{justify-self:start}}
