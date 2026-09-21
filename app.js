@@ -925,7 +925,11 @@ const formulas = [
 {id:'hooke',name:'Hooke’s law',desc:'k = F/ΔL',inputs:[['F','force',6,'N'],['x','extension',.024,'m']],calc:v=>({steps:['F = kΔL','k = F/ΔL'],answer:v.F/v.x,unit:'N m⁻¹'})},
 {id:'stress',name:'Tensile stress',desc:'σ = F/A',inputs:[['F','force',60,'N'],['A','area',2e-7,'m²']],calc:v=>({steps:['stress = F/A'],answer:v.F/v.A,unit:'Pa'})},
 {id:'strain',name:'Tensile strain',desc:'ε = ΔL/L',inputs:[['x','extension',.0012,'m'],['L','original length',2,'m']],calc:v=>({steps:['strain = ΔL/L'],answer:v.x/v.L,unit:''})},
-{id:'young',name:'Young modulus',desc:'E = FL/(AΔL)',inputs:[['F','force',30,'N'],['L','length',1.5,'m'],['A','area',1.26e-7,'m²'],['x','extension',.0018,'m']],calc:v=>({steps:['E = FL/(AΔL)'],answer:v.F*v.L/(v.A*v.x),unit:'Pa'})}
+{id:'young',name:'Young modulus',desc:'E = FL/(AΔL)',inputs:[['F','force',30,'N'],['L','length',1.5,'m'],['A','area',1.26e-7,'m²'],['x','extension',.0018,'m']],calc:v=>({steps:['E = FL/(AΔL)'],answer:v.F*v.L/(v.A*v.x),unit:'Pa'})},
+{id:'density',name:'Density',desc:'ρ = m/V',inputs:[['m','mass',2.7,'kg'],['V','volume',.001,'m³']],calc:v=>({steps:['ρ = m/V'],answer:v.m/v.V,unit:'kg m⁻³'})},
+{id:'workangle',name:'Work at an angle',desc:'W = Fs cosθ',inputs:[['F','force',50,'N'],['s','displacement',4,'m'],['theta','angle to displacement',30,'°']],calc:v=>({steps:['W = Fs cosθ'],answer:v.F*v.s*Math.cos(v.theta*Math.PI/180),unit:'J'})},
+{id:'efficiency',name:'Efficiency',desc:'η = useful / input',inputs:[['useful','useful output energy',750,'J'],['input','total input energy',1000,'J']],calc:v=>({steps:['η = useful output / total input','percentage = η × 100'],answerText:'η = '+fmt(v.useful/v.input)+' = '+fmt(100*v.useful/v.input)+'%'})},
+{id:'elasticenergy',name:'Elastic strain energy',desc:'E = ½FΔL',inputs:[['F','force',12,'N'],['x','extension',.040,'m']],calc:v=>({steps:['E = ½FΔL','valid for a linear force–extension relation'],answer:.5*v.F*v.x,unit:'J'})}
 ];
 function renderFormula(){
  $('#formulaSelect').innerHTML=formulas.map((f,i)=>'<option value="'+i+'">'+f.name+' — '+f.desc+'</option>').join('');
