@@ -29,7 +29,7 @@ const lessons = [
  exit:'Explain why an object can travel a large distance but have zero displacement.'
 },
 {
- id:'resolution', code:'3.4.1.1', title:'Resolving vectors and equilibrium', sim:'vectors',
+ id:'resolution', code:'3.4.1.1', title:'Resolving vectors and equilibrium', sim:'equilibrium',
  lead:'Resolve forces into perpendicular components and decide whether several coplanar forces are in equilibrium.',
  formulas:['Fₓ = F cosθ','Fᵧ = F sinθ','ΣF = 0 in equilibrium'],
  retrieval:[
@@ -246,7 +246,7 @@ const lessons = [
  exit:'Give one reason an energy method may be simpler than using SUVAT and Newton’s laws.'
 },
 {
- id:'density-hooke', code:'3.4.2.1', title:'Density, Hooke’s law and elastic limit', sim:'elasticity',
+ id:'density-hooke', code:'3.4.2.1', title:'Density, Hooke’s law and elastic limit', sim:'density',
  lead:'Move from mechanics into material behaviour by relating force to deformation.',
  formulas:['ρ = m/V','F = kΔL'],
  retrieval:[
@@ -593,6 +593,153 @@ const lessonExtensions = {
 };
 lessons.forEach(l=>Object.assign(l, lessonExtensions[l.id] || {}));
 
+
+const lessonSkillMap = {
+ vectors:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
+ resolution:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
+ moments:['Mathematical modelling'],
+ kinematics:['MS 3.5','MS 3.6','MS 3.7','PS 1.1','PS 3.1'],
+ suvat:['MS 0.5','MS 2.2','MS 2.3','MS 2.4'],
+ rp3:['Required Practical 3','AT d','MS 3.9','PS 1.1'],
+ projectiles:['PS 2.2','PS 3.1'],
+ newton:['PS 4.1','MS 4.1','MS 4.2','AT a/b/d'],
+ momentum:['MS 2.2','MS 2.3'],
+ work:['MS 0.3','PS 3.3','PS 4.1','AT a/b/f'],
+ energy:['MS 0.4','MS 2.2'],
+ 'density-hooke':['MS 0.2','MS 4.3','AT e','PS 3.3'],
+ 'stress-strain':['MS 4.3','PS 3.3'],
+ 'material-behaviour':['MS 4.3'],
+ young:['MS 3.1'],
+ rp4:['Required Practical 4','MS 3.1'],
+ mastery:['Synoptic problem solving']
+};
+lessons.forEach(l=>l.skills=lessonSkillMap[l.id]||[]);
+
+const lessonPractice = {
+ vectors:[
+  {q:'A displacement has components 9.0 m east and 12.0 m north. Calculate the resultant magnitude.',type:'number',answer:15,tol:.05,unit:'m',explain:'Use Pythagoras: √(9²+12²)=15 m.'},
+  {q:'Why is velocity a vector?',type:'text',keywords:['direction','magnitude'],answerText:'Because velocity has both magnitude and direction.'}
+ ],
+ resolution:[
+  {q:'A 100 N force acts at 60° above the horizontal. Calculate its horizontal component.',type:'number',answer:50,tol:.5,unit:'N',explain:'Fₓ=F cos60°=50 N.'},
+  {q:'State the condition for translational equilibrium.',type:'text',keywords:['resultant','zero'],answerText:'The resultant force is zero.'}
+ ],
+ moments:[
+  {q:'A 75 N force acts perpendicularly 0.40 m from a pivot. Calculate the moment.',type:'number',answer:30,tol:.1,unit:'N m',explain:'M=Fd=75×0.40=30 N m.'},
+  {q:'What is a couple?',type:'text',keywords:['equal','opposite','parallel','forces'],answerText:'Two equal, opposite, parallel forces acting along different lines.'}
+ ],
+ kinematics:[
+  {q:'Velocity rises uniformly from 3.0 to 15.0 m s⁻¹ in 4.0 s. Calculate the acceleration.',type:'number',answer:3,tol:.03,unit:'m s⁻²',explain:'a=(15−3)/4=3.0 m s⁻².'},
+  {q:'What does area under an acceleration–time graph represent?',type:'text',keywords:['change','velocity'],answerText:'The change in velocity.'}
+ ],
+ suvat:[
+  {q:'An object starts from rest and accelerates at 2.5 m s⁻² for 6.0 s. Find its final speed.',type:'number',answer:15,tol:.05,unit:'m s⁻¹',explain:'v=u+at=0+2.5×6=15 m s⁻¹.'},
+  {q:'At the highest point of a vertical throw, what is the acceleration?',type:'text',keywords:['9.81','down'],answerText:'Approximately 9.81 m s⁻² downward.'}
+ ],
+ rp3:[
+  {q:'A graph of h against t² has gradient 4.91 m s⁻². Calculate g.',type:'number',answer:9.82,tol:.05,unit:'m s⁻²',explain:'h=(g/2)t², so g=2×gradient.'},
+  {q:'Do repeated readings remove systematic error?',type:'text',keywords:['no'],answerText:'No. Repeats reduce random uncertainty but do not remove a systematic offset.'}
+ ],
+ projectiles:[
+  {q:'A ball is launched horizontally at 8.0 m s⁻¹ for 0.60 s. Ignoring drag, calculate horizontal displacement.',type:'number',answer:4.8,tol:.03,unit:'m',explain:'x=uₓt=8.0×0.60=4.8 m.'},
+  {q:'Why is acceleration not zero at the top of a projectile path?',type:'text',keywords:['gravity','down'],answerText:'Gravity still acts downward, so acceleration remains g downward.'}
+ ],
+ newton:[
+  {q:'A 4.0 kg object experiences a resultant force of 18 N. Calculate acceleration.',type:'number',answer:4.5,tol:.03,unit:'m s⁻²',explain:'a=F/m=18/4=4.5 m s⁻².'},
+  {q:'Why do Newton third-law forces not cancel on one free-body diagram?',type:'text',keywords:['different','objects'],answerText:'They act on different interacting objects.'}
+ ],
+ momentum:[
+  {q:'A 0.50 kg trolley travels at 6.0 m s⁻¹. Calculate its momentum.',type:'number',answer:3,tol:.02,unit:'kg m s⁻¹',explain:'p=mv=0.50×6.0=3.0 kg m s⁻¹.'},
+  {q:'What does area under a force–time graph represent?',type:'text',keywords:['impulse'],answerText:'Impulse, which equals change in momentum.'}
+ ],
+ work:[
+  {q:'A constant 40 N force moves an object 3.0 m in the same direction. Calculate work done.',type:'number',answer:120,tol:.2,unit:'J',explain:'W=Fs=40×3=120 J.'},
+  {q:'What graph area represents work done by a varying force?',type:'text',keywords:['force','displacement'],answerText:'Area under a force–displacement graph.'}
+ ],
+ energy:[
+  {q:'A 2.0 kg object falls through 5.0 m. Calculate the GPE decrease using g=9.81 m s⁻².',type:'number',answer:98.1,tol:.2,unit:'J',explain:'ΔEₚ=mgΔh=2×9.81×5=98.1 J.'},
+  {q:'If mechanical energy decreases because of friction, is total energy destroyed?',type:'text',keywords:['no','transferred'],answerText:'No. Energy is transferred to other stores, commonly internal energy.'}
+ ],
+ 'density-hooke':[
+  {q:'A 0.60 kg sample has volume 2.0×10⁻⁴ m³. Calculate density.',type:'number',answer:3000,tol:5,unit:'kg m⁻³',explain:'ρ=m/V=0.60/(2.0×10⁻⁴)=3000 kg m⁻³.'},
+  {q:'What is the difference between extension and total length?',type:'text',keywords:['change','length'],answerText:'Extension is the change in length from the original length.'}
+ ],
+ 'stress-strain':[
+  {q:'A force of 200 N acts on area 4.0×10⁻⁶ m². Calculate tensile stress.',type:'number',answer:5e7,tol:1e5,unit:'Pa',explain:'σ=F/A=200/(4×10⁻⁶)=5.0×10⁷ Pa.'},
+  {q:'Does tensile strain have a unit?',type:'text',keywords:['no'],answerText:'No. It is a ratio of two lengths.'}
+ ],
+ 'material-behaviour':[
+  {q:'A material returns to its original dimensions after unloading. Is the deformation elastic or plastic?',type:'text',keywords:['elastic'],answerText:'Elastic.'},
+  {q:'What graph feature distinguishes a more ductile material?',type:'text',keywords:['strain'],answerText:'It reaches a larger strain before fracture / has a larger plastic region.'}
+ ],
+ young:[
+  {q:'Stress is 1.5×10⁸ Pa and strain is 7.5×10⁻⁴. Calculate Young modulus.',type:'number',answer:2e11,tol:2e8,unit:'Pa',explain:'E=stress/strain=2.0×10¹¹ Pa.'},
+  {q:'What does the gradient of the initial linear stress–strain graph represent?',type:'text',keywords:['young','modulus'],answerText:'Young modulus.'}
+ ],
+ rp4:[
+  {q:'Why is uncertainty in wire diameter especially important?',type:'text',keywords:['area','squared'],answerText:'Area depends on diameter squared, A=πd²/4.'},
+  {q:'Why should several diameter readings be taken?',type:'text',keywords:['variation','mean'],answerText:'To account for variation in diameter and obtain a more reliable mean.'}
+ ],
+ mastery:[
+  {q:'Before choosing an equation in an unfamiliar mechanics problem, what should you identify first?',type:'text',keywords:['system','diagram'],answerText:'Define the system and represent the situation with a clear diagram / variables.'},
+  {q:'What two checks should follow a numerical answer?',type:'text',keywords:['unit','sensible'],answerText:'Check units/dimensions and physical reasonableness.'}
+ ]
+};
+
+const masteryState = JSON.parse(localStorage.getItem('mechanicsMastery')||'{}');
+function masteryCodeForLesson(l){
+ if(l.id==='rp3') return 'RP3';
+ if(l.id==='rp4') return 'RP4';
+ const m=(l.code||'').match(/3\.4\.\d\.\d/); return m?m[0]:'3.4';
+}
+function recordMastery(code,correct){
+ if(!masteryState[code]) masteryState[code]={correct:0,total:0};
+ masteryState[code].total+=1;
+ if(correct) masteryState[code].correct+=1;
+ localStorage.setItem('mechanicsMastery',JSON.stringify(masteryState));
+ renderMasteryPanel();
+}
+function masteryPct(code){
+ const m=masteryState[code]; return m&&m.total ? Math.round(100*m.correct/m.total) : null;
+}
+function renderMasteryPanel(){
+ const grid=$('#masteryGrid'),pctEl=$('#masteryPercent'),sumEl=$('#masterySummary'),nextEl=$('#nextBestAction');
+ if(!grid||!pctEl||!sumEl||!nextEl)return;
+ const rows=spec.map(s=>({code:s[0],title:s[1],pct:masteryPct(s[0]),attempts:(masteryState[s[0]]||{}).total||0,lesson:s[3]}));
+ const attempted=rows.filter(r=>r.attempts>0);
+ const total=attempted.reduce((a,r)=>a+r.attempts,0),correct=attempted.reduce((a,r)=>a+((masteryState[r.code]||{}).correct||0),0);
+ const overall=total?Math.round(100*correct/total):0;
+ pctEl.textContent=overall+'%';
+ sumEl.textContent=total?correct+' correct from '+total+' tracked attempts.':'Answer questions to build a topic profile.';
+ grid.innerHTML=rows.map(r=>'<article class="mastery-topic"><div class="mastery-line"><strong>'+r.code+'</strong><small>'+(r.pct===null?'Not tested':r.pct+'%')+'</small></div><div class="mastery-bar"><span style="width:'+(r.pct===null?0:r.pct)+'%"></span></div><small>'+r.title+'</small></article>').join('');
+ const weakest=attempted.slice().sort((a,b)=>(a.pct??101)-(b.pct??101))[0];
+ if(weakest && weakest.pct<80){
+  nextEl.innerHTML='Recommended next step: revisit <strong>'+weakest.title+'</strong> ('+weakest.code+'), then retry related questions.';
+ }else if(total){
+  nextEl.textContent='Strong profile so far. Continue mixed practice to confirm mastery across every specification point.';
+ }else{
+  nextEl.textContent='Complete some exam or lesson questions to receive a recommended next step.';
+ }
+}
+function renderLessonPractice(l){
+ const qs=lessonPractice[l.id]||[];
+ return '<div class="practice-stack">'+qs.map((q,i)=>'<div class="practice-question"><p><strong>'+(i+1)+'. '+q.q+'</strong></p><div class="practice-entry"><input '+(q.type==='number'?'type="number" step="any"':'type="text"')+' data-practice-input="'+i+'" placeholder="Enter your answer"><button class="button" data-practice-check="'+i+'">Check answer</button></div><div class="practice-feedback hidden" data-practice-feedback="'+i+'"></div></div>').join('')+'</div>';
+}
+function bindLessonPractice(l){
+ $('[data-practice-check]',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
+  const i=Number(b.dataset.practiceCheck),q=(lessonPractice[l.id]||[])[i],input=$('[data-practice-input="'+i+'"]',$('#lessonPanel')),fb=$('[data-practice-feedback="'+i+'"]',$('#lessonPanel'));
+  let ok=false;
+  if(q.type==='number'){
+   const val=Number(input.value); ok=Number.isFinite(val)&&Math.abs(val-q.answer)<=q.tol;
+  }else{
+   const text=input.value.toLowerCase(); ok=(q.keywords||[]).every(k=>text.includes(k.toLowerCase()));
+  }
+  fb.className='practice-feedback '+(ok?'good':'bad');
+  fb.textContent=(ok?'Correct. ':'Not quite. ')+(q.explain||q.answerText||'');
+  recordMastery(masteryCodeForLesson(l),ok);
+ }));
+}
+
 const completed = new Set(JSON.parse(localStorage.getItem('mechanicsCompleted') || '[]'));
 let activeLesson = 0;
 
@@ -622,17 +769,18 @@ function renderLesson(){
  const saved=JSON.parse(localStorage.getItem('mechanicsLessonAnswers')||'{}');
  const answerKey=(kind,i='')=>l.id+'::'+kind+'::'+i;
  let retrieval=l.retrieval.map((r,i)=>'<div class="mini-question"><p><strong>'+(i+1)+'. '+r.q+'</strong></p><textarea class="student-answer" data-answer-key="'+answerKey('retrieval',i)+'" placeholder="Type your answer here...">'+(saved[answerKey('retrieval',i)]||'')+'</textarea><button class="text-button reveal-answer">Show answer</button><div class="answer-reveal">'+r.a+'</div></div>').join('');
- let objectives='<ul>'+l.objectives.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+ let objectives='<ul>'+l.objectives.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="skill-row">'+(l.skills||[]).map(x=>'<span class="skill-badge">'+x+'</span>').join('')+'</div>';
  let core='<div class="textbook-note"><strong>Core explanation</strong><p>Work through each statement slowly. These notes are aligned to the AQA specification point shown above.</p></div><ul>'+l.core.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
  let terms='<div class="term-grid">'+(l.keyTerms||[]).map(t=>'<article class="term-card"><strong>'+t[0]+'</strong><span>'+t[1]+'</span></article>').join('')+'</div>';
  let depth='<div class="depth-list">'+(l.depth||[]).map((x,i)=>'<article class="depth-card"><span class="depth-number">'+(i+1)+'</span><p>'+x+'</p></article>').join('')+'</div>';
  let worked='<p><strong>Question:</strong> '+l.worked.q+'</p><button class="text-button reveal-answer">Show worked answer</button><div class="answer-reveal">'+l.worked.a+'</div>';
+ let practice=renderLessonPractice(l);
  let task='<p>'+l.task+'</p><textarea class="student-answer" data-answer-key="'+answerKey('task')+'" placeholder="Record your working, prediction or explanation...">'+(saved[answerKey('task')]||'')+'</textarea>';
  let technique='<div class="exam-grid"><article class="exam-tip"><h4>Exam technique</h4><ul>'+(l.exam||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article><article class="exam-tip warning"><h4>Common traps</h4><ul>'+(l.pitfalls||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></article></div>';
  let check='<div class="mini-question"><p><strong>'+l.check.q+'</strong></p><div class="mini-options">'+l.check.choices.map((x,i)=>'<button class="mini-option" data-mini="'+i+'">'+x+'</button>').join('')+'</div><div class="feedback hidden" data-mini-feedback></div></div>';
  let exit='<p>'+l.exit+'</p><textarea class="student-answer" data-answer-key="'+answerKey('exit')+'" placeholder="Write your exit-ticket answer...">'+(saved[answerKey('exit')]||'')+'</textarea>';
  const chunks=[
-  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['worked','6 · Worked example'],['task','7 · Apply it'],['technique','8 · Exam technique'],['check','9 · Check'],['exit','10 · Exit']
+  ['retrieval','1 · Retrieval'],['objectives','2 · Objectives'],['core','3 · Core teaching'],['terms','4 · Key terms'],['depth','5 · AQA depth'],['worked','6 · Worked example'],['practice','7 · Auto-mark practice'],['task','8 · Apply it'],['technique','9 · Exam technique'],['check','10 · Check'],['exit','11 · Exit']
  ];
  $('#lessonPanel').innerHTML =
   '<span class="eyebrow">'+l.code+'</span><h2>'+l.title+'</h2><p class="lesson-lead">'+l.lead+'</p>'+
@@ -645,6 +793,7 @@ function renderLesson(){
   lessonChunk('Key vocabulary','terms',terms)+
   lessonChunk('AQA specification depth','depth',depth)+
   lessonChunk('Worked example','worked',worked)+
+  lessonChunk('Auto-marked practice','practice',practice)+
   lessonChunk('Apply it','task',task)+
   lessonChunk('Exam technique and misconceptions','technique',technique)+
   lessonChunk('Knowledge check','check',check)+
@@ -665,10 +814,12 @@ function renderLesson(){
    data[t.dataset.answerKey]=t.value;
    localStorage.setItem('mechanicsLessonAnswers',JSON.stringify(data));
  }));
- $$('.mini-option',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
+ bindLessonPractice(l);
+ $('.mini-option',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
   const all=$$('.mini-option',$('#lessonPanel')); all.forEach(x=>{x.disabled=true;x.classList.remove('correct','wrong')});
   const chosen=Number(b.dataset.mini); b.classList.add(chosen===l.check.answer?'correct':'wrong'); all[l.check.answer].classList.add('correct');
   const fb=$('[data-mini-feedback]',$('#lessonPanel')); fb.classList.remove('hidden'); fb.textContent=(chosen===l.check.answer?'Correct. ':'Not quite. ')+l.check.explain;
+  recordMastery(masteryCodeForLesson(l),chosen===l.check.answer);
  }));
  $('#completeLesson').addEventListener('click',()=>{
   if(completed.has(l.id)) completed.delete(l.id); else completed.add(l.id);
@@ -691,6 +842,12 @@ const sims = [
  {key:'mag',label:'Vector magnitude / N',min:10,max:100,step:1,value:60},
  {key:'angle',label:'Angle above horizontal / °',min:0,max:90,step:1,value:35}
 ],simple:'A vector can be replaced by perpendicular horizontal and vertical components with exactly the same combined effect.',exam:'For an angle measured from the horizontal, use Fₓ = F cosθ and Fᵧ = F sinθ. State the direction of the final vector.',mistake:'Do not decide sine/cosine from memory alone; identify the adjacent and opposite sides relative to the stated angle.',check:['At 0°, which component equals the full vector?','The horizontal component.'],investigate:'Set 30°, 45° and 60°. Compare how the two components change while the vector magnitude stays fixed.'},
+{id:'equilibrium',code:'3.4.1.1',title:'Three-force equilibrium',subtitle:'Build a closed vector triangle for three coplanar forces acting at a point.',controls:[
+ {key:'f1',label:'Force 1 / N',min:10,max:100,step:2,value:50},
+ {key:'a1',label:'Force 1 angle / °',min:0,max:180,step:5,value:20},
+ {key:'f2',label:'Force 2 / N',min:10,max:100,step:2,value:65},
+ {key:'a2',label:'Force 2 angle / °',min:0,max:180,step:5,value:125}
+],simple:'For equilibrium the third force must be equal and opposite to the resultant of the first two forces.',exam:'For three coplanar forces in equilibrium, the vector sum is zero. The three vectors form a closed triangle when placed head-to-tail.',mistake:'Equilibrium means zero resultant force, not zero individual forces.',check:['What must the vector sum of forces equal in equilibrium?','Zero.'],investigate:'Change both angles and compare the magnitude/direction of the balancing third force.'},
 {id:'moments',code:'3.4.1.2',title:'Moments and balance',subtitle:'Change force and perpendicular distance to see the turning effect.',controls:[
  {key:'force',label:'Applied force / N',min:10,max:120,step:5,value:60},
  {key:'distance',label:'Perpendicular distance / m',min:.1,max:1.2,step:.05,value:.6}
@@ -734,6 +891,12 @@ const sims = [
  {key:'f1',label:'Final force / N',min:0,max:120,step:5,value:80},
  {key:'distance',label:'Displacement / m',min:.5,max:8,step:.5,value:4}
 ],simple:'When force changes with displacement, work is found from the area under the force–displacement graph.',exam:'For a straight-line change in force, the area is a trapezium: W = ½(F₀ + F₁)s.',mistake:'Do not multiply the final force by distance unless the force is constant at that value.',check:['What does area under an F–s graph represent?','Work done / energy transferred.'],investigate:'Set F₀ = F₁ to recover the constant-force case, then compare with a changing-force case.'},
+{id:'density',code:'3.4.2.1',title:'Density and sample dimensions',subtitle:'Relate mass and volume and see how dimensions determine bulk density.',controls:[
+ {key:'mass',label:'Mass / g',min:20,max:1000,step:10,value:270},
+ {key:'length',label:'Length / cm',min:1,max:12,step:.5,value:5},
+ {key:'width',label:'Width / cm',min:1,max:10,step:.5,value:4},
+ {key:'height',label:'Height / cm',min:1,max:10,step:.5,value:2.5}
+],simple:'Density is mass divided by volume. For a cuboid, volume is length × width × height.',exam:'Convert mass to kg and dimensions to metres before using ρ=m/V in SI units.',mistake:'A volume conversion is cubed: 1 cm³ = 10⁻⁶ m³.',check:['What is the SI unit of density?','kg m⁻³.'],investigate:'Double one dimension while keeping mass fixed. Predict and check how density changes in this model.'},
 {id:'elasticity',code:'3.4.2.1–2',title:'Elastic wire + Young modulus',subtitle:'Link force, area and original length to stress, strain and extension.',controls:[
  {key:'force',label:'Tension / N',min:0,max:120,step:5,value:50},
  {key:'length',label:'Original length / m',min:.5,max:3,step:.1,value:1.5},
@@ -772,6 +935,7 @@ function renderSim(){
 function updateReadout(){
  const s=sims[activeSim].id, v=simValues; let txt='';
  if(s==='vectors'){const x=v.mag*Math.cos(v.angle*Math.PI/180),y=v.mag*Math.sin(v.angle*Math.PI/180);txt='Fₓ = '+fmt(x)+' N   |   Fᵧ = '+fmt(y)+' N';}
+ if(s==='equilibrium'){const r1=v.a1*Math.PI/180,r2=v.a2*Math.PI/180,x=v.f1*Math.cos(r1)+v.f2*Math.cos(r2),y=v.f1*Math.sin(r1)+v.f2*Math.sin(r2),f3=Math.hypot(x,y),ang=(Math.atan2(-y,-x)*180/Math.PI+360)%360;txt='Balancing force = '+fmt(f3)+' N at '+fmt(ang)+'° from +x';}
  if(s==='moments'){txt='Moment = '+fmt(v.force*v.distance)+' N m';}
  if(s==='motion'){const t=simTime%8,vel=v.u+v.a*t,pos=v.u*t+.5*v.a*t*t;txt='t = '+fmt(t)+' s   |   v = '+fmt(vel)+' m s⁻¹   |   s = '+fmt(pos)+' m';}
  if(s==='projectile'){const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r);txt='uₓ = '+fmt(ux)+' m s⁻¹   |   uᵧ = '+fmt(uy)+' m s⁻¹   |   drag constant = '+fmt(v.drag)+' s⁻¹';}
@@ -781,6 +945,7 @@ function updateReadout(){
  if(s==='impulse'){const J=.5*v.peak*v.time,dv=J/v.mass;txt='Impulse = area = '+fmt(J)+' N s   |   |Δp| = '+fmt(J)+' kg m s⁻¹   |   |Δv| = '+fmt(dv)+' m s⁻¹';}
  if(s==='energy'){const gpe=v.mass*9.81*v.height,ke=gpe*(1-v.loss/100),speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='Initial GPE = '+fmt(gpe)+' J   |   final KE available = '+fmt(ke)+' J   |   final v ≈ '+fmt(speed)+' m s⁻¹';}
  if(s==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;txt='Work = area = ½('+fmt(v.f0)+' + '+fmt(v.f1)+') × '+fmt(v.distance)+' = '+fmt(W)+' J';}
+ if(s==='density'){const Vcm=v.length*v.width*v.height,V=Vcm*1e-6,rho=(v.mass/1000)/V;txt='Volume = '+fmt(Vcm)+' cm³   |   density = '+fmt(rho)+' kg m⁻³';}
  if(s==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;txt='stress = '+stress.toExponential(2)+' Pa   |   strain = '+strain.toExponential(2)+'   |   ΔL = '+(ext*1000).toFixed(3)+' mm';}
  if(s==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,broken=v.strain>=v.break,stress=broken?0:(v.strain<=epsY?E*v.strain:y+(v.yield*.22e6)*Math.log1p((v.strain-epsY)*120));const region=broken?'fractured':(v.strain<=epsY?'linear elastic':'plastic');txt='region: '+region+'   |   stress ≈ '+(stress/1e6).toFixed(1)+' MPa   |   elastic strain limit ≈ '+epsY.toExponential(2);}
  $('#simReadout').textContent=txt;
@@ -822,6 +987,14 @@ function drawSim(){
   arrow(o.x,o.y,x,o.y,'Fₓ','#63d9a4');arrow(x,o.y,x,y,'Fᵧ','#ffd56a');arrow(o.x,o.y,x,y,'F','#67c7ff');
   ctx.setLineDash([5,5]);ctx.strokeStyle='#7389a1';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,o.y);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#dceaff';ctx.fillText('Components form a right-angled vector triangle.',w*.52,h*.2);
+ }
+ if(id==='equilibrium'){
+  const cx=w*.38,cy=h*.58,scale=Math.min(w,h)*.0045,r1=v.a1*Math.PI/180,r2=v.a2*Math.PI/180;
+  const x1=cx+v.f1*Math.cos(r1)*scale,y1=cy-v.f1*Math.sin(r1)*scale;
+  const x2=x1+v.f2*Math.cos(r2)*scale,y2=y1-v.f2*Math.sin(r2)*scale;
+  arrow(cx,cy,x1,y1,'F₁','#67c7ff');arrow(x1,y1,x2,y2,'F₂','#63d9a4');arrow(x2,y2,cx,cy,'F₃','#ffd56a');
+  ctx.fillStyle='#dceaff';ctx.fillText('Closed triangle → ΣF = 0',w*.60,h*.22);
+  ctx.fillText('F₃ balances the resultant of F₁ + F₂',w*.55,h*.30);
  }
  if(id==='moments'){
   const py=h*.52,cx=w*.46,len=Math.min(w*.72,620);ctx.strokeStyle='#9db1c9';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(cx-len/2,py);ctx.lineTo(cx+len/2,py);ctx.stroke();
@@ -885,6 +1058,16 @@ function drawSim(){
   ctx.fillStyle='rgba(99,217,164,.20)';ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.lineTo(gx+gw,gy+gh);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#63d9a4';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,y0);ctx.lineTo(gx+gw,y1);ctx.stroke();
   ctx.fillStyle='#dceaff';ctx.fillText('Area = work = '+fmt(.5*(v.f0+v.f1)*v.distance)+' J',gx+20,gy+30);
+ }
+ if(id==='density'){
+  const bx=w*.25,by=h*.32,sx=Math.min(180,60+v.length*8),sy=Math.min(120,35+v.height*7),d=Math.min(70,20+v.width*5);
+  ctx.fillStyle='rgba(103,199,255,.22)';ctx.strokeStyle='#67c7ff';ctx.lineWidth=2;
+  ctx.beginPath();ctx.rect(bx,by,sx,sy);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+d,by-d);ctx.lineTo(bx+sx+d,by-d);ctx.lineTo(bx+sx,by);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(bx+sx,by);ctx.lineTo(bx+sx+d,by-d);ctx.lineTo(bx+sx+d,by+sy-d);ctx.lineTo(bx+sx,by+sy);ctx.closePath();ctx.fill();ctx.stroke();
+  const V=v.length*v.width*v.height,rho=(v.mass/1000)/(V*1e-6);
+  ctx.fillStyle='#dceaff';ctx.fillText(v.length+' cm',bx+sx*.35,by+sy+24);ctx.fillText(v.height+' cm',bx-5,by+sy*.5);ctx.fillText(v.width+' cm',bx+sx+12,by-18);
+  ctx.fillText('mass = '+v.mass+' g',w*.62,h*.33);ctx.fillText('volume = '+fmt(V)+' cm³',w*.62,h*.43);ctx.fillText('ρ = '+fmt(rho)+' kg m⁻³',w*.62,h*.53);
  }
  if(id==='elasticity'){
   const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length,base=65,pix=Math.min(h*.48,100+ext*1e5),wireX=w*.30;
@@ -966,7 +1149,21 @@ const quiz = [
 ['3.4.2.1','Tensile strain has unit…',['Pa','N','m','no unit'],3,'It is a ratio of lengths.','The units cancel.'],
 ['3.4.2.1','Elastic strain energy for a linear spring is…',['FΔL','½FΔL','F/ΔL','½k/F'],1,'Area of triangle under F–extension graph.','E=½FΔL.'],
 ['3.4.2.2','Young modulus is…',['stress × strain','stress / strain','strain / stress','force / extension'],1,'Definition.','E=stress/strain in the linear elastic region.'],
-['RP4','Why is wire diameter especially important in Young modulus?',['Area depends on d²','Force equals d²','Length equals d²','Strain has units of d²'],0,'Think A=πd²/4.','Area depends on diameter squared.']
+['RP4','Why is wire diameter especially important in Young modulus?',['Area depends on d²','Force equals d²','Length equals d²','Strain has units of d²'],0,'Think A=πd²/4.','Area depends on diameter squared.'],
+['3.4.1.1','For three coplanar forces acting at a point in equilibrium, their vectors…',['must have equal magnitudes','form a closed triangle','must all be at 90°','must all point upward'],1,'Think about the vector sum.','A zero vector sum means the force vectors can form a closed triangle.'],
+['3.4.1.2','A couple produces a turning effect because…',['the forces act on the same line','the forces are unequal','equal opposite forces act along different lines','there is a resultant force'],2,'A couple has zero resultant force but separated lines of action.','The separation of the equal opposite forces gives a non-zero moment.'],
+['3.4.1.3','Area under an acceleration–time graph gives…',['displacement','change in velocity','force','power'],1,'Consider acceleration × time.','The signed area gives change in velocity.'],
+['3.4.1.3','On a displacement–time graph, instantaneous velocity is found from…',['area under the graph','gradient of a tangent','maximum displacement','intercept only'],1,'Instantaneous rate of change needs a tangent.','The tangent gradient gives instantaneous velocity.'],
+['3.4.1.4','As a falling object speeds up through air, drag generally…',['decreases','stays zero','increases','reverses gravity'],2,'AQA requires this qualitative relationship.','Air resistance increases with speed.'],
+['3.4.1.5','Newton’s first law applies when resultant force is zero. The object then…',['must be stationary','has constant velocity','must speed up','has zero mass'],1,'Zero resultant force means zero acceleration.','Velocity remains constant, which includes remaining at rest.'],
+['3.4.1.6','A triangular force–time pulse has peak 1000 N and duration 0.20 s. Impulse is…',['50 N s','100 N s','200 N s','5000 N s'],1,'Find the triangle area.','½×1000×0.20=100 N s.'],
+['3.4.1.6','In an explosion of an initially stationary closed system, total momentum after is…',['zero','always positive','equal to kinetic energy','equal to total mass'],0,'Use momentum conservation.','Initial momentum is zero, so the vector total after remains zero.'],
+['3.4.1.7','A 50 N force acts through 4.0 m at 60° to displacement. Work done is…',['25 J','100 J','200 J','400 J'],1,'Use Fs cosθ.','50×4×cos60°=100 J.'],
+['3.4.1.7','The area under a force–displacement graph is…',['impulse','work done','acceleration','strain'],1,'Do not confuse F–s with F–t.','Area under F–s is work done.'],
+['3.4.1.7','A device receives 800 J and transfers 600 J usefully. Efficiency is…',['25%','60%','75%','133%'],2,'Useful/input ×100%.','600/800=0.75=75%.'],
+['3.4.2.1','A sample has mass 0.50 kg and volume 2.0×10⁻⁴ m³. Density is…',['250 kg m⁻³','1000 kg m⁻³','2500 kg m⁻³','10000 kg m⁻³'],2,'Use ρ=m/V.','0.50/(2×10⁻⁴)=2500 kg m⁻³.'],
+['3.4.2.1','Which statement best distinguishes elastic limit from limit of proportionality?',['They are always identical by definition','one concerns permanent deformation; the other concerns linear F–extension behaviour','elastic limit is a density','limit of proportionality is fracture'],1,'Think return-to-original-shape versus straight-line proportionality.','The elastic limit concerns recoverability; the limit of proportionality concerns proportional F–extension behaviour.'],
+['3.4.2.2','Young modulus is obtained from the initial linear stress–strain graph using…',['area','gradient','x-intercept','maximum strain'],1,'E=stress/strain.','Young modulus is the gradient of the initial linear region.']
 ];
 let qi=0,score=0,streak=0;
 function renderQuiz(){
@@ -976,6 +1173,7 @@ function renderQuiz(){
  $$('[data-choice]').forEach(b=>b.addEventListener('click',()=>{
   const chosen=Number(b.dataset.choice);$$('[data-choice]').forEach(x=>x.disabled=true);b.classList.add(chosen===q[3]?'correct':'wrong');$$('[data-choice]')[q[3]].classList.add('correct');
   if(chosen===q[3]){score++;streak++;}else streak=0;$('#quizScore').textContent=score;$('#quizStreak').textContent=streak;
+  recordMastery(q[0],chosen===q[3]);
   const fb=$('#quizFeedback');fb.className='feedback '+(chosen===q[3]?'good':'bad');fb.textContent=(chosen===q[3]?'Correct. ':'Not quite. ')+q[5];$('#nextQuestion').classList.remove('hidden');
  }));
 }
@@ -999,8 +1197,28 @@ const spec = [
 ];
 function renderSpec(){
  const host=$('#specGrid'); if(!host)return;
- host.innerHTML=spec.map(s=>'<article class="spec-card"><div class="status"><span class="eyebrow">'+s[0]+'</span><span class="status-dot '+(completed.has(s[3])?'done':'')+'"></span></div><h3>'+s[1]+'</h3><p>'+s[2]+'</p><button class="text-button" data-spec-lesson="'+s[3]+'">Open lesson</button></article>').join('');
+ host.innerHTML=spec.map(s=>'<article class="spec-card"><div class="status"><span class="eyebrow">'+s[0]+'</span><span class="status-dot '+(completed.has(s[3])?'done':'')+'"></span></div><h3>'+s[1]+'</h3><p>'+s[2]+'</p><span class="mastery-chip">'+(masteryPct(s[0])===null?'No mastery data yet':'Tracked mastery: '+masteryPct(s[0])+'%')+'</span><button class="text-button" data-spec-lesson="'+s[3]+'">Open lesson</button></article>').join('');
  $$('[data-spec-lesson]').forEach(b=>b.addEventListener('click',()=>{const i=lessons.findIndex(l=>l.id===b.dataset.specLesson);if(i>=0){activeLesson=i;renderCourseList();renderLesson();openView('course');}}));
+}
+
+function regression(points){
+ if(points.length<2)return null;
+ const n=points.length,sx=points.reduce((a,p)=>a+p.x,0),sy=points.reduce((a,p)=>a+p.y,0),sxx=points.reduce((a,p)=>a+p.x*p.x,0),sxy=points.reduce((a,p)=>a+p.x*p.y,0);
+ const den=n*sxx-sx*sx;if(Math.abs(den)<1e-15)return null;
+ const m=(n*sxy-sx*sy)/den,b=(sy-m*sx)/n;return {m,b};
+}
+function drawPracticalGraph(id,points,xLabel,yLabel){
+ const canvas=document.getElementById(id);if(!canvas)return;
+ const rect=canvas.getBoundingClientRect(),W=Math.max(320,rect.width||600),H=260,dpr=Math.min(2,window.devicePixelRatio||1);
+ canvas.width=W*dpr;canvas.height=H*dpr;const g=canvas.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+ g.fillStyle='#091625';g.fillRect(0,0,W,H);const left=58,right=18,top=18,bottom=42,pw=W-left-right,ph=H-top-bottom;
+ g.strokeStyle='#72859b';g.lineWidth=1.5;g.beginPath();g.moveTo(left,top);g.lineTo(left,H-bottom);g.lineTo(W-right,H-bottom);g.stroke();
+ g.fillStyle='#9fb2c8';g.font='12px system-ui';g.fillText(xLabel,W/2-20,H-12);g.save();g.translate(14,H/2+20);g.rotate(-Math.PI/2);g.fillText(yLabel,0,0);g.restore();
+ if(!points.length){g.fillText('Collect readings to build the graph.',left+20,top+40);return;}
+ const maxX=Math.max(...points.map(p=>p.x),1e-9)*1.12,maxY=Math.max(...points.map(p=>p.y),1e-9)*1.12;
+ const px=x=>left+(x/maxX)*pw,py=y=>H-bottom-(y/maxY)*ph;
+ g.fillStyle='#ffd56a';points.forEach(p=>{g.beginPath();g.arc(px(p.x),py(p.y),5,0,Math.PI*2);g.fill();});
+ const fit=regression(points);if(fit){g.strokeStyle='#67c7ff';g.lineWidth=2;g.beginPath();g.moveTo(px(0),py(Math.max(0,fit.b)));g.lineTo(px(maxX),py(fit.m*maxX+fit.b));g.stroke();}
 }
 
 let gData=[],yData=[];
@@ -1012,11 +1230,12 @@ function updatePracticalControls(){
 }
 ['dropHeight','loadMass','wireDiameter'].forEach(id=>$('#'+id).addEventListener('input',updatePracticalControls));
 $$('[data-practical]').forEach(b=>b.addEventListener('click',()=>{
- const g=b.dataset.practical==='g';$('#practicalG').classList.toggle('hidden',!g);$('#practicalYoung').classList.toggle('hidden',g);$$('[data-practical]').forEach(x=>x.classList.toggle('primary',x===b));
+ const g=b.dataset.practical==='g';$('#practicalG').classList.toggle('hidden',!g);$('#practicalYoung').classList.toggle('hidden',g);$('[data-practical]').forEach(x=>x.classList.toggle('primary',x===b));requestAnimationFrame(()=>g?renderG():renderY());
 }));
 function renderG(){
  $('#gRows').innerHTML=gData.map(r=>'<tr><td>'+r.h.toFixed(2)+'</td><td>'+r.t.toFixed(3)+'</td><td>'+r.t2.toFixed(4)+'</td><td>'+r.g.toFixed(2)+'</td></tr>').join('');
- if(gData.length){const mean=gData.reduce((a,b)=>a+b.g,0)/gData.length;$('#gSummary').textContent='Mean g = '+mean.toFixed(2)+' m s⁻² from '+gData.length+' reading'+(gData.length===1?'':'s')+'. Compare with 9.81 m s⁻² and discuss uncertainty.';}else $('#gSummary').textContent='Collect at least three readings.';
+ drawPracticalGraph('gGraph',gData.map(r=>({x:r.t2,y:r.h})),'t² / s²','h / m');
+ if(gData.length){const mean=gData.reduce((a,b)=>a+b.g,0)/gData.length,fit=regression(gData.map(r=>({x:r.t2,y:r.h}))),graphG=fit?2*fit.m:null;$('#gSummary').textContent='Mean g = '+mean.toFixed(2)+' m s⁻²'+(graphG!==null?' | best-fit graph g = '+graphG.toFixed(2)+' m s⁻²':'')+'. Compare with 9.81 m s⁻² and evaluate scatter, intercept and uncertainty.';}else $('#gSummary').textContent='Collect at least three readings.';
 }
 $('#takeGReading').addEventListener('click',()=>{
  const h=Number($('#dropHeight').value)/100,ideal=Math.sqrt(2*h/9.81),noise=(Math.random()-.5)*.012,t=Math.max(.05,ideal+noise),g=2*h/(t*t);gData.push({h,t,t2:t*t,g});renderG();
@@ -1026,7 +1245,8 @@ $('#clearGData').addEventListener('click',()=>{gData=[];renderG();});
 
 function renderY(){
  $('#yRows').innerHTML=yData.map(r=>'<tr><td>'+r.F.toFixed(1)+'</td><td>'+r.extmm.toFixed(3)+'</td><td>'+r.stress.toExponential(2)+'</td><td>'+r.strain.toExponential(2)+'</td><td>'+r.E.toExponential(2)+'</td></tr>').join('');
- if(yData.length){const mean=yData.reduce((a,b)=>a+b.E,0)/yData.length;$('#ySummary').textContent='Mean E = '+mean.toExponential(3)+' Pa from '+yData.length+' reading'+(yData.length===1?'':'s')+'. Check consistency and identify the largest uncertainty source.';}else $('#ySummary').textContent='Collect at least three readings.';
+ drawPracticalGraph('yGraph',yData.map(r=>({x:r.strain,y:r.stress})),'strain','stress / Pa');
+ if(yData.length){const mean=yData.reduce((a,b)=>a+b.E,0)/yData.length,fit=regression(yData.map(r=>({x:r.strain,y:r.stress}))),graphE=fit?fit.m:null;$('#ySummary').textContent='Mean E = '+mean.toExponential(3)+' Pa'+(graphE!==null?' | stress–strain gradient E = '+graphE.toExponential(3)+' Pa':'')+'. Check linearity, consistency and the effect of diameter uncertainty.';}else $('#ySummary').textContent='Collect at least three readings.';
 }
 $('#takeYReading').addEventListener('click',()=>{
  const m=Number($('#loadMass').value),d=Number($('#wireDiameter').value)*1e-3,L=1.5,F=m*9.81,A=Math.PI*d*d/4,trueE=2.0e11,ideal=F*L/(A*trueE),noise=1+(Math.random()-.5)*.04,ext=ideal*noise,stress=F/A,strain=ext/L,E=stress/strain;
@@ -1034,6 +1254,6 @@ $('#takeYReading').addEventListener('click',()=>{
 });
 $('#clearYData').addEventListener('click',()=>{yData=[];renderY();});
 
-renderCourseList();renderLesson();saveProgress();renderSim();renderFormula();renderQuiz();renderSpec();updatePracticalControls();renderG();renderY();
+renderCourseList();renderLesson();saveProgress();renderSim();renderFormula();renderQuiz();renderSpec();renderMasteryPanel();updatePracticalControls();renderG();renderY();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 })();
