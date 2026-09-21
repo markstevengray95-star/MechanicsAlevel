@@ -1774,9 +1774,24 @@ const spec = [
 ['3.4.2.2','Young modulus','Stress–strain gradient and Young modulus.','young'],
 ['RP4','Determination of Young modulus','Simple experimental method and uncertainty/evaluation.','rp4']
 ];
+const specDetails = {
+ '3.4.1.1':['scalar and vector nature with paired examples','vector addition by calculation and scale drawing','resolution into perpendicular components','inclined-plane force components','closed-triangle method','equilibrium for two or three coplanar forces','equilibrium at rest or constant velocity'],
+ '3.4.1.2':['moment = force × perpendicular distance','couples and couple moment','principle of moments','centre of mass','centre of mass of a uniform regular solid'],
+ '3.4.1.3':['displacement, speed, velocity and acceleration','average and instantaneous quantities','uniform and non-uniform motion graphs','v–t area = displacement','a–t area = change in velocity','s–t gradient = velocity','v–t gradient = acceleration','bouncing-ball graph interpretation','all four constant-acceleration equations','acceleration due to gravity'],
+ 'RP3':['free-fall determination of g','repeated readings and range of heights','random and systematic errors','h against t² linearisation','best-fit gradient and g=2×gradient','evaluation and uncertainty'],
+ '3.4.1.4':['independent horizontal and vertical projectile motion','uniform-gravity SUVAT problems','qualitative friction','lift and drag','terminal speed','air resistance increasing with speed','drag effect on projectile trajectory','factors affecting vehicle maximum speed'],
+ '3.4.1.5':['Newton’s first law','Newton’s second law for constant mass','Newton’s third law','resultant force calculations','free-body diagrams','experimental verification of Newton II'],
+ '3.4.1.6':['p=mv','one-dimensional momentum conservation','force as rate of change of momentum','impulse = change in momentum','force–time graph area','variable force with time','impact force and contact time','elastic and inelastic collisions','explosions','transport-safety context'],
+ '3.4.1.7':['W=Fs cosθ','kinetic energy','gravitational potential energy','power as energy-transfer rate','P=Fv','variable force calculations','force–displacement graph area','efficiency as fraction/percentage','motor-lifting efficiency investigation and errors'],
+ '3.4.1.8':['conservation of energy','GPE–KE transfers','work against resistive forces','quantitative and qualitative energy balances','physical estimation'],
+ '3.4.2.1':['density','Hooke’s law','spring constant/stiffness','limit of proportionality and elastic limit','tensile stress','tensile strain','elastic strain energy','breaking stress','plastic behaviour','fracture and brittle behaviour','force–extension interpretation','spring energy to kinetic/GPE','simple stress–strain curves','analogue/digital measurement ideas','volume/density estimation'],
+ '3.4.2.2':['Young modulus definition','Young modulus from stress–strain gradient','simple measurement method','wire geometry and area'],
+ 'RP4':['Young modulus practical method','wire length and diameter measurements','force and extension data','stress and strain processing','best-fit stress–strain gradient','diameter/area uncertainty','random/systematic evaluation','remain in linear elastic region']
+};
+
 function renderSpec(){
  const host=$('#specGrid'); if(!host)return;
- host.innerHTML=spec.map(s=>'<article class="spec-card"><div class="status"><span class="eyebrow">'+s[0]+'</span><span class="status-dot '+(completed.has(s[3])?'done':'')+'"></span></div><h3>'+s[1]+'</h3><p>'+s[2]+'</p><span class="mastery-chip">'+(masteryPct(s[0])===null?'No mastery data yet':'Tracked mastery: '+masteryPct(s[0])+'%')+'</span><button class="text-button" data-spec-lesson="'+s[3]+'">Open lesson</button></article>').join('');
+ host.innerHTML=spec.map(s=>'<article class="spec-card"><div class="status"><span class="eyebrow">'+s[0]+'</span><span class="status-dot '+(completed.has(s[3])?'done':'')+'"></span></div><h3>'+s[1]+'</h3><p>'+s[2]+'</p><details class="spec-detail"><summary>Show full coverage</summary><ul>'+(specDetails[s[0]]||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul></details><span class="mastery-chip">'+(masteryPct(s[0])===null?'No mastery data yet':'Tracked mastery: '+masteryPct(s[0])+'%')+'</span><button class="text-button" data-spec-lesson="'+s[3]+'">Open lesson</button></article>').join('');
  $$('[data-spec-lesson]').forEach(b=>b.addEventListener('click',()=>{const i=lessons.findIndex(l=>l.id===b.dataset.specLesson);if(i>=0){activeLesson=i;renderCourseList();renderLesson();openView('course');}}));
 }
 
