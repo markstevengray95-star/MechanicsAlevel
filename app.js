@@ -737,7 +737,35 @@ function bindLessonPractice(l){
   fb.className='practice-feedback '+(ok?'good':'bad');
   fb.textContent=(ok?'Correct. ':'Not quite. ')+(q.explain||q.answerText||'');
   recordMastery(masteryCodeForLesson(l),ok);
+  setLessonCheckpoint(l.id,'practice'+i,ok);
  }));
+}
+
+
+const lessonReadinessState = JSON.parse(localStorage.getItem('mechanicsLessonReadiness')||'{}');
+function setLessonCheckpoint(lessonId,key,correct){
+ if(!lessonReadinessState[lessonId])lessonReadinessState[lessonId]={};
+ // Readiness tracks best demonstrated result, so a later slip does not erase prior mastery.
+ if(correct)lessonReadinessState[lessonId][key]=true;
+ else if(!(key in lessonReadinessState[lessonId]))lessonReadinessState[lessonId][key]=false;
+ localStorage.setItem('mechanicsLessonReadiness',JSON.stringify(lessonReadinessState));
+ updateLessonReadinessUI(lessonId);
+}
+function lessonReadiness(lessonId){
+ const expected=(lessonPractice[lessonId]||[]).map((_,i)=>'practice'+i).concat(['check']);
+ const state=lessonReadinessState[lessonId]||{};
+ const passed=expected.filter(k=>state[k]===true).length;
+ return {passed,total:expected.length,pct:expected.length?Math.round(100*passed/expected.length):0};
+}
+function readinessHtml(lessonId){
+ const r=lessonReadiness(lessonId),message=r.pct>=100?'Ready to progress: all mastery checks passed.':r.pct>=67?'Nearly there: revisit any missed checkpoint before moving on.':'Build confidence by completing the auto-marked practice and knowledge check.';
+ return '<div class="lesson-readiness" data-readiness-box><div class="readiness-head"><strong>Lesson readiness</strong><span data-readiness-score>'+r.pct+'%</span></div><div class="readiness-bar"><span data-readiness-fill style="width:'+r.pct+'%"></span></div><small data-readiness-message>'+message+'</small></div>';
+}
+function updateLessonReadinessUI(lessonId){
+ const box=$('[data-readiness-box]');if(!box)return;
+ const r=lessonReadiness(lessonId),message=r.pct>=100?'Ready to progress: all mastery checks passed.':r.pct>=67?'Nearly there: revisit any missed checkpoint before moving on.':'Build confidence by completing the auto-marked practice and knowledge check.';
+ const score=$('[data-readiness-score]',box),fill=$('[data-readiness-fill]',box),msg=$('[data-readiness-message]',box);
+ if(score)score.textContent=r.pct+'%';if(fill)fill.style.width=r.pct+'%';if(msg)msg.textContent=message;
 }
 
 const completed = new Set(JSON.parse(localStorage.getItem('mechanicsCompleted') || '[]'));
@@ -785,7 +813,7 @@ function renderLesson(){
  $('#lessonPanel').innerHTML =
   '<span class="eyebrow">'+l.code+'</span><h2>'+l.title+'</h2><p class="lesson-lead">'+l.lead+'</p>'+
   '<div>'+l.formulas.map(f=>'<span class="formula-chip">'+f+'</span>').join('')+'</div>'+
-  '<div class="spec-coverage"><strong>AQA coverage:</strong> This lesson is mapped to '+l.code+' and includes the examinable content, mathematical treatment and practical/graph skills relevant to this part of Mechanics & Materials.</div>'+
+  '<div class="spec-coverage"><strong>AQA coverage:</strong> This lesson is mapped to '+l.code+' and includes the examinable content, mathematical treatment and practical/graph skills relevant to this part of Mechanics & Materials.</div>'+readinessHtml(l.id)+
   '<div class="chunk-strip">'+chunks.map((c,i)=>'<button class="chunk-button '+(i===0?'active':'')+'" data-chunk="'+c[0]+'">'+c[1]+'</button>').join('')+'</div>'+
   lessonChunk('Retrieval starter', 'retrieval', retrieval, true)+
   lessonChunk('Learning objectives','objectives',objectives)+
@@ -820,6 +848,7 @@ function renderLesson(){
   const chosen=Number(b.dataset.mini); b.classList.add(chosen===l.check.answer?'correct':'wrong'); all[l.check.answer].classList.add('correct');
   const fb=$('[data-mini-feedback]',$('#lessonPanel')); fb.classList.remove('hidden'); fb.textContent=(chosen===l.check.answer?'Correct. ':'Not quite. ')+l.check.explain;
   recordMastery(masteryCodeForLesson(l),chosen===l.check.answer);
+  setLessonCheckpoint(l.id,'check',chosen===l.check.answer);
  }));
  $('#completeLesson').addEventListener('click',()=>{
   if(completed.has(l.id)) completed.delete(l.id); else completed.add(l.id);
