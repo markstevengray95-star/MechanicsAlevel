@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "npx serve ."
+    "start": "npx serve .",
+    "test:smoke": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
   }
 }
