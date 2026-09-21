@@ -216,3 +216,13 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .field span em{font-style:normal;color:var(--muted);font-size:.8rem;margin-left:4px}
 @media(max-width:900px){.formula-toolbar{grid-template-columns:1fr 1fr}.formula-toolbar .button{grid-column:1/-1}.formula-teach-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.formula-toolbar{grid-template-columns:1fr}.formula-layout-pro{grid-template-columns:1fr}}
+
+
+/* Guided textbook lesson chunks */
+.guided-textbook{display:grid;gap:14px}
+.textbook-chunk{padding:16px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,rgba(103,199,255,.045),rgba(255,255,255,.018))}
+.textbook-chunk-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.textbook-chunk-head h4{margin:0;font-size:1rem}
+.textbook-chunk p{margin:0;line-height:1.68;color:var(--text)}
+.textbook-do{margin-top:12px;padding:11px 12px;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;background:rgba(103,199,255,.055);line-height:1.5;color:var(--muted)}
+.textbook-do strong{color:var(--accent)}
