@@ -1114,6 +1114,30 @@ const sims = [
  {key:'break',label:'Breaking strain',min:.025,max:.100,step:.005,value:.070}
 ],simple:'The initial straight region is elastic. Beyond yield, a ductile teaching model shows plastic deformation until fracture.',exam:'Young modulus is the gradient of the initial linear stress–strain graph. Strength and stiffness are different properties.',mistake:'A material with a high Young modulus is stiff, but that alone does not tell you its breaking stress.',check:['What does the initial stress–strain gradient represent?','Young modulus.'],investigate:'Compare high and low Young modulus while keeping yield stress similar. Then change breaking strain to model more or less ductile behaviour.'}
 ];
+
+const simTeaching = {
+ vectors:{watch:'Watch how the horizontal and vertical components change while their vector sum remains the original force.',assume:'The components are perpendicular and the diagram is rescaled for clarity.'},
+ equilibrium:{watch:'The third vector closes the triangle exactly, showing that the vector sum is zero.',assume:'Forces act at one point in one plane; rope/pulley masses and friction are ignored.'},
+ moments:{watch:'Moment grows in direct proportion to either force or perpendicular distance.',assume:'The beam is rigid and the displayed force acts perpendicular to it.'},
+ couplecom:{watch:'A pure couple produces rotation with zero resultant force. Moving the centre of mass changes the weight moment about the pivot.',assume:'The body is rigid and weight is represented as a single force through the centre of mass.'},
+ motion:{watch:'Compare the moving object with the velocity–time line: graph gradient is acceleration and signed area is displacement.',assume:'Acceleration is constant throughout each run.'},
+ bounce:{watch:'Free-flight sections have gradient approximately −g; impacts reverse velocity quickly and reduce the next peak speed.',assume:'Air resistance and finite collision duration are simplified; the retained-speed control is a teaching model.'},
+ projectile:{watch:'Separate horizontal and vertical velocity vectors. Adding drag shortens the range and destroys the ideal symmetry.',assume:'Gravity is uniform. The optional drag uses a simplified linear model rather than a full aerodynamic calculation.'},
+ terminal:{watch:'Drag increases with speed, shrinking the resultant force until acceleration tends toward zero.',assume:'Drag is modelled as proportional to speed so the approach to terminal speed is easy to see.'},
+ vehicle:{watch:'The resistive-force curve rises with speed until it crosses the driving-force line: that intersection is the maximum steady speed.',assume:'Driving force is constant and aerodynamic drag is represented by a quadratic speed term plus constant rolling resistance.'},
+ newton:{watch:'The acceleration arrow follows the resultant force, not the driving force alone. Increasing mass reduces acceleration for fixed resultant force.',assume:'Mass is constant and motion is one-dimensional.'},
+ momentum:{watch:'Total signed momentum is unchanged in the sticking collision while kinetic energy falls.',assume:'External impulse during the short collision is negligible.'},
+ impulse:{watch:'The shaded force–time area is impulse. A wider pulse can give the same impulse with a lower peak force.',assume:'The pulse is triangular so its area can be calculated exactly with ½bh.'},
+ collisiontypes:{watch:'Momentum stays the same in all closed-system modes; kinetic energy behaves differently for sticking, elastic and explosion cases.',assume:'Interactions are one-dimensional and external impulse is negligible. The explosion converts stored internal energy into kinetic energy.'},
+ energy:{watch:'GPE decreases while KE grows; the dissipated bar accounts for energy transferred away from mechanical stores.',assume:'The percentage-loss control is a teaching simplification rather than a detailed friction law.'},
+ workgraph:{watch:'The shaded area beneath the force–displacement line is the work done, including when force varies.',assume:'Force changes linearly with displacement between the two chosen endpoints.'},
+ motor:{watch:'Compare electrical input energy with useful GPE. The difference is the dissipated transfer and determines efficiency.',assume:'The lift speed is represented by the chosen height/time; motor start-up transients are ignored.'},
+ density:{watch:'Changing any dimension changes volume. Density only changes if mass and volume change in different proportions.',assume:'The sample is a uniform cuboid.'},
+ springenergy:{watch:'The initial force–extension line is Hookean. Area under the graph is energy transferred; beyond the proportional limit the graph bends.',assume:'The non-linear region is illustrative and is not a material-specific constitutive model.'},
+ elasticity:{watch:'For the same material, longer wires extend more and larger cross-sectional areas extend less. Stress–strain slope is Young modulus.',assume:'The wire stays in the linear elastic region.'},
+ stressstrain:{watch:'Use the initial gradient for stiffness, the plastic region for ductility and the final point for fracture behaviour.',assume:'The post-yield curve is a simplified ductile-material model for teaching graph interpretation.'}
+};
+
 let activeSim=0, simValues={}, running=true, slow=false, simTime=0, last=performance.now();
 const canvas=$('#simCanvas'), ctx=canvas.getContext('2d');
 
@@ -1129,6 +1153,9 @@ function renderSim(){
  renderSimTabs();
  $('#simCode').textContent=s.code; $('#simSpec').textContent='AQA '+s.code; $('#simTitle').textContent=s.title; $('#simSubtitle').textContent=s.subtitle;
  $('#simpleExplain').textContent=s.simple; $('#examExplain').textContent=s.exam; $('#mistakeExplain').textContent=s.mistake;
+ const teaching=simTeaching[s.id]||{watch:'Change one variable at a time and connect the visual change to the governing physics.',assume:'This is a schematic teaching model; sizes and times may be rescaled.'};
+ if($('#watchExplain'))$('#watchExplain').textContent=teaching.watch;
+ if($('#assumptionExplain'))$('#assumptionExplain').textContent=teaching.assume;
  $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div><div class="sim-investigate"><strong>Try this investigation:</strong> '+s.investigate+'</div>';
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
  $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
