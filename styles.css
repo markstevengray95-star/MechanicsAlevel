@@ -226,3 +226,14 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .textbook-chunk p{margin:0;line-height:1.68;color:var(--text)}
 .textbook-do{margin-top:12px;padding:11px 12px;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;background:rgba(103,199,255,.055);line-height:1.5;color:var(--muted)}
 .textbook-do strong{color:var(--accent)}
+
+
+/* Guided simulation activities */
+.sim-activities{display:grid;gap:9px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.sim-activity-title{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sim-activity-title span{font-size:.78rem;color:var(--muted)}
+.sim-activity{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02);cursor:pointer}
+.sim-activity input{margin-top:3px}
+.sim-activity span{display:grid;gap:3px;font-size:.86rem;line-height:1.45;color:var(--muted)}
+.sim-activity span b{color:var(--text)}
+.sim-activity.done{border-color:rgba(99,217,164,.30);background:rgba(99,217,164,.055)}
