@@ -53,6 +53,7 @@
     <button class="nav-button active" data-view="course">Guided course</button>
     <button class="nav-button" data-view="lab">Simulation lab</button>
     <button class="nav-button" data-view="formula">Formula coach</button>
+    <button class="nav-button" data-view="skills">Maths & graph skills</button>
     <button class="nav-button" data-view="practical">Required practicals 3 & 4</button>
     <button class="nav-button" data-view="exam">Exam practice</button>
     <button class="nav-button" data-view="spec">AQA checklist</button>
@@ -123,6 +124,51 @@
       </article>
     </div>
     <div class="formula-cards" id="formulaCards"></div>
+  </section>
+
+
+  <section class="view" id="view-skills">
+    <div class="section-head">
+      <div><span class="eyebrow">AQA maths + data analysis</span><h2>Maths & graph skills studio</h2></div>
+      <p class="muted">Practise gradients, graph areas, uncertainties, linearisation and scientific notation with automatically generated questions.</p>
+    </div>
+    <div class="skills-layout">
+      <aside class="panel pad">
+        <label class="field"><span>Skill focus</span>
+          <select id="skillSelect">
+            <option value="gradient">Gradient from a graph</option>
+            <option value="vtarea">Area under velocity–time graph</option>
+            <option value="impulse">Area under force–time graph</option>
+            <option value="uncertainty">Percentage uncertainty</option>
+            <option value="poweruncertainty">Uncertainty in a squared quantity</option>
+            <option value="linearise">Linearising relationships</option>
+            <option value="sigfig">Significant figures</option>
+          </select>
+        </label>
+        <div class="skill-summary" id="skillSummary"></div>
+        <div class="skill-stat-grid">
+          <div><strong id="skillCorrect">0</strong><span>correct</span></div>
+          <div><strong id="skillAttempts">0</strong><span>attempts</span></div>
+        </div>
+        <button class="button" id="newSkillQuestion">New question</button>
+      </aside>
+      <article class="panel pad">
+        <span class="eyebrow" id="skillCode">MS / PS</span>
+        <h3 id="skillQuestion"></h3>
+        <canvas class="skills-chart" id="skillCanvas" aria-label="Generated physics graph question"></canvas>
+        <div class="practice-entry skill-answer-row">
+          <input type="text" id="skillAnswer" inputmode="decimal" placeholder="Enter your answer">
+          <button class="button primary" id="checkSkillAnswer">Check</button>
+        </div>
+        <div class="feedback hidden" id="skillFeedback"></div>
+        <div class="worked hidden" id="skillWorked"></div>
+      </article>
+    </div>
+    <div class="skill-focus-cards">
+      <article class="panel pad"><span class="eyebrow">MS 3.5–3.7</span><h3>Graphs</h3><p class="muted">Extract gradients and areas, including displacement, acceleration changes, impulse and work.</p></article>
+      <article class="panel pad"><span class="eyebrow">PS 2.3 / 3.3</span><h3>Uncertainty</h3><p class="muted">Interpret scatter, percentage uncertainty, systematic error and the effect of powers such as d².</p></article>
+      <article class="panel pad"><span class="eyebrow">Paper 3</span><h3>Data analysis</h3><p class="muted">Choose suitable plots, identify gradients/intercepts and link them back to the physical constant being measured.</p></article>
+    </div>
   </section>
 
   <section class="view" id="view-practical">
@@ -215,6 +261,14 @@
         <p class="muted" id="nextBestAction">Complete some exam questions to receive a recommended next step.</p>
       </div>
       <div class="mastery-grid" id="masteryGrid"></div>
+    </article>
+    <article class="panel pad structured-panel">
+      <div class="section-head compact">
+        <div><span class="eyebrow">Original AQA-style practice</span><h3>Structured problems</h3></div>
+        <p class="muted">Multi-step questions that combine calculation, explanation and practical/data-analysis skills.</p>
+      </div>
+      <div class="structured-tabs" id="structuredTabs"></div>
+      <div id="structuredProblem"></div>
     </article>
   </section>
 
