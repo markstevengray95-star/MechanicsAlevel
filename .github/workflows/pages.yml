@@ -42,5 +42,11 @@ jobs:
           grep -q "id:'workgraph'" app.js
           grep -q "id:'stressstrain'" app.js
           grep -q "id:'density'" app.js
-          grep -q "<strong>12</strong><span>interactive models</span>" index.html
+          grep -q "id:'equilibrium'" app.js
+          grep -q "mechanicsMastery" app.js
+          grep -q "lessonPractice" app.js
+          grep -q "drawPracticalGraph" app.js
+          grep -q 'id="gGraph"' index.html
+          grep -q 'id="yGraph"' index.html
+          grep -q "<strong>14</strong><span>interactive models</span>" index.html
           grep -q "<strong>18</strong><span>formula tools</span>" index.html
