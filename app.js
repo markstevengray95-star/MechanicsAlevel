@@ -867,7 +867,7 @@ function renderLessonPractice(l){
  return '<div class="practice-stack">'+qs.map((q,i)=>'<div class="practice-question"><p><strong>'+(i+1)+'. '+q.q+'</strong></p><div class="practice-entry"><input '+(q.type==='number'?'type="number" step="any"':'type="text"')+' data-practice-input="'+i+'" placeholder="Enter your answer"><button class="button" data-practice-check="'+i+'">Check answer</button></div><div class="practice-feedback hidden" data-practice-feedback="'+i+'"></div></div>').join('')+'</div>';
 }
 function bindLessonPractice(l){
- $('[data-practice-check]',$('#lessonPanel')).forEach(b=>b.addEventListener('click',()=>{
+ Array.from($('#lessonPanel').querySelectorAll('[data-practice-check]')).forEach(b=>b.addEventListener('click',()=>{
   const i=Number(b.dataset.practiceCheck),q=(lessonPractice[l.id]||[])[i],input=$('[data-practice-input="'+i+'"]',$('#lessonPanel')),fb=$('[data-practice-feedback="'+i+'"]',$('#lessonPanel'));
   let ok=false;
   if(q.type==='number'){
