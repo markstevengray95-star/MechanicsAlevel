@@ -57,7 +57,7 @@ try {
     const min=Number(await first.getAttribute('min'));
     const max=Number(await first.getAttribute('max'));
     const value=String(min+(max-min)*0.6);
-    await first.fill(value);
+    await first.evaluate((el,val)=>{el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));},value);
     assert((await page.locator('#simReadout').innerText()).trim().length>0,'Simulation readout empty: '+title);
   }
 
