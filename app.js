@@ -1873,10 +1873,10 @@ canvas.addEventListener('pointerdown',e=>{
  const p=simPoint(e);
  running=false;$('#playPause').textContent='Play';$('#simState').textContent='Direct control';
  simPointerActive=true;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
- canvas.classList.add('dragging');canvas.setPointerCapture?.(e.pointerId);handleSimPointer(e);
+ canvas.classList.add('dragging');try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}handleSimPointer(e);
 });
 canvas.addEventListener('pointermove',handleSimPointer);
-canvas.addEventListener('pointerup',e=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');canvas.releasePointerCapture?.(e.pointerId);});
+canvas.addEventListener('pointerup',e=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){}});
 canvas.addEventListener('pointercancel',()=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');});
 
 function renderSim(){
