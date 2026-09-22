@@ -124,8 +124,8 @@ try {
   await page.waitForTimeout(40);
   assert((await page.locator('#simPredictionPrompt').innerText()).trim().length>20,'Prediction prompt missing');
   assert(await page.locator('#investigationSteps li').count()>=3,'Guided investigation steps missing');
-  assert((await page.locator('#scenarioStory').innerText()).trim().length>20,'Scenario story missing');
-  assert((await page.locator('#scenarioGoal').innerText()).trim().length>15,'Scenario goal missing');
+  assert((await page.locator('#scenarioStory').textContent()).trim().length>20,'Scenario story missing');
+  assert((await page.locator('#scenarioGoal').textContent()).trim().length>15,'Scenario goal missing');
 
   const linkedPixels=await page.locator('#linkedSimCanvas').evaluate(el=>{
     const d=el.getContext('2d').getImageData(0,0,el.width,el.height).data;let n=0;
