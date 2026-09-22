@@ -1774,6 +1774,7 @@ function renderSimData(){
  const id=sims[activeSim].id,rows=simDataRecords[id]||[];
  $('#simDataRows').innerHTML=rows.length?rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r.variables+'</td><td>'+r.results+'</td></tr>').join(''):'<tr><td colspan="3" class="muted">No trials recorded yet. Change a variable, make a prediction, then record the result.</td></tr>';
 }
+let simAuxTick=0;
 function updateSimEnhancements(){
  const id=sims[activeSim].id,profile=simEnhancements[id]||{},metrics=getSimMetrics(id,simValues);
  $('#simMetrics').innerHTML=simDisplay.live?metrics.map(x=>'<div class="sim-metric"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join(''):'';
@@ -1782,6 +1783,8 @@ function updateSimEnhancements(){
  localStorage.setItem('mechanicsSimChallenges',JSON.stringify(simChallengeProgress));
  $('#simChallengeState').textContent=done?'Completed':(simChallengeProgress[id]?'Previously completed':'In progress');
  $('#simChallengeState').classList.toggle('success',done);
+ updateScenarioState();updateTimelineUI();updateMeasureReadout();
+ if((simAuxTick++%8)===0)drawLinkedView();
 }
 function renderSimEnhancements(){
  const id=sims[activeSim].id,profile=simEnhancements[id]||{};
@@ -1965,7 +1968,7 @@ const simCanvasHints={
 function setSimControl(key,value,{resetTime=true}={}){
  const s=sims[activeSim],control=s.controls.find(x=>x.key===key);
  if(!control)return;
- const v=clamp(Number(value),Number(control.min),Number(control.max));
+ const bounds=simBounds(control),v=clamp(Number(value),bounds.min,bounds.max);
  const step=Number(control.step)||0;
  const snapped=step?Math.round(v/step)*step:v;
  simValues[key]=Number(snapped.toFixed(8));
@@ -2194,9 +2197,12 @@ function renderSim(){
  $('#simCheck').innerHTML='<p>'+s.check[0]+'</p><button class="text-button" id="revealSimCheck">Show answer</button><div class="answer-reveal">'+s.check[1]+'</div><div class="sim-investigate"><strong>Try this investigation:</strong> '+s.investigate+'</div>'+simActivitiesHtml(s.id);
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
  bindSimActivities();
- $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
+ $('#simControls').innerHTML=s.controls.map(c=>{const b=simBounds(c);return '<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+b.min+'" max="'+b.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>'}).join('');
  $$('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();drawSimSafely();}));
  renderSimEnhancements();
+ renderSimPedagogy();
+ updateTimelineUI();
+ updateMeasureReadout();
  updateReadout();
 }
 
@@ -2424,11 +2430,12 @@ requestAnimationFrame(animate);
 $('#playPause').addEventListener('click',()=>{running=!running;$('#playPause').textContent=running?'Pause':'Play';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
 $('#slowMotion').addEventListener('click',()=>{slow=!slow;$('#slowMotion').textContent=slow?'Normal speed':'Slow motion';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
 $('#stepSim').addEventListener('click',()=>{running=false;$('#playPause').textContent='Play';simTime+=.25;$('#simState').textContent='Stepped to '+fmt(simTime)+' s';updateReadout();drawSimSafely();});
-$('#recordSim').addEventListener('click',()=>{const id=sims[activeSim].id;if(!simDataRecords[id])simDataRecords[id]=[];simDataRecords[id].push({variables:simVariablesText(),results:simResultsText()});if(simDataRecords[id].length>20)simDataRecords[id].shift();renderSimData();});
-$('#clearSimData').addEventListener('click',()=>{simDataRecords[sims[activeSim].id]=[];renderSimData();});
+$('#recordSim').addEventListener('click',()=>{const id=sims[activeSim].id;if(!simDataRecords[id])simDataRecords[id]=[];simDataRecords[id].push({variables:simVariablesText(),results:simResultsText(),raw:{...simValues},time:simTime,metrics:getSimMetrics(id,simValues,simTime)});if(simDataRecords[id].length>20)simDataRecords[id].shift();renderSimData();renderInvestigationGraph();if(investigationRunning)$('#investigationFeedback').textContent='Trial '+simDataRecords[id].length+' recorded. Keep the control variables fixed while changing '+simPedagogy[id].investigation.xLabel+'.';});
+$('#clearSimData').addEventListener('click',()=>{simDataRecords[sims[activeSim].id]=[];renderSimData();renderInvestigationGraph();});
 $('#showGrid').addEventListener('change',e=>{simDisplay.grid=e.target.checked;drawSimSafely();});
 $('#showVectors').addEventListener('change',e=>{simDisplay.vectors=e.target.checked;drawSimSafely();});
 $('#showLiveInfo').addEventListener('change',e=>{simDisplay.live=e.target.checked;updateSimEnhancements();});
+$('#showTrails').addEventListener('change',e=>{simDisplay.trails=e.target.checked;drawSimSafely();});
 $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
 const formulas = [
