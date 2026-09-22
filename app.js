@@ -1232,7 +1232,7 @@ const sims = [
  {key:'drop',label:'Initial drop height / m',min:.5,max:5,step:.25,value:2.5},
  {key:'retain',label:'Speed retained after bounce / %',min:30,max:95,step:5,value:70}
 ],simple:'Between impacts the ball accelerates downward at approximately g. At each collision the velocity reverses rapidly and usually has a smaller magnitude.',exam:'On a velocity–time graph, free-flight sections have constant gradient −g if upward is positive. The collision gives a rapid velocity change and large impulse.',mistake:'Velocity can change sign instantly in an idealised collision model; acceleration between impacts is still due to gravity.',check:['What is the gradient of the free-flight sections of a v–t graph if upward is positive?','Approximately −g.'],investigate:'Reduce the retained-speed percentage and observe how bounce heights and successive velocity peaks change.'},
-{id:'projectile',code:'3.4.1.4',title:'Projectile cannon lab + drag',subtitle:'Aim and fire a virtual cannon from an adjustable platform. Measure angle, launch height, flight time, range, maximum height and impact conditions, then connect the motion to SUVAT.',controls:[
+{id:'projectile',code:'3.4.1.4',title:'Projectile launcher lab + drag',subtitle:'Aim and launch a virtual projectile from an adjustable laboratory platform. Measure angle, launch height, flight time, range, maximum height and impact conditions, then connect the motion to SUVAT.',controls:[
  {key:'speed',label:'Launch speed / m s⁻¹',min:5,max:40,step:1,value:20},
  {key:'angle',label:'Launch angle / °',min:0,max:85,step:1,value:45},
  {key:'height',label:'Launch height above ground / m',min:0,max:30,step:.5,value:0},
@@ -2028,7 +2028,7 @@ const simCanvasHints={
  couplecom:'Drag the yellow centre-of-mass marker, or drag a couple force to alter separation and force.',
  motion:'Drag the start or end of the velocity–time line to change initial velocity or acceleration. Drag the car/graph horizontally to scrub time.',
  bounce:'Drag the ball up/down to set drop height. Drag on the graph to change rebound percentage or scrub through the bounce.',
- projectile:'Drag the gold height handle up/down to raise the cannon platform. Drag the launch-vector tip to set angle and speed, then press Fire projectile. Use the ruler, angle tool, stopwatch and calculation panel to measure the motion.',
+ projectile:'Drag the gold height handle up/down to raise the launch platform. Drag the launch-vector tip to set angle and speed, then press Launch projectile. Use the ruler, angle tool, stopwatch and calculation panel to measure the motion.',
  terminal:'Drag the falling object vertically to scrub time; drag the terminal-speed line on the graph to change drag coefficient.',
  vehicle:'Drag the driving-force line vertically, or drag the graph intersection horizontally to target a different maximum speed.',
  newton:'Drag the green driving-force arrow or red resistance arrow horizontally to change the forces.',
@@ -2317,7 +2317,7 @@ function renderSim(){
  updateReadout();
  if(s.id==='projectile'){
   running=false;
-  $('#playPause').textContent='Fire projectile';
+  $('#playPause').textContent='Launch projectile';
   $('#simState').textContent='Ready to launch';
  }else{
   $('#playPause').textContent=running?'Pause':'Play';
@@ -2562,15 +2562,17 @@ function drawSim(){
   ctx.fillStyle='#ffd56a';ctx.fillText('height '+fmt(v.height)+' m',L.heightHandleX+10,Math.max(18,L.launchY-10));
   dragHandle(L.heightHandleX,L.launchY,'drag height');
 
-  // Stylised cannon: wheels/carriage plus a rotatable barrel ending at the launch point.
-  const backX=L.launchX-50*Math.cos(r),backY=L.launchY+50*Math.sin(r);
-  ctx.save();ctx.strokeStyle='#75879a';ctx.lineWidth=15;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(backX,backY);ctx.lineTo(L.launchX,L.launchY);ctx.stroke();
-  ctx.strokeStyle='#b3c2d0';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(backX-4*Math.cos(r),backY+4*Math.sin(r));ctx.lineTo(L.launchX+3*Math.cos(r),L.launchY-3*Math.sin(r));ctx.stroke();ctx.restore();
-  const carriageY=Math.min(base-9,L.launchY+30);
-  ctx.fillStyle='#65798d';ctx.fillRect(L.launchX-62,carriageY-16,58,18);
-  ctx.fillStyle='#253646';for(const wx of [L.launchX-50,L.launchX-16]){ctx.beginPath();ctx.arc(wx,carriageY+5,12,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#9fb2c7';ctx.lineWidth=2;ctx.stroke();}
-  ctx.fillStyle='#a8e4ff';ctx.beginPath();ctx.arc(L.launchX,L.launchY,8,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#dceaff';ctx.fillText('virtual cannon',Math.max(76,L.launchX-58),Math.max(18,L.launchY-42));
+  // Neutral laboratory launcher: adjustable stand, pivot and launch tube.
+  const standX=L.launchX-44,standY=Math.min(base-18,L.launchY+34);
+  ctx.strokeStyle='#71869a';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(standX,standY);ctx.lineTo(standX,L.launchY+5);ctx.stroke();
+  ctx.fillStyle='#64798d';ctx.fillRect(standX-18,standY,40,8);
+  ctx.fillStyle='#9fb2c7';ctx.beginPath();ctx.arc(standX,L.launchY+5,9,0,Math.PI*2);ctx.fill();
+  ctx.save();ctx.translate(standX,L.launchY+5);ctx.rotate(-r);
+  ctx.fillStyle='#67c7ff';ctx.fillRect(0,-7,52,14);
+  ctx.fillStyle='#17314a';ctx.fillRect(36,-3,20,6);
+  ctx.restore();
+  ctx.fillStyle='#a8e4ff';ctx.beginPath();ctx.arc(L.launchX,L.launchY,7,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#dceaff';ctx.fillText('virtual lab launcher',Math.max(76,L.launchX-58),Math.max(18,L.launchY-42));
 
   // Built-in protractor with 15 degree marks.
   const pr=48;ctx.strokeStyle='rgba(168,228,255,.62)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(L.launchX,L.launchY,pr,-Math.PI/2,0);ctx.stroke();
@@ -2699,7 +2701,7 @@ function animate(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;if(running)simTime+=dt*(slow?.3:1);
  if(running&&sims[activeSim].id==='projectile'){
   const T=projectileStats(simValues).time;
-  if(simTime>=T){simTime=T;running=false;$('#playPause').textContent='Fire again';$('#simState').textContent='Landed — inspect the measurements';}
+  if(simTime>=T){simTime=T;running=false;$('#playPause').textContent='Launch again';$('#simState').textContent='Landed — inspect the measurements';}
  }
  if(!simRenderError)drawSimSafely();
  updateReadout();
@@ -2718,7 +2720,7 @@ $('#playPause').addEventListener('click',()=>{
  running=!running;$('#playPause').textContent=running?'Pause':'Play';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';
 });
 $('#slowMotion').addEventListener('click',()=>{slow=!slow;$('#slowMotion').textContent=slow?'Normal speed':'Slow motion';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
-$('#stepSim').addEventListener('click',()=>{running=false;const id=sims[activeSim].id;const T=id==='projectile'?projectileStats(simValues).time:Infinity;simTime=Math.min(simTime+.25,T);$('#playPause').textContent=id==='projectile'?(simTime>=T?'Fire again':'Resume flight'):'Play';$('#simState').textContent='Stepped to '+fmt(simTime)+' s';updateReadout();drawSimSafely();});
+$('#stepSim').addEventListener('click',()=>{running=false;const id=sims[activeSim].id;const T=id==='projectile'?projectileStats(simValues).time:Infinity;simTime=Math.min(simTime+.25,T);$('#playPause').textContent=id==='projectile'?(simTime>=T?'Launch again':'Resume flight'):'Play';$('#simState').textContent='Stepped to '+fmt(simTime)+' s';updateReadout();drawSimSafely();});
 $('#recordSim').addEventListener('click',()=>{const id=sims[activeSim].id;if(!simDataRecords[id])simDataRecords[id]=[];simDataRecords[id].push({variables:simVariablesText(),results:simResultsText(),raw:{...simValues},time:simTime,metrics:getSimMetrics(id,simValues,simTime)});if(simDataRecords[id].length>20)simDataRecords[id].shift();renderSimData();renderInvestigationGraph();if(investigationRunning)$('#investigationFeedback').textContent='Trial '+simDataRecords[id].length+' recorded. Keep the control variables fixed while changing '+simPedagogy[id].investigation.xLabel+'.';});
 $('#clearSimData').addEventListener('click',()=>{simDataRecords[sims[activeSim].id]=[];renderSimData();renderInvestigationGraph();});
 $('#showGrid').addEventListener('change',e=>{simDisplay.grid=e.target.checked;drawSimSafely();});
