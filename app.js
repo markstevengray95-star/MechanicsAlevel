@@ -1869,10 +1869,15 @@ function handleSimPointer(event){
   event.preventDefault();
  }
 }
-canvas.addEventListener('pointerdown',e=>{const p=simPoint(e);simPointerActive=true;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);canvas.setPointerCapture?.(e.pointerId);handleSimPointer(e);});
+canvas.addEventListener('pointerdown',e=>{
+ const p=simPoint(e);
+ running=false;$('#playPause').textContent='Play';$('#simState').textContent='Direct control';
+ simPointerActive=true;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
+ canvas.classList.add('dragging');canvas.setPointerCapture?.(e.pointerId);handleSimPointer(e);
+});
 canvas.addEventListener('pointermove',handleSimPointer);
-canvas.addEventListener('pointerup',e=>{simPointerActive=false;simDragTarget=null;canvas.releasePointerCapture?.(e.pointerId);});
-canvas.addEventListener('pointercancel',()=>{simPointerActive=false;simDragTarget=null;});
+canvas.addEventListener('pointerup',e=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');canvas.releasePointerCapture?.(e.pointerId);});
+canvas.addEventListener('pointercancel',()=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');});
 
 function renderSim(){
  const s=sims[activeSim]; simValues={}; s.controls.forEach(c=>simValues[c.key]=c.value); simTime=0;
