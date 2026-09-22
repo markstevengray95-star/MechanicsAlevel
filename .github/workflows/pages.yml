@@ -88,6 +88,21 @@ jobs:
           }
           NODE
 
+      - name: Check virtual experiment studio
+        run: |
+          grep -q "const simPedagogy" app.js
+          grep -q "simPredictions" app.js
+          grep -q "simMeasureTool" app.js
+          grep -q "drawLinkedView" app.js
+          grep -q "checkFbd" app.js
+          grep -q "analyseInvestigation" app.js
+          grep -q "simScenarioProgress" app.js
+          grep -q "simSandbox" app.js
+          grep -q 'id="simTimeline"' index.html
+          grep -q 'id="linkedSimCanvas"' index.html
+          grep -q 'id="fbdCanvas"' index.html
+          grep -q 'id="investigationCanvas"' index.html
+          grep -q 'id="sandboxToggle"' index.html
       - name: Install browser test dependencies
         run: |
           npm install --no-audit --no-fund
