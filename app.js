@@ -1692,6 +1692,11 @@ function setSimControl(key,value,{resetTime=true}={}){
  if(out)out.textContent=simValues[key];
  if(resetTime)simTime=0;
 }
+function setSimScrub(duration,fraction){
+ simTime=duration*clamp(Number(fraction),0,.9999);
+ running=false;$('#playPause').textContent='Play';
+}
+
 let simPointerActive=false,simDragTarget=null,simInputSource=null;
 
 function simPoint(event){
@@ -1777,7 +1782,7 @@ function handleSimPointer(event){
  }
  if(id==='motion'){
   const gx=65,gy=h*.55,gw=w-120,gh=h*.34;
-  if(target==='time'){simTime=8*clamp((x-30)/(w-60),0,1);running=false;$('#playPause').textContent='Play';}
+  if(target==='time'){setSimScrub(8,(x-30)/(w-60));}
   else if(target==='u')setSimControl('u',30*(gy+gh*.5-y)/Math.max(gh,1),{resetTime:false});
   else{
    const tt=Math.max(.5,8*clamp((x-gx)/Math.max(gw,1),.08,1)),vAt=30*(gy+gh*.5-y)/Math.max(gh,1);
@@ -1787,7 +1792,7 @@ function handleSimPointer(event){
  if(id==='bounce'){
   if(target==='drop')setSimControl('drop',.5+4.5*(1-clamp((y-40)/(h*.45),0,1)),{resetTime:false});
   else if(target==='retain')setSimControl('retain',30+65*(1-clamp((y-55)/(h-110),0,1)),{resetTime:false});
-  else{simTime=6*clamp(x/w,0,1);running=false;$('#playPause').textContent='Play';}
+  else{setSimScrub(6,x/w);}
   changed=true;
  }
  if(id==='projectile'){
@@ -1796,7 +1801,7 @@ function handleSimPointer(event){
   setSimControl('angle',angle,{resetTime:false});setSimControl('speed',5+30*frac,{resetTime:false});changed=true;
  }
  if(id==='terminal'){
-  if(target==='time'){simTime=8*clamp((y-70)/Math.max(h-150,1),0,1);running=false;$('#playPause').textContent='Play';}
+  if(target==='time'){setSimScrub(8,(y-70)/Math.max(h-150,1));}
   else{
    const gy=55,gh=h-110,frac=1-clamp((y-gy)/Math.max(gh,1),0,1),vt=Math.max(.2,frac*(simValues.mass*9.81/.5)*1.1);
    setSimControl('k',simValues.mass*9.81/vt,{resetTime:false});
@@ -1814,7 +1819,7 @@ function handleSimPointer(event){
   setSimControl(target==='drive'?'drive':'resist',target==='drive'?force:Math.min(2500,force),{resetTime:false});changed=true;
  }
  if(id==='momentum'){
-  if(target==='time'){simTime=6*clamp(x/w,0,1);running=false;$('#playPause').textContent='Play';}
+  if(target==='time'){setSimScrub(6,x/w);}
   else{
    const center=target==='v1'?w*.25:w*.75,vel=8*clamp((x-center)/(w*.22),-1,1);
    setSimControl(target,vel,{resetTime:false});
@@ -1826,7 +1831,7 @@ function handleSimPointer(event){
   setSimControl('peak',100+4900*(1-clamp((y-gy)/Math.max(gh,1),0,1)),{resetTime:false});changed=true;
  }
  if(id==='energy'){
-  simTime=6*clamp((x-50)/Math.max(w*.63-50,1),0,1);running=false;$('#playPause').textContent='Play';changed=true;
+  setSimScrub(6,(x-50)/Math.max(w*.63-50,1));changed=true;
  }
  if(id==='workgraph'){
   const gx=70,gy=55,gw=w-130,gh=h-110;
@@ -1844,7 +1849,7 @@ function handleSimPointer(event){
   if(y>=gy&&y<=gy+gh)setSimControl('k',20+480*(1-clamp((y-gy)/Math.max(gh,1),0,1)),{resetTime:false});changed=true;
  }
  if(id==='collisiontypes'){
-  simTime=6*clamp(x/w,0,1);running=false;$('#playPause').textContent='Play';
+  setSimScrub(6,x/w);
   const mode=y<h/3?0:y<2*h/3?1:2;setSimControl('mode',mode,{resetTime:false});changed=true;
  }
  if(id==='density'){
