@@ -1114,9 +1114,13 @@ function openView(name){
  $('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
  if(name==='lab'){
   requestAnimationFrame(()=>{
-   syncSimCanvas();
-   renderSim();
-   drawSimSafely();
+   try{
+    syncSimCanvas();
+    renderSim();
+    drawSimSafely();
+   }catch(error){
+    showSimError(error);
+   }
   });
  }
 }
