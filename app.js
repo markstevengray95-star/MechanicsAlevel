@@ -1256,6 +1256,189 @@ const simTeaching = {
  stressstrain:{watch:'Use the initial gradient for stiffness, the plastic region for ductility and the final point for fracture behaviour.',assume:'The post-yield curve is a simplified ductile-material model for teaching graph interpretation.'}
 };
 
+const simEnhancements = {
+ vectors:{
+  knowledge:['Scalars have magnitude only; vectors also have direction.','Perpendicular components recombine to the original vector.','For an angle from the horizontal: Fₓ=Fcosθ and Fᵧ=Fsinθ.','A complete vector answer includes both magnitude and direction.'],
+  presets:[
+   {label:'45° equal components',values:{mag:60,angle:45}},
+   {label:'Mostly horizontal',values:{mag:80,angle:15}},
+   {label:'Mostly vertical',values:{mag:80,angle:75}}
+  ],
+  challenge:{text:'Make the two perpendicular components equal to within 0.5 N.',check:(v)=>Math.abs(v.mag*Math.cos(v.angle*Math.PI/180)-v.mag*Math.sin(v.angle*Math.PI/180))<=.5}
+ },
+ equilibrium:{
+  knowledge:['Equilibrium means the vector sum of all forces is zero.','An object in equilibrium may be at rest or moving at constant velocity.','Three coplanar forces at a point can be represented by a closed vector triangle.','The third force is equal and opposite to the resultant of the other two.'],
+  presets:[
+   {label:'Near cancellation',values:{f1:60,a1:0,f2:60,a2:180}},
+   {label:'Right-angle forces',values:{f1:50,a1:0,f2:50,a2:90}},
+   {label:'Oblique triangle',values:{f1:70,a1:30,f2:55,a2:140}}
+  ],
+  challenge:{text:'Adjust the first two forces so the balancing third force is below 10 N.',check:(v)=>{const r1=v.a1*Math.PI/180,r2=v.a2*Math.PI/180;return Math.hypot(v.f1*Math.cos(r1)+v.f2*Math.cos(r2),v.f1*Math.sin(r1)+v.f2*Math.sin(r2))<10}}
+ },
+ moments:{
+  knowledge:['Moment = force × perpendicular distance from pivot to line of action.','Moment is measured in N m.','For rotational equilibrium, clockwise moment = anticlockwise moment.','Increasing either force or perpendicular distance increases the turning effect.'],
+  presets:[
+   {label:'36 N m',values:{force:60,distance:.6}},
+   {label:'Large force, short arm',values:{force:120,distance:.3}},
+   {label:'Small force, long arm',values:{force:30,distance:1.2}}
+  ],
+  challenge:{text:'Create a moment of 36 N m to within 0.5 N m.',check:(v)=>Math.abs(v.force*v.distance-36)<=.5}
+ },
+ couplecom:{
+  knowledge:['A couple is two equal, opposite, parallel forces on different lines of action.','A couple has zero resultant force but a non-zero turning effect.','Moment of a couple = one force × perpendicular separation.','Weight can be treated as acting through the centre of mass.'],
+  presets:[
+   {label:'Pure couple 15 N m',values:{force:30,sep:.5,com:0}},
+   {label:'COM right of pivot',values:{force:30,sep:.5,com:.3}},
+   {label:'Wide couple',values:{force:20,sep:.9,com:0}}
+  ],
+  challenge:{text:'Set the centre of mass exactly over the pivot and make the couple moment 20 N m.',check:(v)=>Math.abs(v.com)<.001&&Math.abs(v.force*v.sep-20)<.6}
+ },
+ motion:{
+  knowledge:['Gradient of displacement–time = velocity.','Gradient of velocity–time = acceleration.','Area under velocity–time = displacement.','Area under acceleration–time = change in velocity.'],
+  presets:[
+   {label:'Speeding up',values:{u:4,a:2}},
+   {label:'Constant velocity',values:{u:10,a:0}},
+   {label:'Stop then reverse',values:{u:12,a:-3}}
+  ],
+  challenge:{text:'Choose u and a so the object stops between 3.5 s and 4.5 s.',check:(v)=>v.a<0&&(-v.u/v.a)>=3.5&&(-v.u/v.a)<=4.5}
+ },
+ bounce:{
+  knowledge:['Between bounces, acceleration is approximately constant at g downward.','If upward is positive, free-flight v–t sections have gradient −g.','Impact causes a rapid velocity reversal and a large impulse.','Lower rebound speed gives lower subsequent peak height.'],
+  presets:[
+   {label:'High rebound',values:{drop:3,retain:90}},
+   {label:'Medium rebound',values:{drop:3,retain:70}},
+   {label:'Heavy damping',values:{drop:3,retain:40}}
+  ],
+  challenge:{text:'Make the second peak height less than 1.0 m while starting from at least 2.5 m.',check:(v)=>v.drop>=2.5&&v.drop*Math.pow(v.retain/100,2)<1}
+ },
+ projectile:{
+  knowledge:['Horizontal and vertical motion share the same time but can be analysed independently.','Without drag, horizontal acceleration is zero and vertical acceleration is −g.','At maximum height, vertical velocity is zero but acceleration is still −g.','Air resistance reduces range and destroys ideal trajectory symmetry.'],
+  presets:[
+   {label:'Ideal 45°',values:{speed:20,angle:45,drag:0}},
+   {label:'Low-angle fast',values:{speed:28,angle:25,drag:0}},
+   {label:'With drag',values:{speed:20,angle:45,drag:.12}}
+  ],
+  challenge:{text:'With zero drag, set a launch that has horizontal and vertical initial velocity components equal.',check:(v)=>v.drag===0&&Math.abs(v.speed*Math.cos(v.angle*Math.PI/180)-v.speed*Math.sin(v.angle*Math.PI/180))<.5}
+ },
+ terminal:{
+  knowledge:['Weight is constant while drag increases with speed.','Resultant force decreases as drag approaches weight.','Terminal speed occurs when drag = weight.','At terminal speed acceleration is zero, but the object continues moving.'],
+  presets:[
+   {label:'Light / high drag',values:{mass:.6,k:6}},
+   {label:'Default',values:{mass:1.2,k:3}},
+   {label:'Heavy / low drag',values:{mass:3,k:1.5}}
+  ],
+  challenge:{text:'Adjust mass and drag so terminal speed is between 4.5 and 5.5 m s⁻¹.',check:(v)=>{const vt=v.mass*9.81/v.k;return vt>=4.5&&vt<=5.5}}
+ },
+ vehicle:{
+  knowledge:['Aerodynamic drag increases strongly with speed.','Maximum steady speed occurs where total resistance equals driving force.','At maximum steady speed, resultant force and acceleration are zero.','Increasing drag or rolling resistance reduces maximum speed for the same drive force.'],
+  presets:[
+   {label:'Low drag',values:{drive:3500,drag:2,roll:250,mass:1200}},
+   {label:'High drag',values:{drive:3500,drag:8,roll:350,mass:1200}},
+   {label:'High drive',values:{drive:6500,drag:4,roll:350,mass:1200}}
+  ],
+  challenge:{text:'Tune the vehicle for a maximum steady speed between 25 and 30 m s⁻¹.',check:(v)=>{const vm=Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag));return vm>=25&&vm<=30}}
+ },
+ newton:{
+  knowledge:['Newton I: zero resultant force means constant velocity.','Newton II for constant mass: ΣF=ma.','Newton III pairs act on different interacting objects.','A free-body diagram contains only forces acting on the chosen object.'],
+  presets:[
+   {label:'Balanced forces',values:{drive:1800,resist:1800,mass:1200}},
+   {label:'Forward acceleration',values:{drive:3600,resist:900,mass:1200}},
+   {label:'Large mass',values:{drive:3600,resist:900,mass:2000}}
+  ],
+  challenge:{text:'Create exactly zero acceleration while non-zero forces still act.',check:(v)=>v.drive>0&&v.resist>0&&Math.abs(v.drive-v.resist)<1}
+ },
+ momentum:{
+  knowledge:['Momentum p=mv is a vector, so direction/sign matters.','Total linear momentum is conserved in a closed system.','Sticking collisions are perfectly inelastic.','Momentum can be conserved even when kinetic energy decreases.'],
+  presets:[
+   {label:'Moving hits stationary',values:{m1:1,v1:5,m2:2,v2:0}},
+   {label:'Head-on',values:{m1:1,v1:5,m2:1,v2:-5}},
+   {label:'Unequal masses',values:{m1:3,v1:4,m2:1,v2:-2}}
+  ],
+  challenge:{text:'Make the joined trolleys finish almost at rest (|v| < 0.2 m s⁻¹).',check:(v)=>Math.abs((v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2))<.2}
+ },
+ impulse:{
+  knowledge:['Impulse = change in momentum.','Impulse equals the area under a force–time graph.','For a triangular pulse, J=½FpeakΔt.','For the same Δp, increasing contact time reduces average/peak force.'],
+  presets:[
+   {label:'Short hard impact',values:{peak:4000,time:.04,mass:.8}},
+   {label:'Long softer impact',values:{peak:1000,time:.16,mass:.8}},
+   {label:'Same impulse pair',values:{peak:2000,time:.08,mass:.8}}
+  ],
+  challenge:{text:'Create an impulse between 75 and 85 N s.',check:(v)=>{const J=.5*v.peak*v.time;return J>=75&&J<=85}}
+ },
+ energy:{
+  knowledge:['Energy is conserved overall but can transfer between stores.','Near Earth, ΔGPE=mgΔh.','Kinetic energy = ½mv².','Resistive forces transfer energy into internal stores/surroundings.'],
+  presets:[
+   {label:'Ideal transfer',values:{height:4,mass:2,loss:0}},
+   {label:'Moderate losses',values:{height:4,mass:2,loss:20}},
+   {label:'Large losses',values:{height:4,mass:2,loss:50}}
+  ],
+  challenge:{text:'Set the model so exactly half of the initial GPE remains available for final KE.',check:(v)=>Math.abs(v.loss-50)<.1}
+ },
+ workgraph:{
+  knowledge:['Work done is energy transferred by a force through a displacement.','For variable force, work is area under the force–displacement graph.','A straight-line force change gives a trapezium area.','For constant force parallel to motion, W=Fs.'],
+  presets:[
+   {label:'Constant force',values:{f0:50,f1:50,distance:4}},
+   {label:'Increasing force',values:{f0:20,f1:80,distance:4}},
+   {label:'Decreasing force',values:{f0:100,f1:20,distance:4}}
+  ],
+  challenge:{text:'Create exactly 200 J of work to within 2 J.',check:(v)=>Math.abs(.5*(v.f0+v.f1)*v.distance-200)<=2}
+ },
+ motor:{
+  knowledge:['Useful output energy when lifting is mgh.','Useful output power = mgh/t.','Efficiency = useful output power ÷ input power.','Random and systematic errors should be considered in motor-efficiency investigations.'],
+  presets:[
+   {label:'Efficient setup',values:{mass:20,height:2,time:4,input:300}},
+   {label:'Lower efficiency',values:{mass:10,height:2,time:5,input:650}},
+   {label:'Fast lift',values:{mass:10,height:2,time:2,input:650}}
+  ],
+  challenge:{text:'Tune the motor to an efficiency between 60% and 80% without exceeding 100%.',check:(v)=>{const e=100*(v.mass*9.81*v.height/v.time)/v.input;return e>=60&&e<=80}}
+ },
+ springenergy:{
+  knowledge:['Within the proportional region, F=kΔL.','Spring constant k is stiffness in N m⁻¹.','Area under the F–extension graph is elastic strain energy.','For a Hookean spring, E=½FΔL=½k(ΔL)².'],
+  presets:[
+   {label:'Soft spring',values:{k:80,ext:.12,limit:.18}},
+   {label:'Stiff spring',values:{k:320,ext:.12,limit:.18}},
+   {label:'Beyond proportional limit',values:{k:160,ext:.24,limit:.18}}
+  ],
+  challenge:{text:'Store more than 2 J while remaining inside the proportional region.',check:(v)=>v.ext<=v.limit&&.5*v.k*v.ext*v.ext>2}
+ },
+ collisiontypes:{
+  knowledge:['Momentum is conserved in all closed-system collision/explosion examples.','An ideal elastic collision also conserves total kinetic energy.','A perfectly inelastic collision loses kinetic energy from the moving objects.','An explosion converts internal energy into kinetic energy.'],
+  presets:[
+   {label:'Sticking',values:{m1:1,m2:1.5,speed:4,mode:0}},
+   {label:'Elastic',values:{m1:1,m2:1.5,speed:4,mode:1}},
+   {label:'Explosion',values:{m1:1,m2:1.5,speed:4,mode:2}}
+  ],
+  challenge:{text:'Select the interaction that conserves both total momentum and total kinetic energy.',check:(v)=>Math.round(v.mode)===1}
+ },
+ density:{
+  knowledge:['Density ρ=m/V.','For a cuboid, V=lwh.','Convert g→kg and cm³→m³ for SI density.','Density compares mass per unit volume, not simply “heaviness”.'],
+  presets:[
+   {label:'≈ water',values:{mass:100,length:5,width:4,height:5}},
+   {label:'Dense sample',values:{mass:780,length:5,width:4,height:2}},
+   {label:'Low density',values:{mass:50,length:8,width:5,height:4}}
+  ],
+  challenge:{text:'Create a sample with density between 2600 and 2800 kg m⁻³.',check:(v)=>{const rho=(v.mass/1000)/(v.length*v.width*v.height*1e-6);return rho>=2600&&rho<=2800}}
+ },
+ elasticity:{
+  knowledge:['Tensile stress = F/A.','Tensile strain = ΔL/L.','Young modulus E=stress/strain in the linear elastic region.','Equivalent wire form: E=FL/(AΔL).'],
+  presets:[
+   {label:'Steel-like',values:{force:50,length:1.5,area:.4,young:200}},
+   {label:'Long wire',values:{force:50,length:3,area:.4,young:200}},
+   {label:'Thin wire',values:{force:50,length:1.5,area:.15,young:200}}
+  ],
+  challenge:{text:'Adjust the setup so extension is between 0.8 mm and 1.2 mm.',check:(v)=>{const ext=v.force*v.length/(v.area*1e-6*v.young*1e9);return ext>=.0008&&ext<=.0012}}
+ },
+ stressstrain:{
+  knowledge:['The initial straight-line gradient is Young modulus.','Elastic deformation is recoverable on unloading.','Plastic deformation leaves permanent strain.','Breaking stress/strain, stiffness and ductility describe different material properties.'],
+  presets:[
+   {label:'Stiff material',values:{strain:.01,young:200,yield:300,break:.06}},
+   {label:'More ductile',values:{strain:.04,young:120,yield:220,break:.095}},
+   {label:'Near fracture',values:{strain:.065,young:120,yield:240,break:.07}}
+  ],
+  challenge:{text:'Place the material in the plastic region without fracturing it.',check:(v)=>{const epsY=(v.yield*1e6)/(v.young*1e9);return v.strain>epsY&&v.strain<v.break}}
+ }
+};
+
 const simActivities = {
  vectors:[
   ['Predict','Before moving the angle slider, predict which component will increase as the angle rises from 20° to 70° while magnitude stays fixed.'],
