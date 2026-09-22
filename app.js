@@ -841,6 +841,81 @@ const lessonTextbook = {
 };
 lessons.forEach(l=>l.textbook=lessonTextbook[l.id]||[]);
 
+const lessonExtraTextbook = {
+ vectors:[
+  ['Reasoning with signs','Choose positive x and y directions before resolving anything. A negative component is not a “negative size”; it tells you the vector points opposite to the chosen positive axis. This becomes especially important when vectors later feed into momentum, acceleration and equilibrium calculations.','Take east and north as positive. Write the signed components of 18 N west and 7 N south, then sketch the vector.'],
+  ['From diagram to calculation','A good vector solution moves through four stages: sketch arrows, choose axes, calculate components/resultant, then state magnitude plus direction. Estimation is useful: the resultant of perpendicular vectors must be larger than either component but smaller than their arithmetic sum.','For 9 N east and 12 N north, estimate the resultant before calculating it exactly and explain why your estimate is sensible.']
+ ],
+ resolution:[
+  ['Choosing the best axes','Axes do not have to be horizontal and vertical. On an inclined plane, axes parallel and perpendicular to the plane usually reduce the number of components and make the normal reaction easier to interpret.','Sketch a block on a 30° slope and resolve its weight using axes parallel/perpendicular to the slope.'],
+  ['Equilibrium as two equations','In two-dimensional equilibrium, ΣFₓ=0 and ΣFᵧ=0. These equations are independent but describe one physical condition: zero resultant force. If three forces act, a closed vector triangle is an equivalent graphical statement.','Invent three coplanar forces that could keep a point in equilibrium and show how both component sums can be zero.']
+ ],
+ moments:[
+  ['Line of action','The distance in M=Fd is the shortest distance from pivot to the force line of action. Extending the force arrow as a line often makes this distance obvious. If the force passes through the pivot, its moment is zero no matter how large the force is.','Draw one force that gives a large moment and one equally large force that gives zero moment about the same pivot.'],
+  ['Combining force and moment equilibrium','A rigid body in complete equilibrium requires both zero resultant force and zero resultant moment. Satisfying the principle of moments alone does not guarantee translational equilibrium.','Describe the two separate checks needed to show a beam is in complete equilibrium.']
+ ],
+ kinematics:[
+  ['Reading graphs quantitatively','Graph questions often hide the physics in gradients and areas. Always write the physical meaning and units of the gradient/area before calculating. For non-linear graphs, use a tangent for instantaneous gradient rather than joining distant points.','State the quantity and unit represented by the gradient of a v–t graph and the area under an a–t graph.'],
+  ['Changing direction','Velocity crossing zero on a v–t graph means the object changes direction if the sign continues through zero. Acceleration can still have the same sign throughout, so velocity direction and acceleration direction must be treated separately.','Sketch a v–t graph for an object moving forward, stopping, then moving backward under constant negative acceleration.']
+ ],
+ suvat:[
+  ['Selecting an equation','List the five SUVAT symbols and identify which are known before choosing an equation. Select an equation that contains the knowns and the one unknown; this is safer than trying equations at random.','A question gives u, a and s but no t. Identify the most efficient SUVAT equation before substituting numbers.'],
+  ['Vertical sign conventions','For vertical motion you may choose upward or downward as positive, but every displacement, velocity and acceleration must then follow that convention. With upward positive, a=-g throughout ideal free flight—even while the object is travelling upward.','A ball is thrown upward. Write the signs of u, a and displacement while it is still above the launch point.']
+ ],
+ rp3:[
+  ['Why graph h against t²?','From h=½gt², plotting h against t² creates a straight line with gradient g/2. Linearising the relationship allows the whole dataset to contribute to g rather than relying on one pair of readings.','Explain why a graph of h against t would not be expected to be a straight line.'],
+  ['Uncertainty thinking','Timing uncertainty is especially important for short drops. Increasing the drop height increases the measured time, so a fixed absolute timing uncertainty becomes a smaller percentage uncertainty. Repeats help random scatter but not a systematic timing offset.','Explain why a longer drop can improve percentage timing uncertainty without changing the stopwatch resolution.']
+ ],
+ projectiles:[
+  ['Launching from a height','If a projectile starts above its landing level, vertical displacement to the ground is negative when upward is chosen positive. The launch height changes flight time and range even when launch speed and angle stay the same. Solve the vertical equation y=h+uᵧt−½gt² and choose the positive root for impact time.','A ball is launched horizontally from 5.0 m above the ground. Without calculating fully, explain why its flight time is longer than for a launch from ground level.'],
+  ['Horizontal launch from a platform','For a horizontal launch, uᵧ=0 but acceleration is still g downward. The time to fall is controlled by the vertical motion, while horizontal range is uₓ multiplied by that same flight time.','Write the two equations you would combine to find the range of a ball launched horizontally from a cliff.'],
+  ['Impact velocity','When a projectile lands below its launch point, its downward vertical speed at impact can be larger than its initial upward component. Find vₓ and vᵧ at impact separately, then combine them with Pythagoras and use tan⁻¹ for the impact angle.','State the steps needed to find impact speed and impact direction for a projectile landing below its launch point.'],
+  ['Angle versus height','Launch angle changes the split between horizontal and vertical initial velocity. Launch height changes how long gravity has to act before impact. The simulator lets you keep one fixed while varying the other, which is useful for separating these effects.','Predict which variable—angle or launch height—changes the initial velocity components, and which mainly changes available flight time.'],
+  ['Model limits','The ideal equations assume a uniform gravitational field and negligible air resistance. With drag, horizontal speed decreases and the simple same-height range formula no longer applies. A model should therefore state clearly whether drag is being included.','Identify two assumptions behind an ideal SUVAT projectile calculation and describe one visible consequence when drag is introduced.']
+ ],
+ newton:[
+  ['System boundaries','Choose the object or group of objects before drawing forces. Internal forces between objects inside one chosen system do not appear as external forces on the whole system, which can simplify connected-body problems.','Explain why tension can disappear from the whole-system equation for two connected trolleys.'],
+  ['From FBD to equation','Translate a free-body diagram into one resultant-force equation per relevant axis. Do not substitute into F=ma until the signed force sum is clear.','For a car with drive right and resistance left, write the symbolic horizontal Newton II equation before using numbers.']
+ ],
+ momentum:[
+  ['Choosing the system','Momentum conservation applies to a chosen system when external impulse is negligible during the interaction. During a short collision, large internal contact forces occur in equal/opposite pairs and cancel in the total-system momentum equation.','Explain why momentum can be approximately conserved during a short trolley collision even though the trolleys exert large forces on each other.'],
+  ['Energy alongside momentum','Momentum and kinetic energy answer different questions. Momentum conservation constrains motion in every closed collision; kinetic-energy comparison tells you whether the collision is elastic or how much energy moved into other stores.','Describe what you would calculate after using momentum conservation to decide whether a collision was elastic.']
+ ],
+ work:[
+  ['Force at an angle','Only the component of force parallel to displacement transfers energy through W=Fs cosθ. A perpendicular force can change direction without doing work in this simple translational sense.','Explain why the normal force on a box sliding horizontally does no work on the box when there is no vertical displacement.'],
+  ['Power as a rate','Power compares how quickly energy is transferred, not how much energy is transferred in total. Two machines can perform the same work but have different powers if the times differ.','Give a numerical example where two motors transfer the same energy but have different powers.']
+ ],
+ energy:[
+  ['Choosing the energy stores','Start by identifying initial and final stores and any transfer to surroundings. Then write a conservation statement before inserting equations such as ½mv² or mgh. This avoids treating “lost” mechanical energy as destroyed.','Write an energy-accounting statement for an object sliding down a rough slope.'],
+  ['Combining energy with force','Work done by non-conservative forces such as friction can be included explicitly in an energy equation. This is often more efficient than using acceleration when only speeds and height changes matter.','Outline an equation linking GPE loss, final KE and work done against friction.']
+ ],
+ 'density-hooke':[
+  ['Proportionality and limit','Hooke’s law F=kΔL applies only in the proportional region. The proportional limit is identified where the force–extension graph stops being a straight line through the origin.','Describe what you would look for on an F–ΔL graph to decide whether Hooke’s law still applies.'],
+  ['Elastic energy from graph area','Elastic energy transferred is the area under the force–extension graph. In the linear Hookean region this is a triangle, giving E=½FΔL=½k(ΔL)². Beyond linearity, use graph area rather than assuming the triangular formula.','Explain why doubling extension quadruples stored energy only while Hooke’s law remains valid.']
+ ],
+ 'stress-strain':[
+  ['Why use stress and strain?','Force–extension depends on specimen dimensions. Stress and strain normalise for cross-sectional area and original length, allowing materials of different specimen sizes to be compared more meaningfully.','Explain why two wires of different diameter can have different extension under the same force even if made from the same material.'],
+  ['Energy per unit volume','Area under a stress–strain graph represents energy transferred per unit volume. This connects the graph to toughness: a material with a large area to fracture can absorb more energy per unit volume before breaking.','Compare two schematic stress–strain curves and identify which would be tougher from the graph area.']
+ ],
+ 'material-behaviour':[
+  ['Elastic versus plastic unloading','Elastic deformation is recovered when the force is removed. After plastic deformation, unloading does not return the sample to zero strain; a permanent extension remains.','Sketch how an unloading line from the plastic region could leave a positive residual strain.'],
+  ['Strength, stiffness and ductility','These are different properties: stiffness relates to the elastic gradient, strength to the stress sustained before failure/yield, and ductility to the amount of plastic strain before fracture.','Describe a material that is stiff but brittle and explain what its stress–strain graph would look like.']
+ ],
+ young:[
+  ['Material property versus geometry','Young modulus describes material stiffness in the linear elastic region and should not depend on sample length or diameter. Extension does depend on geometry through ΔL=FL/(AE).','Predict how halving wire diameter affects extension at fixed force, length and material.'],
+  ['Reading E from a graph','On a stress–strain graph, Young modulus is the gradient of the initial linear region. Use a large gradient triangle and SI units: stress in Pa and strain dimensionless.','A graph gradient is 2.1×10¹¹ Pa. State the Young modulus and explain what a larger value would mean physically.']
+ ],
+ rp4:[
+  ['Why measure diameter carefully?','Wire area A=πd²/4, so diameter uncertainty is amplified because area depends on d². Measuring diameter at several positions and orientations helps identify variation and improves the mean estimate.','If diameter has a 1% uncertainty, estimate the percentage uncertainty contribution to area.'],
+  ['Gradient method','A stress–strain graph should be linear in the elastic region, and its gradient gives Young modulus. Using several loads and a best-fit gradient is more robust than calculating E from only one reading.','Explain why points beyond the proportional region should not be included in the Young-modulus gradient.']
+ ],
+ mastery:[
+  ['Build a model before calculating','For unfamiliar questions, define the system, sketch the situation, label known quantities and decide which principle applies before choosing equations. This reduces equation hunting and reveals missing assumptions.','Take a two-stage mechanics problem and identify the governing principle for each stage before doing any algebra.'],
+  ['Check dimensions and limits','Units and limiting cases can expose mistakes. Ask what should happen if a variable becomes zero, very large or doubles. A physically impossible sign or scale often signals an algebra error.','Choose one mechanics equation and test it using a simple limiting case.']
+ ]
+};
+lessons.forEach(l=>{l.textbook=(l.textbook||[]).concat(lessonExtraTextbook[l.id]||[]);});
+
 const lessonSkillMap = {
  vectors:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
  resolution:['MS 0.6','MS 4.2','MS 4.4','MS 4.5','PS 1.1'],
