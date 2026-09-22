@@ -76,6 +76,36 @@ try {
     assert((await page.locator('#simChallenge').innerText()).trim().length>15,'Simulation challenge missing: '+title);
     await page.locator('[data-sim-preset]').first().click();
     assert((await page.locator('#simReadout').innerText()).trim().length>0,'Preset failed to update readout: '+title);
+
+    // Real mouse drag across the simulation canvas.
+    const beforeDrag=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
+    const beforeReadout=(await page.locator('#simReadout').innerText()).trim();
+    await page.mouse.move(box.x+box.width*.25,box.y+box.height*.25);
+    await page.mouse.down();
+    await page.mouse.move(box.x+box.width*.72,box.y+box.height*.64,{steps:5});
+    await page.mouse.up();
+    await page.waitForTimeout(20);
+    const afterDrag=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
+    const afterReadout=(await page.locator('#simReadout').innerText()).trim();
+    assert((await page.locator('#simState').innerText()).includes('Direct control'),'Mouse drag did not enter direct control: '+title);
+    assert(beforeDrag!==afterDrag||beforeReadout!==afterReadout,'Mouse drag did not change simulation state: '+title);
+
+    // Touch-style PointerEvents exercise the same direct manipulation path used by phones/tablets.
+    const touchBefore=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
+    const touchReadoutBefore=(await page.locator('#simReadout').innerText()).trim();
+    await page.locator('#simCanvas').evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      const fire=(type,fx,fy,buttons)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:901,pointerType:'touch',isPrimary:true,buttons,clientX:r.left+r.width*fx,clientY:r.top+r.height*fy}));
+      fire('pointerdown',.72,.24,1);
+      fire('pointermove',.34,.76,1);
+      fire('pointerup',.34,.76,0);
+    });
+    await page.waitForTimeout(20);
+    const touchAfter=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
+    const touchReadoutAfter=(await page.locator('#simReadout').innerText()).trim();
+    assert((await page.locator('#simState').innerText()).includes('Direct control'),'Touch drag did not enter direct control: '+title);
+    assert(touchBefore!==touchAfter||touchReadoutBefore!==touchReadoutAfter,'Touch drag did not change simulation state: '+title);
+
     const first=page.locator('#simControls input[type="range"]').first();
     const min=Number(await first.getAttribute('min'));
     const max=Number(await first.getAttribute('max'));
