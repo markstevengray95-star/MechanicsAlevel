@@ -50,6 +50,7 @@ try {
     await page.waitForTimeout(40);
     const title=(await page.locator('#simTitle').innerText()).trim();
     assert(title.length>0,'Simulation title missing at '+i);
+    await page.locator('#simCanvas').scrollIntoViewIfNeeded();
     const box=await page.locator('#simCanvas').boundingBox();
     assert(box && box.width>200 && box.height>200,'Simulation canvas not visible at '+i);
     const canvasState=await page.locator('#simCanvas').evaluate(el=>{
