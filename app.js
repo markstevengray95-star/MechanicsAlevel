@@ -2309,7 +2309,7 @@ function simTrailPoint(id,v,t,w,h){
  if(id==='projectile'){const T=projectileFlight(v),tt=clamp(t,0,Math.max(.2,T)),pts=[];let maxX=1,maxY=1;for(let i=0;i<=80;i++){const p=projectileState(T*i/80,v);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}const p=projectileState(Math.min(tt%Math.max(.2,T),T),v),sx=(w-90)/(maxX*1.08),sy=(h-105)/(maxY*1.35);return {x:45+p.x*sx,y:h-45-p.y*sy};}
  if(id==='terminal'){const tt=((t%8)+8)%8;return {x:w*.30,y:70+(h-150)*(tt/8)};}
  if(id==='energy'){const p=((t%6)+6)%6/6,left=50,right=w*.63,top=70,ground=h-70;return {x:left+(right-left)*p,y:top+(ground-top)*(1-Math.pow(1-p,2))-12};}
- if(id==='motor'){const p=Math.min(1,((t%Math.max(v.time,1))+Math.max(v.time,1))%Math.max(v.time,1))/Math.max(v.time,1));return {x:w*.30,y:(h-65)-((h-65)-60)*p};}
+ if(id==='motor'){const period=Math.max(v.time,1),p=Math.min(1,(((t%period)+period)%period)/period);return {x:w*.30,y:(h-65)-((h-65)-60)*p};}
  if(id==='momentum'){const before=(t%6)<3,p=t%3,cy=h*.48;if(before)return {x:w*.24+v.v1*p*10,y:cy};const V=(v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2);return {x:w*.5+V*p*10,y:cy};}
  return null;
 }
