@@ -119,6 +119,77 @@ try {
     await page.locator('#clearSimData').click();
   }
 
+  // Virtual experiment studio: prediction, linked view, timeline, measurements, FBD, investigation, scenario and sandbox.
+  await page.locator('#simTabs .sim-tab').first().click();
+  await page.waitForTimeout(40);
+  assert((await page.locator('#simPredictionPrompt').innerText()).trim().length>20,'Prediction prompt missing');
+  assert(await page.locator('#investigationSteps li').count()>=3,'Guided investigation steps missing');
+  assert((await page.locator('#scenarioStory').innerText()).trim().length>20,'Scenario story missing');
+  assert((await page.locator('#scenarioGoal').innerText()).trim().length>15,'Scenario goal missing');
+
+  const linkedPixels=await page.locator('#linkedSimCanvas').evaluate(el=>{
+    const d=el.getContext('2d').getImageData(0,0,el.width,el.height).data;let n=0;
+    for(let i=3;i<d.length;i+=Math.max(4,Math.floor(d.length/6000/4)*4)){if(d[i]>0)n++;}
+    return n;
+  });
+  assert(linkedPixels>5,'Linked graph view appears blank');
+
+  await page.locator('#simPrediction').fill('The vertical component should increase as the angle increases.');
+  await page.locator('#lockPrediction').click();
+  assert((await page.locator('#simPredictionFeedback').innerText()).includes('Prediction locked'),'Prediction did not lock');
+  await page.locator('#revealPrediction').click();
+  assert((await page.locator('#simPredictionFeedback').innerText()).includes('Physics explanation'),'Prediction explanation did not reveal');
+
+  const timeline=page.locator('#simTimeline');
+  await timeline.fill('500');
+  assert((await page.locator('#simState').innerText()).includes('Timeline scrub'),'Timeline scrub did not activate');
+  assert((await page.locator('#timelineOutput').innerText()).trim().length>0,'Timeline output missing');
+
+  const firstControl=page.locator('#simControls input[type="range"]').first();
+  const baseMax=Number(await firstControl.getAttribute('max'));
+  await page.locator('#sandboxToggle').click();
+  const sandboxMax=Number(await firstControl.getAttribute('max'));
+  assert(sandboxMax>baseMax,'Sandbox did not expand control range');
+  assert((await page.locator('#sandboxToggle').innerText()).includes('on'),'Sandbox did not turn on');
+  await page.locator('#sandboxToggle').click();
+
+  assert(await page.locator('[data-measure-tool]').count()===7,'Measurement toolbelt incomplete');
+  await page.locator('[data-measure-tool="ruler"]').click();
+  const measureCanvas=page.locator('#simCanvas');
+  await measureCanvas.scrollIntoViewIfNeeded();
+  const mb=await measureCanvas.boundingBox();
+  await measureCanvas.evaluate(el=>{
+    const r=el.getBoundingClientRect();
+    const fire=(type,fx,fy,buttons)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:777,pointerType:'mouse',isPrimary:true,buttons,clientX:r.left+r.width*fx,clientY:r.top+r.height*fy}));
+    fire('pointerdown',.2,.25,1);fire('pointermove',.7,.6,1);fire('pointerup',.7,.6,0);
+  });
+  assert((await page.locator('#simMeasureReadout').innerText()).includes('Canvas distance'),'Ruler measurement did not update');
+  await page.locator('[data-measure-tool="probe"]').click();
+
+  await page.locator('.sim-mode-panel summary').filter({hasText:'Free-body diagram builder'}).click();
+  await page.locator('#fbdForceType').selectOption({label:'Applied'});
+  await page.locator('#fbdDirection').selectOption('0');
+  await page.locator('#addFbdForce').click();
+  await page.locator('#checkFbd').click();
+  assert((await page.locator('#fbdFeedback').innerText()).includes('Correct'),'Free-body diagram checker did not validate expected vector force');
+
+  const guidedSummary=page.locator('.sim-mode-panel summary').filter({hasText:'Guided investigation'});
+  await guidedSummary.click();
+  await page.locator('#startInvestigation').click();
+  const angleControl=page.locator('[data-control="angle"]');
+  for(const value of ['20','45','70']){
+    await angleControl.evaluate((el,val)=>{el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));},value);
+    await page.locator('#recordSim').click();
+  }
+  await page.locator('#analyseInvestigation').click();
+  assert((await page.locator('#investigationFeedback').innerText()).includes('Across your recorded range'),'Investigation analysis did not run');
+
+  const scenarioSummary=page.locator('.sim-mode-panel summary').filter({hasText:'Scenario challenge'});
+  await scenarioSummary.click();
+  await page.locator('#loadScenario').click();
+  await angleControl.evaluate(el=>{el.value='45';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  assert((await page.locator('#scenarioState').innerText()).includes('Completed'),'Scenario challenge did not detect success');
+
   await page.locator('#stepSim').click();
   assert((await page.locator('#simState').innerText()).includes('Stepped'),'Step-time control failed');
   await page.locator('#showGrid').uncheck();
