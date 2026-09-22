@@ -279,3 +279,34 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 @media(max-width:700px){.sim-metrics{grid-template-columns:1fr}.viewer-controls .button{flex:1 1 calc(50% - 8px)}.sim-display-options{display:grid;grid-template-columns:1fr 1fr}}
 
 .sim-canvas-hint::before{content:'Drag the white handles · ';font-weight:800;color:var(--accent)}
+
+
+/* Virtual experiment studio */
+.sim-timeline{margin:10px 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025)}
+.sim-timeline span{display:flex;justify-content:space-between;gap:12px}
+.sim-timeline output{font-weight:800;color:var(--accent)}
+.sim-timeline input{width:100%;margin-top:8px}
+.sim-toolbelt{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:10px 0 12px;padding:9px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.022)}
+.sim-tool{padding:7px 9px;font-size:.77rem}
+.sim-tool.active{border-color:rgba(103,199,255,.55);background:rgba(103,199,255,.14);color:#e7f6ff}
+.sim-measure-readout{flex:1 1 260px;padding:7px 9px;border-radius:9px;background:rgba(0,0,0,.16);font-size:.78rem;color:var(--muted);line-height:1.4}
+.sim-experiment-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.sim-mode-panel{padding:0;overflow:hidden}
+.sim-mode-panel summary{cursor:pointer;padding:13px 14px;font-weight:800;color:var(--text);background:rgba(103,199,255,.045);border-bottom:1px solid transparent}
+.sim-mode-panel[open] summary{border-bottom-color:var(--line)}
+.sim-mode-body{padding:13px}
+.sim-mode-body p{line-height:1.55}
+.sim-mode-body textarea{width:100%;resize:vertical;min-height:78px;background:rgba(0,0,0,.15);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;font:inherit}
+.sim-inline-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:10px}
+.sim-prediction-feedback{margin-top:9px;padding:9px 10px;border-left:3px solid var(--accent);background:rgba(103,199,255,.045);border-radius:0 9px 9px 0;color:var(--muted);font-size:.84rem;line-height:1.5;min-height:20px}
+#linkedSimCanvas,#investigationCanvas,#fbdCanvas{width:100%;height:auto;min-height:190px;border:1px solid var(--line);border-radius:12px;background:#0b1827}
+#fbdCanvas{min-height:230px}
+.fbd-controls{display:grid;grid-template-columns:1fr 1fr auto auto auto;gap:7px;margin-top:9px}
+.fbd-controls select{min-width:0;background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:8px}
+.investigation-steps{display:grid;gap:7px;padding-left:20px;color:var(--muted);line-height:1.5}
+#scenarioState.success{border-color:rgba(99,217,164,.45);background:rgba(99,217,164,.12);color:#baf5d7}
+#sandboxToggle.primary{border-color:rgba(255,213,106,.55);background:rgba(255,213,106,.13);color:#ffe9ac}
+.viewer-wrap{box-shadow:0 18px 48px rgba(0,0,0,.22)}
+#simCanvas{border-radius:16px}
+@media(max-width:980px){.sim-experiment-grid{grid-template-columns:1fr}.fbd-controls{grid-template-columns:1fr 1fr}.fbd-controls .button,.fbd-controls .text-button{min-height:40px}}
+@media(max-width:650px){.sim-toolbelt{display:grid;grid-template-columns:1fr 1fr}.sim-measure-readout{grid-column:1/-1}.sim-mode-body{padding:11px}.fbd-controls{grid-template-columns:1fr}.sim-timeline span{font-size:.82rem}}
