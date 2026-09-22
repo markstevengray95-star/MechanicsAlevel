@@ -91,15 +91,81 @@
           <button class="button" id="resetSim">Reset</button>
           <button class="button" id="slowMotion">Slow motion</button>
           <button class="button" id="recordSim">Record data</button>
+          <button class="button" id="sandboxToggle">Sandbox: off</button>
         </div>
+        <label class="sim-timeline field">
+          <span>Frame-by-frame timeline <output id="timelineOutput">0.00 s</output></span>
+          <input id="simTimeline" type="range" min="0" max="1000" value="0" step="1">
+        </label>
         <div class="sim-display-options" aria-label="Simulation display options">
           <label><input type="checkbox" id="showGrid" checked> Grid</label>
           <label><input type="checkbox" id="showVectors" checked> Force/vector arrows</label>
           <label><input type="checkbox" id="showLiveInfo" checked> Live information</label>
+          <label><input type="checkbox" id="showTrails" checked> Motion trails</label>
+        </div>
+        <div class="sim-toolbelt" id="simToolbelt" aria-label="Measurement tools">
+          <button class="button sim-tool active" data-measure-tool="probe">Probe</button>
+          <button class="button sim-tool" data-measure-tool="ruler">Ruler</button>
+          <button class="button sim-tool" data-measure-tool="angle">Angle</button>
+          <button class="button sim-tool" data-measure-tool="stopwatch">Stopwatch</button>
+          <button class="button sim-tool" data-measure-tool="force">Force meter</button>
+          <button class="button sim-tool" data-measure-tool="velocity">Velocity</button>
+          <button class="button sim-tool" data-measure-tool="cursor">Graph cursor</button>
+          <span class="sim-measure-readout" id="simMeasureReadout">Probe: drag the model or tap a graph.</span>
         </div>
         <p class="sim-canvas-hint" id="simCanvasHint"></p>
         <div class="sim-presets" id="simPresets"></div>
         <div class="sim-metrics" id="simMetrics"></div>
+        <div class="sim-experiment-grid">
+          <details class="panel sim-mode-panel" open>
+            <summary>Predict → test → explain</summary>
+            <div class="sim-mode-body">
+              <p id="simPredictionPrompt"></p>
+              <textarea id="simPrediction" rows="3" placeholder="Write your prediction and why..."></textarea>
+              <div class="sim-inline-actions"><button class="button" id="lockPrediction">Lock prediction</button><button class="text-button" id="revealPrediction">Reveal physics explanation</button></div>
+              <div class="sim-prediction-feedback" id="simPredictionFeedback"></div>
+            </div>
+          </details>
+          <details class="panel sim-mode-panel" open>
+            <summary>Linked graph / second view</summary>
+            <div class="sim-mode-body">
+              <canvas id="linkedSimCanvas" width="640" height="240" aria-label="Linked graph for the active simulation"></canvas>
+              <p class="muted" id="linkedSimCaption"></p>
+            </div>
+          </details>
+          <details class="panel sim-mode-panel">
+            <summary>Free-body diagram builder</summary>
+            <div class="sim-mode-body">
+              <canvas id="fbdCanvas" width="640" height="300" aria-label="Free body diagram builder"></canvas>
+              <div class="fbd-controls">
+                <select id="fbdForceType"><option>Weight</option><option>Normal</option><option>Tension</option><option>Drag</option><option>Friction</option><option>Applied</option><option>Driving</option><option>Lift</option></select>
+                <select id="fbdDirection"><option value="-90">Up</option><option value="90">Down</option><option value="180">Left</option><option value="0">Right</option></select>
+                <button class="button" id="addFbdForce">Add force</button>
+                <button class="text-button" id="undoFbdForce">Undo</button>
+                <button class="text-button" id="checkFbd">Check diagram</button>
+              </div>
+              <div id="fbdFeedback" class="sim-prediction-feedback"></div>
+            </div>
+          </details>
+          <details class="panel sim-mode-panel">
+            <summary>Guided investigation</summary>
+            <div class="sim-mode-body">
+              <p id="investigationPrompt"></p>
+              <ol id="investigationSteps" class="investigation-steps"></ol>
+              <canvas id="investigationCanvas" width="640" height="240" aria-label="Investigation results graph"></canvas>
+              <div class="sim-inline-actions"><button class="button" id="startInvestigation">Start investigation</button><button class="text-button" id="analyseInvestigation">Analyse recorded data</button></div>
+              <div id="investigationFeedback" class="sim-prediction-feedback"></div>
+            </div>
+          </details>
+          <details class="panel sim-mode-panel">
+            <summary>Scenario challenge</summary>
+            <div class="sim-mode-body">
+              <p id="scenarioStory"></p>
+              <p class="muted" id="scenarioGoal"></p>
+              <div class="sim-inline-actions"><button class="button" id="loadScenario">Load scenario</button><span class="pill" id="scenarioState">Not completed</span></div>
+            </div>
+          </details>
+        </div>
         <article class="panel sim-challenge-card">
           <div class="sim-challenge-head"><span class="eyebrow">Interactive challenge</span><span class="pill" id="simChallengeState">In progress</span></div>
           <p id="simChallenge"></p>
