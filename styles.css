@@ -244,3 +244,5 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .spec-detail summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:.86rem}
 .spec-detail ul{margin:10px 0 3px;padding-left:20px;display:grid;gap:6px}
 .spec-detail li{color:var(--muted);line-height:1.4;font-size:.84rem}
+
+#simState.error{border-color:rgba(255,123,135,.55);background:rgba(255,123,135,.14);color:#ffd6da}
