@@ -1,5 +1,5 @@
-const CACHE='mechanics-lab-v11';
-const CORE=['./','./index.html','./styles.css?v=11','./app.js?v=11','./manifest.webmanifest'];
+const CACHE='mechanics-lab-v12';
+const CORE=['./','./index.html','./styles.css?v=12','./app.js?v=12','./manifest.webmanifest'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
