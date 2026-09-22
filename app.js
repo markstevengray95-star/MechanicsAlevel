@@ -1111,7 +1111,7 @@ function renderLesson(){
 
 function openView(name){
  $$('.view').forEach(v=>v.classList.toggle('active-view',v.id==='view-'+name));
- $('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+ $$('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
  if(name==='lab'){
   requestAnimationFrame(()=>{
    try{
