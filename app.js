@@ -1591,6 +1591,71 @@ function renderSimTabs(){
  $('#simTabs').innerHTML=sims.map((s,i)=>'<button class="sim-tab '+(i===activeSim?'active':'')+'" data-sim="'+i+'">'+s.title+'</button>').join('');
  $$('.sim-tab').forEach(b=>b.addEventListener('click',()=>{activeSim=Number(b.dataset.sim);renderSim();}));
 }
+const simDataRecords={};
+const simChallengeProgress=JSON.parse(localStorage.getItem('mechanicsSimChallenges')||'{}');
+const simDisplay={grid:true,vectors:true,live:true};
+
+function getSimMetrics(id,v,t=simTime){
+ const m=[];
+ const add=(label,value)=>m.push([label,value]);
+ if(id==='vectors'){const r=v.angle*Math.PI/180;add('Horizontal component',fmt(v.mag*Math.cos(r))+' N');add('Vertical component',fmt(v.mag*Math.sin(r))+' N');add('Vector magnitude',fmt(v.mag)+' N');add('Direction',fmt(v.angle)+'°');}
+ if(id==='equilibrium'){const a=v.a1*Math.PI/180,b=v.a2*Math.PI/180,x=v.f1*Math.cos(a)+v.f2*Math.cos(b),y=v.f1*Math.sin(a)+v.f2*Math.sin(b);add('Resultant of F₁+F₂',fmt(Math.hypot(x,y))+' N');add('Balancing force',fmt(Math.hypot(x,y))+' N');add('Balance direction',fmt((Math.atan2(-y,-x)*180/Math.PI+360)%360)+'°');add('ΣF with F₃','0 N');}
+ if(id==='moments'){add('Moment',fmt(v.force*v.distance)+' N m');add('Force',fmt(v.force)+' N');add('Perpendicular distance',fmt(v.distance)+' m');}
+ if(id==='couplecom'){add('Couple moment',fmt(v.force*v.sep)+' N m');add('Resultant force of couple','0 N');add('Weight moment',fmt(20*9.81*v.com)+' N m');add('COM offset',fmt(v.com)+' m');}
+ if(id==='motion'){const tt=t%8,vel=v.u+v.a*tt,pos=v.u*tt+.5*v.a*tt*tt;add('Time',fmt(tt)+' s');add('Velocity',fmt(vel)+' m s⁻¹');add('Displacement',fmt(pos)+' m');add('Graph gradient',fmt(v.a)+' m s⁻²');}
+ if(id==='bounce'){const e=v.retain/100,n=Math.floor(t/1.5)%5,h=v.drop*Math.pow(e*e,n);add('Bounce number',String(n+1));add('Approx. peak height',fmt(h)+' m');add('Speed retained',fmt(v.retain)+'%');add('Free-flight acceleration','−9.81 m s⁻²');}
+ if(id==='projectile'){const r=v.angle*Math.PI/180,T=projectileFlight(v),ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r),p=projectileState(Math.min(t%Math.max(.2,T),T),v);add('Initial vₓ',fmt(ux)+' m s⁻¹');add('Initial vᵧ',fmt(uy)+' m s⁻¹');add('Flight time',fmt(T)+' s');add('Current speed',fmt(Math.hypot(p.vx,p.vy))+' m s⁻¹');}
+ if(id==='terminal'){const vt=v.mass*9.81/v.k,tt=t%8,s=vt*(1-Math.exp(-v.k*tt/v.mass)),drag=v.k*s;add('Terminal speed',fmt(vt)+' m s⁻¹');add('Current speed',fmt(s)+' m s⁻¹');add('Weight',fmt(v.mass*9.81)+' N');add('Drag',fmt(drag)+' N');}
+ if(id==='vehicle'){const vmax=Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag)),tt=t%12,s=vmax*(1-Math.exp(-tt/3)),res=v.roll+v.drag*s*s;add('Max steady speed',fmt(vmax)+' m s⁻¹');add('Current speed',fmt(s)+' m s⁻¹');add('Total resistance',fmt(res)+' N');add('Resultant force',fmt(v.drive-res)+' N');}
+ if(id==='newton'){const F=v.drive-v.resist;add('Resultant force',fmt(F)+' N');add('Acceleration',fmt(F/v.mass)+' m s⁻²');add('Mass',fmt(v.mass)+' kg');add('Force balance',F===0?'Balanced':'Unbalanced');}
+ if(id==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,V=p/(v.m1+v.m2),ki=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kf=.5*(v.m1+v.m2)*V*V;add('Total momentum',fmt(p)+' kg m s⁻¹');add('Joined velocity',fmt(V)+' m s⁻¹');add('KE before',fmt(ki)+' J');add('KE after',fmt(kf)+' J');}
+ if(id==='impulse'){const J=.5*v.peak*v.time;add('Impulse',fmt(J)+' N s');add('Δp',fmt(J)+' kg m s⁻¹');add('Δv magnitude',fmt(J/v.mass)+' m s⁻¹');add('Average force',fmt(J/v.time)+' N');}
+ if(id==='energy'){const G=v.mass*9.81*v.height,K=G*(1-v.loss/100);add('Initial GPE',fmt(G)+' J');add('Final KE available',fmt(K)+' J');add('Dissipated',fmt(G-K)+' J');add('Final speed',fmt(Math.sqrt(Math.max(0,2*K/v.mass)))+' m s⁻¹');}
+ if(id==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;add('Work / graph area',fmt(W)+' J');add('Mean force',fmt((v.f0+v.f1)/2)+' N');add('Displacement',fmt(v.distance)+' m');}
+ if(id==='motor'){const E=v.mass*9.81*v.height,P=E/v.time,eff=100*P/v.input;add('Useful GPE',fmt(E)+' J');add('Useful output power',fmt(P)+' W');add('Input power',fmt(v.input)+' W');add('Efficiency',fmt(eff)+'%');}
+ if(id==='springenergy'){const linear=v.ext<=v.limit,F=linear?v.k*v.ext:v.k*v.limit+v.k*.35*(v.ext-v.limit),E=linear?.5*v.k*v.ext*v.ext:.5*v.k*v.limit*v.limit+(v.ext-v.limit)*(v.k*v.limit+F)/2;add('Force',fmt(F)+' N');add('Elastic energy',fmt(E)+' J');add('F/extension',v.ext?fmt(F/v.ext)+' N m⁻¹':'—');add('Region',linear?'Hookean':'Non-linear');}
+ if(id==='collisiontypes'){const mode=Math.round(v.mode);let p0=0,p1=0,k0=0,k1=0;if(mode===0){const V=v.m1*v.speed/(v.m1+v.m2);p0=v.m1*v.speed;p1=(v.m1+v.m2)*V;k0=.5*v.m1*v.speed*v.speed;k1=.5*(v.m1+v.m2)*V*V;}else if(mode===1){const a=(v.m1-v.m2)/(v.m1+v.m2)*v.speed,b=2*v.m1/(v.m1+v.m2)*v.speed;p0=v.m1*v.speed;p1=v.m1*a+v.m2*b;k0=.5*v.m1*v.speed*v.speed;k1=.5*v.m1*a*a+.5*v.m2*b*b;}else{const a=v.speed,b=-v.m1*a/v.m2;p1=v.m1*a+v.m2*b;k1=.5*v.m1*a*a+.5*v.m2*b*b;}add('Mode',['Sticking','Elastic','Explosion'][mode]);add('Momentum before',fmt(p0)+' kg m s⁻¹');add('Momentum after',fmt(p1)+' kg m s⁻¹');add('KE change',fmt(k1-k0)+' J');}
+ if(id==='density'){const V=v.length*v.width*v.height,rho=(v.mass/1000)/(V*1e-6);add('Volume',fmt(V)+' cm³');add('Mass',fmt(v.mass)+' g');add('Density',fmt(rho)+' kg m⁻³');}
+ if(id==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;add('Stress',fmt(stress)+' Pa');add('Strain',fmt(strain));add('Extension',fmt(ext*1000)+' mm');add('Young modulus',fmt(E)+' Pa');}
+ if(id==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,region=v.strain>=v.break?'Fractured':v.strain>epsY?'Plastic':'Elastic';add('Yield strain',fmt(epsY));add('Applied strain',fmt(v.strain));add('Young modulus',fmt(E)+' Pa');add('Region',region);}
+ return m;
+}
+
+function simVariablesText(){
+ const s=sims[activeSim];
+ return s.controls.map(control=>control.label.split(' / ')[0]+'='+fmt(simValues[control.key])).join('; ');
+}
+function simResultsText(){return getSimMetrics(sims[activeSim].id,simValues).map(x=>x[0]+'='+x[1]).join('; ');}
+
+function renderSimData(){
+ const id=sims[activeSim].id,rows=simDataRecords[id]||[];
+ $('#simDataRows').innerHTML=rows.length?rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r.variables+'</td><td>'+r.results+'</td></tr>').join(''):'<tr><td colspan="3" class="muted">No trials recorded yet. Change a variable, make a prediction, then record the result.</td></tr>';
+}
+function updateSimEnhancements(){
+ const id=sims[activeSim].id,profile=simEnhancements[id]||{},metrics=getSimMetrics(id,simValues);
+ $('#simMetrics').innerHTML=simDisplay.live?metrics.map(x=>'<div class="sim-metric"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join(''):'';
+ const done=!!profile.challenge?.check?.(simValues,simTime);
+ if(done)simChallengeProgress[id]=true;
+ localStorage.setItem('mechanicsSimChallenges',JSON.stringify(simChallengeProgress));
+ $('#simChallengeState').textContent=done?'Completed':(simChallengeProgress[id]?'Previously completed':'In progress');
+ $('#simChallengeState').classList.toggle('success',done);
+}
+function renderSimEnhancements(){
+ const id=sims[activeSim].id,profile=simEnhancements[id]||{};
+ $('#keyKnowledge').innerHTML='<ul class="key-knowledge-list">'+(profile.knowledge||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+ $('#simPresets').innerHTML=(profile.presets||[]).map((p,i)=>'<button class="button sim-preset" data-sim-preset="'+i+'">'+p.label+'</button>').join('');
+ $('#simChallenge').textContent=profile.challenge?.text||'Explore how changing one variable affects the model.';
+ $$('[data-sim-preset]').forEach(b=>b.addEventListener('click',()=>{
+  const preset=profile.presets[Number(b.dataset.simPreset)];if(!preset)return;
+  Object.entries(preset.values).forEach(([key,value])=>{
+   simValues[key]=value;
+   const input=$('[data-control="'+key+'"]');if(input){input.value=value;const out=$('[data-output="'+key+'"]');if(out)out.textContent=value;}
+  });
+  simTime=0;updateReadout();drawSimSafely();
+ }));
+ renderSimData();updateSimEnhancements();
+}
+
 function renderSim(){
  const s=sims[activeSim]; simValues={}; s.controls.forEach(c=>simValues[c.key]=c.value); simTime=0;
  renderSimTabs();
@@ -1603,7 +1668,8 @@ function renderSim(){
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
  bindSimActivities();
  $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
- $$('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();}));
+ $('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();drawSimSafely();}));
+ renderSimEnhancements();
  updateReadout();
 }
 
@@ -1630,6 +1696,7 @@ function updateReadout(){
  if(s==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;txt='stress = '+stress.toExponential(2)+' Pa   |   strain = '+strain.toExponential(2)+'   |   ΔL = '+(ext*1000).toFixed(3)+' mm';}
  if(s==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,broken=v.strain>=v.break,stress=broken?0:(v.strain<=epsY?E*v.strain:y+(v.yield*.22e6)*Math.log1p((v.strain-epsY)*120));const region=broken?'fractured':(v.strain<=epsY?'linear elastic':'plastic');txt='region: '+region+'   |   stress ≈ '+(stress/1e6).toFixed(1)+' MPa   |   elastic strain limit ≈ '+epsY.toExponential(2);}
  $('#simReadout').textContent=txt;
+ updateSimEnhancements();
 }
 
 function sizeCanvas(){
