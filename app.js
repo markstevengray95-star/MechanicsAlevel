@@ -2268,7 +2268,8 @@ function arrow(x1,y1,x2,y2,label,color='#67c7ff'){
 }
 function dragHandle(x,y,label='drag'){
  ctx.save();
- ctx.fillStyle='rgba(255,255,255,.12)';
+ ctx.shadowColor='rgba(103,199,255,.65)';ctx.shadowBlur=10;
+ ctx.fillStyle='rgba(255,255,255,.14)';
  ctx.strokeStyle='#ffffff';
  ctx.lineWidth=2;
  ctx.beginPath();ctx.arc(x,y,10,0,Math.PI*2);ctx.fill();ctx.stroke();
@@ -2294,8 +2295,31 @@ function projectileFlight(v){
  let t=.02,last=projectileState(t,v);
  while(t<20){t+=.02;const p=projectileState(t,v);if(p.y<0&&t>.1)return t;last=p;} return 20;
 }
+function drawCanvasBackdrop(w,h){
+ const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#10253c');grad.addColorStop(.65,'#0a1827');grad.addColorStop(1,'#07111d');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+ const glow=ctx.createRadialGradient(w*.5,h*.35,20,w*.5,h*.35,Math.max(w,h)*.65);glow.addColorStop(0,'rgba(103,199,255,.06)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+}
+function bounceHeightAt(v,t){
+ const g=9.81,e=v.retain/100;let tt=((t%6)+6)%6,height=v.drop,cycle=0;
+ while(cycle<5){const fall=Math.sqrt(2*height/g),up=e*Math.sqrt(2*g*height)/g*2;if(tt<=fall)return Math.max(0,height-.5*g*tt*tt);tt-=fall;if(tt<=up){const vu=e*Math.sqrt(2*g*height);return Math.max(0,vu*tt-.5*g*tt*tt)}tt-=up;height*=e*e;cycle++}return 0;
+}
+function simTrailPoint(id,v,t,w,h){
+ if(id==='motion'){const tt=((t%8)+8)%8,pos=v.u*tt+.5*v.a*tt*tt,min=-80,max=220;return {x:40+(clamp(pos,min,max)-min)/(max-min)*(w-80),y:h*.32};}
+ if(id==='bounce'){const base=h*.42,scale=(h*.30)/Math.max(.5,v.drop);return {x:w*.25,y:base-bounceHeightAt(v,t)*scale};}
+ if(id==='projectile'){const T=projectileFlight(v),tt=clamp(t,0,Math.max(.2,T)),pts=[];let maxX=1,maxY=1;for(let i=0;i<=80;i++){const p=projectileState(T*i/80,v);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}const p=projectileState(Math.min(tt%Math.max(.2,T),T),v),sx=(w-90)/(maxX*1.08),sy=(h-105)/(maxY*1.35);return {x:45+p.x*sx,y:h-45-p.y*sy};}
+ if(id==='terminal'){const tt=((t%8)+8)%8;return {x:w*.30,y:70+(h-150)*(tt/8)};}
+ if(id==='energy'){const p=((t%6)+6)%6/6,left=50,right=w*.63,top=70,ground=h-70;return {x:left+(right-left)*p,y:top+(ground-top)*(1-Math.pow(1-p,2))-12};}
+ if(id==='motor'){const p=Math.min(1,((t%Math.max(v.time,1))+Math.max(v.time,1))%Math.max(v.time,1))/Math.max(v.time,1));return {x:w*.30,y:(h-65)-((h-65)-60)*p};}
+ if(id==='momentum'){const before=(t%6)<3,p=t%3,cy=h*.48;if(before)return {x:w*.24+v.v1*p*10,y:cy};const V=(v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2);return {x:w*.5+V*p*10,y:cy};}
+ return null;
+}
+function drawTrailOverlay(id,v,w,h){
+ if(!simDisplay.trails)return;
+ ctx.save();for(let i=14;i>=1;i--){const p=simTrailPoint(id,v,simTime-i*.12,w,h);if(!p)continue;ctx.fillStyle='rgba(103,199,255,'+(0.03+(15-i)*.012)+')';ctx.beginPath();ctx.arc(p.x,p.y,2.5+(15-i)*.08,0,Math.PI*2);ctx.fill();}ctx.restore();
+}
+
 function drawSim(){
- const size=syncSimCanvas(),w=size.w,h=size.h;ctx.clearRect(0,0,w,h);grid(w,h);
+ const size=syncSimCanvas(),w=size.w,h=size.h;ctx.clearRect(0,0,w,h);drawCanvasBackdrop(w,h);grid(w,h);
  const id=sims[activeSim].id,v=simValues;
  ctx.fillStyle='#dceaff';ctx.font='14px system-ui';
  if(id==='vectors'){
@@ -2440,6 +2464,8 @@ function drawSim(){
   const e=Math.min(v.strain,br),s=matStress(e),px=gx+gw*(e/(br*1.08)),py=gy+gh-(s/maxStress)*gh;ctx.fillStyle=v.strain>=br?'#ff7b87':'#ffd56a';ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();dragHandle(px,py,'strain');
   ctx.fillStyle='#dceaff';ctx.fillText('elastic',gx+15,gy+gh-55);ctx.fillText('plastic',gx+gw*.42,gy+55);ctx.fillText('fracture',gx+gw*.82,gy+95);
  }
+ drawTrailOverlay(id,v,w,h);
+ drawMeasurementOverlay(w,h);
 }
 
 function drawCart(x,y,width,label){ctx.fillStyle='#67c7ff';ctx.fillRect(x-width/2,y-24,width,38);ctx.fillStyle='#081422';ctx.beginPath();ctx.arc(x-width*.28,y+20,11,0,Math.PI*2);ctx.arc(x+width*.28,y+20,11,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText(label,x-8,y);}
