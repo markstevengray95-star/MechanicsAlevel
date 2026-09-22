@@ -52,6 +52,17 @@ try {
     assert(title.length>0,'Simulation title missing at '+i);
     const box=await page.locator('#simCanvas').boundingBox();
     assert(box && box.width>200 && box.height>200,'Simulation canvas not visible at '+i);
+    const canvasState=await page.locator('#simCanvas').evaluate(el=>{
+      const ctx=el.getContext('2d');
+      const data=ctx.getImageData(0,0,el.width,el.height).data;
+      let nonzero=0;
+      const stride=Math.max(4,Math.floor(data.length/12000/4)*4);
+      for(let p=3;p<data.length;p+=stride){ if(data[p]>0) nonzero++; }
+      return {width:el.width,height:el.height,clientWidth:el.clientWidth,clientHeight:el.clientHeight,nonzero};
+    });
+    assert(canvasState.width>=canvasState.clientWidth,'Canvas backing width too small: '+title);
+    assert(canvasState.height>=canvasState.clientHeight,'Canvas backing height too small: '+title);
+    assert(canvasState.nonzero>5,'Simulation canvas appears blank: '+title);
     const controlCount=await page.locator('#simControls input[type="range"]').count();
     assert(controlCount>0,'Simulation has no controls: '+title);
     const activityCount=await page.locator('[data-sim-activity]').count();
