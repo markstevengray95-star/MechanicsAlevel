@@ -1232,7 +1232,7 @@ const sims = [
  {key:'drop',label:'Initial drop height / m',min:.5,max:5,step:.25,value:2.5},
  {key:'retain',label:'Speed retained after bounce / %',min:30,max:95,step:5,value:70}
 ],simple:'Between impacts the ball accelerates downward at approximately g. At each collision the velocity reverses rapidly and usually has a smaller magnitude.',exam:'On a velocity–time graph, free-flight sections have constant gradient −g if upward is positive. The collision gives a rapid velocity change and large impulse.',mistake:'Velocity can change sign instantly in an idealised collision model; acceleration between impacts is still due to gravity.',check:['What is the gradient of the free-flight sections of a v–t graph if upward is positive?','Approximately −g.'],investigate:'Reduce the retained-speed percentage and observe how bounce heights and successive velocity peaks change.'},
-{id:'projectile',code:'3.4.1.4',title:'Projectile launcher + drag',subtitle:'Fire a classroom projectile launcher from different heights, speeds and angles, then measure flight time, range, maximum height and impact conditions.',controls:[
+{id:'projectile',code:'3.4.1.4',title:'Projectile cannon lab + drag',subtitle:'Aim and fire a virtual cannon from an adjustable platform. Measure angle, launch height, flight time, range, maximum height and impact conditions, then connect the motion to SUVAT.',controls:[
  {key:'speed',label:'Launch speed / m s⁻¹',min:5,max:40,step:1,value:20},
  {key:'angle',label:'Launch angle / °',min:0,max:85,step:1,value:45},
  {key:'height',label:'Launch height above ground / m',min:0,max:30,step:.5,value:0},
@@ -2028,7 +2028,7 @@ const simCanvasHints={
  couplecom:'Drag the yellow centre-of-mass marker, or drag a couple force to alter separation and force.',
  motion:'Drag the start or end of the velocity–time line to change initial velocity or acceleration. Drag the car/graph horizontally to scrub time.',
  bounce:'Drag the ball up/down to set drop height. Drag on the graph to change rebound percentage or scrub through the bounce.',
- projectile:'Drag the height handle up/down to change launch height. Drag the launch-vector tip to change launch angle and speed. The ground, range and impact measurements update live.',
+ projectile:'Drag the gold height handle up/down to raise the cannon platform. Drag the launch-vector tip to set angle and speed, then press Fire projectile. Use the ruler, angle tool, stopwatch and calculation panel to measure the motion.',
  terminal:'Drag the falling object vertically to scrub time; drag the terminal-speed line on the graph to change drag coefficient.',
  vehicle:'Drag the driving-force line vertically, or drag the graph intersection horizontally to target a different maximum speed.',
  newton:'Drag the green driving-force arrow or red resistance arrow horizontally to change the forces.',
@@ -2087,8 +2087,8 @@ function chooseSimDragTarget(id,x,y,w,h){
  }
  if(id==='bounce')return x<w*.48?'drop':(y<h*.5?'retain':'time');
  if(id==='projectile'){
-  const L=projectileLayout(simValues,w,h);
-  return dist2(x,y,L.launchX,L.launchY)<=dist2(x,y,L.tipX,L.tipY)?'height':'launch';
+  const L=projectileLayout(simValues,w,h),dh=Math.min(dist2(x,y,L.launchX,L.launchY),dist2(x,y,L.heightHandleX,L.launchY)),dl=dist2(x,y,L.tipX,L.tipY);
+  return dh<=dl?'height':'launch';
  }
  if(id==='terminal')return x<w*.48?'time':'terminal';
  if(id==='vehicle')return y<h*.35?'drive':'vmax';
@@ -2347,6 +2347,7 @@ function updateReadout(){
  if(s==='elasticity'){const A=v.area*1e-6,E=v.young*1e9,stress=v.force/A,strain=stress/E,ext=strain*v.length;txt='stress = '+stress.toExponential(2)+' Pa   |   strain = '+strain.toExponential(2)+'   |   ΔL = '+(ext*1000).toFixed(3)+' mm';}
  if(s==='stressstrain'){const E=v.young*1e9,y=v.yield*1e6,epsY=y/E,broken=v.strain>=v.break,stress=broken?0:(v.strain<=epsY?E*v.strain:y+(v.yield*.22e6)*Math.log1p((v.strain-epsY)*120));const region=broken?'fractured':(v.strain<=epsY?'linear elastic':'plastic');txt='region: '+region+'   |   stress ≈ '+(stress/1e6).toFixed(1)+' MPa   |   elastic strain limit ≈ '+epsY.toExponential(2);}
  $('#simReadout').textContent=txt;
+ updateProjectileTools();
  updateSimEnhancements();
 }
 
@@ -2405,12 +2406,66 @@ function projectileStats(v){
  const impactSpeed=Math.hypot(impact.vx,impact.vy),impactAngle=Math.atan2(Math.abs(impact.vy),Math.max(1e-9,Math.abs(impact.vx)))*180/Math.PI;
  return {time:T,range:Math.max(0,impact.x),maxY,timeAtMax,impactSpeed,impactAngle,impactVx:impact.vx,impactVy:impact.vy};
 }
+
+function idealProjectileStats(v){
+ const g=9.81,r=Number(v.angle)*Math.PI/180,u=Number(v.speed)||0,h=Math.max(0,Number(v.height)||0);
+ const ux=u*Math.cos(r),uy=u*Math.sin(r),disc=Math.max(0,uy*uy+2*g*h);
+ const flight=(uy+Math.sqrt(disc))/g;
+ const timeToMax=Math.max(0,uy/g);
+ const rise=uy>0?uy*uy/(2*g):0;
+ const maxHeight=h+rise,range=Math.max(0,ux*flight),impactVy=uy-g*flight;
+ const impactSpeed=Math.hypot(ux,impactVy);
+ const impactAngle=Math.atan2(Math.abs(impactVy),Math.max(1e-9,Math.abs(ux)))*180/Math.PI;
+ return {g,ux,uy,flight,timeToMax,rise,maxHeight,range,impactVy,impactSpeed,impactAngle};
+}
+function updateProjectileTools(){
+ const panel=$('#projectileTools');if(!panel)return;
+ const active=sims[activeSim]?.id==='projectile';panel.classList.toggle('hidden',!active);if(!active)return;
+ const v=simValues,ideal=idealProjectileStats(v),sim=projectileStats(v),dragOn=Number(v.drag)>1e-6;
+ const badge=$('#projectileModelBadge');badge.textContent=dragOn?'SUVAT + drag comparison':'Ideal SUVAT';badge.classList.toggle('warning',dragOn);
+ const eq=$('#projectileEquationGrid');
+ eq.innerHTML=[
+  ['Resolve horizontal','uₓ = u cosθ',fmt(ideal.ux)+' m s⁻¹'],
+  ['Resolve vertical','uᵧ = u sinθ',fmt(ideal.uy)+' m s⁻¹'],
+  ['Horizontal position','x = uₓt','constant horizontal velocity if drag = 0'],
+  ['Vertical position','y = h + uᵧt − ½gt²','take ground as y = 0'],
+  ['Vertical velocity','vᵧ = uᵧ − gt','aᵧ = −g'],
+  ['Resultant speed','v = √(vₓ² + vᵧ²)','combine perpendicular components']
+ ].map(x=>'<div class="projectile-equation-card"><span>'+x[0]+'</span><strong><code>'+x[1]+'</code></strong><span>'+x[2]+'</span></div>').join('');
+ const slider=$('#projectileCalcTime'),out=$('#projectileCalcTimeOut');
+ slider.max=Math.max(.01,ideal.flight).toFixed(2);
+ if(Number(slider.value)>ideal.flight)slider.value=ideal.flight.toFixed(2);
+ const t=clamp(Number(slider.value)||0,0,Math.max(ideal.flight,0));
+ out.textContent=fmt(t)+' s';
+ const x=ideal.ux*t,y=Number(v.height)+ideal.uy*t-.5*ideal.g*t*t,vx=ideal.ux,vy=ideal.uy-ideal.g*t,speed=Math.hypot(vx,vy),dir=Math.atan2(vy,Math.max(1e-9,vx))*180/Math.PI;
+ const calc=$('#projectileCalcGrid');
+ const rows=[
+  ['Time to max height',fmt(ideal.timeToMax)+' s'],
+  ['Maximum height',fmt(ideal.maxHeight)+' m'],
+  ['Flight time',fmt(ideal.flight)+' s'],
+  ['Horizontal range',fmt(ideal.range)+' m'],
+  ['Impact vᵧ',fmt(ideal.impactVy)+' m s⁻¹'],
+  ['Impact speed',fmt(ideal.impactSpeed)+' m s⁻¹'],
+  ['Impact angle',fmt(ideal.impactAngle)+'° below horizontal'],
+  ['x at selected t',fmt(x)+' m'],
+  ['y at selected t',fmt(Math.max(0,y))+' m'],
+  ['vₓ at selected t',fmt(vx)+' m s⁻¹'],
+  ['vᵧ at selected t',fmt(vy)+' m s⁻¹'],
+  ['speed at selected t',fmt(speed)+' m s⁻¹'],
+  ['direction at selected t',fmt(Math.abs(dir))+'° '+(dir>=0?'above':'below')+' horizontal']
+ ];
+ calc.innerHTML=rows.map(x=>'<div class="projectile-calc-card"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
+ const note=$('#projectileCalcNote');
+ note.textContent=dragOn
+  ?'The calculation cards above use the ideal no-drag SUVAT model. With drag switched on, use the live simulation values for comparison: simulated flight '+fmt(sim.time)+' s, range '+fmt(sim.range)+' m, impact speed '+fmt(sim.impactSpeed)+' m s⁻¹.'
+  :'These calculations assume uniform gravitational acceleration g = 9.81 m s⁻², level ground and negligible air resistance.';
+}
 function projectileLayout(v,w,h){
  const stats=projectileStats(v),pts=[];let maxX=Math.max(1,stats.range),maxY=Math.max(1,stats.maxY);
  for(let i=0;i<=160;i++){const tt=stats.time*i/160,p=projectileState(tt,v);pts.push(p);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
  const base=h-45,sx=(w-105)/(Math.max(1,maxX)*1.08),sy=(h-105)/(Math.max(1,maxY)*1.18),launchX=55,launchY=base-(Number(v.height)||0)*sy;
  const rad=v.angle*Math.PI/180,vecLen=clamp(v.speed*3,24,105),tipX=launchX+Math.cos(rad)*vecLen,tipY=launchY-Math.sin(rad)*vecLen;
- return {stats,pts,maxX,maxY,sx,sy,base,launchX,launchY,tipX,tipY};
+ return {stats,pts,maxX,maxY,sx,sy,base,launchX,launchY,tipX,tipY,heightHandleX:Math.max(28,launchX-30)};
 }
 function drawCanvasBackdrop(w,h){
  const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#10253c');grad.addColorStop(.65,'#0a1827');grad.addColorStop(1,'#07111d');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
@@ -2488,72 +2543,69 @@ function drawSim(){
   ctx.stroke();dragHandle(x,ballY,'ball');ctx.fillStyle='#dceaff';ctx.fillText('free-flight gradient ≈ −g',gx+8,gy+18);
  }
  if(id==='projectile'){
-  const L=projectileLayout(v,w,h),T=L.stats.time,base=L.base,tNow=Math.min(Math.max(simTime,0),T);
-  const r=v.angle*Math.PI/180;
+  const L=projectileLayout(v,w,h),T=L.stats.time,base=L.base,tNow=Math.min(Math.max(simTime,0),T),r=v.angle*Math.PI/180;
 
   // Ground and adjustable launch platform.
   ctx.strokeStyle='#6f8197';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(18,base+10);ctx.lineTo(w-18,base+10);ctx.stroke();
-  ctx.fillStyle='#52677b';ctx.fillRect(24,L.launchY+10,34,Math.max(8,base-L.launchY));
-  ctx.fillStyle='#7f93a8';ctx.fillRect(18,L.launchY+2,46,12);
+  ctx.fillStyle='#485d70';ctx.fillRect(20,L.launchY+18,42,Math.max(8,base-L.launchY-8));
+  ctx.fillStyle='#879aab';ctx.fillRect(12,L.launchY+12,58,10);
   ctx.fillStyle='#dceaff';ctx.font='12px system-ui';ctx.fillText('ground',w-66,base+28);
-  ctx.fillText('adjustable platform',70,Math.min(base-12,L.launchY+24));
 
-  // Height ruler with useful metre marks.
-  ctx.strokeStyle='rgba(220,234,255,.55)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(14,L.launchY);ctx.lineTo(14,base);ctx.stroke();
-  const rulerStep=Math.max(1,Math.ceil(Math.max(1,v.height)/6));
-  for(let m=0;m<=v.height+1e-6;m+=rulerStep){
-   const yy=base-m*L.sy;ctx.beginPath();ctx.moveTo(9,yy);ctx.lineTo(19,yy);ctx.stroke();
-   if(m>0){ctx.fillStyle='#b9cbe0';ctx.fillText(fmt(m)+' m',22,yy+4);}
+  // Height ruler + draggable height handle.
+  ctx.strokeStyle='rgba(220,234,255,.65)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(L.heightHandleX,L.launchY);ctx.lineTo(L.heightHandleX,base);ctx.stroke();
+  const rulerTop=Math.max(1,Math.ceil(Math.max(1,v.height))),major=Math.max(1,Math.ceil(rulerTop/6));
+  for(let m=0;m<=rulerTop;m+=major){
+   const yy=base-m*L.sy;if(yy<L.launchY-2||yy>base+2)continue;
+   ctx.beginPath();ctx.moveTo(L.heightHandleX-6,yy);ctx.lineTo(L.heightHandleX+6,yy);ctx.stroke();
+   ctx.fillStyle='#b9cbe0';ctx.fillText(m+' m',L.heightHandleX+9,yy+4);
+  }
+  ctx.fillStyle='#ffd56a';ctx.fillText('height '+fmt(v.height)+' m',L.heightHandleX+10,Math.max(18,L.launchY-10));
+  dragHandle(L.heightHandleX,L.launchY,'drag height');
+
+  // Stylised cannon: wheels/carriage plus a rotatable barrel ending at the launch point.
+  const backX=L.launchX-50*Math.cos(r),backY=L.launchY+50*Math.sin(r);
+  ctx.save();ctx.strokeStyle='#75879a';ctx.lineWidth=15;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(backX,backY);ctx.lineTo(L.launchX,L.launchY);ctx.stroke();
+  ctx.strokeStyle='#b3c2d0';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(backX-4*Math.cos(r),backY+4*Math.sin(r));ctx.lineTo(L.launchX+3*Math.cos(r),L.launchY-3*Math.sin(r));ctx.stroke();ctx.restore();
+  const carriageY=Math.min(base-9,L.launchY+30);
+  ctx.fillStyle='#65798d';ctx.fillRect(L.launchX-62,carriageY-16,58,18);
+  ctx.fillStyle='#253646';for(const wx of [L.launchX-50,L.launchX-16]){ctx.beginPath();ctx.arc(wx,carriageY+5,12,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#9fb2c7';ctx.lineWidth=2;ctx.stroke();}
+  ctx.fillStyle='#a8e4ff';ctx.beginPath();ctx.arc(L.launchX,L.launchY,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#dceaff';ctx.fillText('virtual cannon',Math.max(76,L.launchX-58),Math.max(18,L.launchY-42));
+
+  // Built-in protractor with 15 degree marks.
+  const pr=48;ctx.strokeStyle='rgba(168,228,255,.62)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(L.launchX,L.launchY,pr,-Math.PI/2,0);ctx.stroke();
+  for(let deg=0;deg<=90;deg+=15){
+   const a=-deg*Math.PI/180,x1=L.launchX+Math.cos(a)*(pr-5),y1=L.launchY+Math.sin(a)*(pr-5),x2=L.launchX+Math.cos(a)*(pr+3),y2=L.launchY+Math.sin(a)*(pr+3);
+   ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+   if(deg%30===0){ctx.fillStyle='#b9cbe0';ctx.fillText(deg+'°',L.launchX+Math.cos(a)*(pr+14)-8,L.launchY+Math.sin(a)*(pr+14)+4);}
   }
 
-  // Stylised classroom launcher: base, pivot and guide tube.
-  const tubeLen=46,tubeX=L.launchX+Math.cos(r)*tubeLen,tubeY=L.launchY-Math.sin(r)*tubeLen;
-  ctx.save();ctx.translate(L.launchX,L.launchY);ctx.rotate(-r);
-  ctx.fillStyle='#67c7ff';ctx.fillRect(-12,-8,56,16);
-  ctx.fillStyle='#0b1827';ctx.fillRect(22,-4,27,8);
-  ctx.restore();
-  ctx.fillStyle='#9fb2c7';ctx.beginPath();ctx.arc(L.launchX,L.launchY,15,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#21364a';ctx.beginPath();ctx.arc(L.launchX,L.launchY,7,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#dceaff';ctx.fillText('projectile launcher',L.launchX+8,Math.max(18,L.launchY-30));
-
-  // Faint predicted trajectory helps students aim; bright line shows the path already travelled.
-  ctx.setLineDash([5,6]);ctx.strokeStyle='rgba(103,199,255,.32)';ctx.lineWidth=2;ctx.beginPath();
+  // Predicted path and actual traced flight.
+  ctx.setLineDash([5,6]);ctx.strokeStyle='rgba(103,199,255,.28)';ctx.lineWidth=2;ctx.beginPath();
   L.pts.forEach((p,i)=>{const x=L.launchX+p.x*L.sx,y=base-p.y*L.sy;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.setLineDash([]);
-
   ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();
-  for(let i=0;i<=120;i++){
-   const tt=tNow*i/120,p=projectileState(tt,v),x=L.launchX+p.x*L.sx,y=base-p.y*L.sy;
-   i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-  }
-  ctx.stroke();
+  for(let i=0;i<=120;i++){const tt=tNow*i/120,p=projectileState(tt,v),x=L.launchX+p.x*L.sx,y=base-p.y*L.sy;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
 
+  // Projectile and live velocity components.
   const p=projectileState(tNow,v),px=L.launchX+p.x*L.sx,py=base-p.y*L.sy;
   ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();
-  if(simDisplay.vectors){
-   arrow(px,py,px+clamp(p.vx*3,-85,85),py,'vₓ','#63d9a4');
-   arrow(px,py,px,py-clamp(p.vy*3,-85,85),'vᵧ','#ffb66a');
-  }
+  if(simDisplay.vectors){arrow(px,py,px+clamp(p.vx*3,-85,85),py,'vₓ','#63d9a4');arrow(px,py,px,py-clamp(p.vy*3,-85,85),'vᵧ','#ffb66a');}
 
-  // Measurement guides: launch height, range and maximum height.
+  // Measurement guides.
   ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(255,213,106,.75)';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(L.launchX,L.launchY);ctx.lineTo(L.launchX,base);ctx.stroke();
   ctx.beginPath();ctx.moveTo(L.launchX,base-2);ctx.lineTo(L.launchX+L.stats.range*L.sx,base-2);ctx.stroke();
   const maxPoint=projectileState(L.stats.timeAtMax,v),mx=L.launchX+maxPoint.x*L.sx,my=base-L.stats.maxY*L.sy;
   ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx,base);ctx.stroke();ctx.setLineDash([]);
-
-  ctx.fillStyle='#ffd56a';ctx.font='12px system-ui';
-  ctx.fillText('launch height '+fmt(v.height)+' m',L.launchX+8,(L.launchY+base)/2);
-  ctx.fillText('range '+fmt(L.stats.range)+' m',L.launchX+Math.max(20,L.stats.range*L.sx*.42),base-10);
-  ctx.fillText('max height '+fmt(L.stats.maxY)+' m',mx+8,Math.max(24,my-8));
+  ctx.fillStyle='#ffd56a';ctx.fillText('range '+fmt(L.stats.range)+' m',L.launchX+Math.max(20,L.stats.range*L.sx*.42),base-10);
+  ctx.fillText('max '+fmt(L.stats.maxY)+' m',mx+8,Math.max(24,my-8));
   ctx.fillStyle='#ffb66a';ctx.beginPath();ctx.arc(L.launchX+L.stats.range*L.sx,base,6,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#dceaff';ctx.fillText('impact '+fmt(L.stats.impactSpeed)+' m s⁻¹',Math.min(w-165,L.launchX+L.stats.range*L.sx-52),base-20);
 
-  // Direct manipulation handles: platform height and launch vector.
+  // Aim vector and draggable angle/speed handle.
   arrow(L.launchX,L.launchY,L.tipX,L.tipY,'u','#a8e4ff');
-  ctx.strokeStyle='#a8e4ff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(L.launchX,L.launchY,30,-v.angle*Math.PI/180,0);ctx.stroke();
-  ctx.fillStyle='#dceaff';ctx.fillText(fmt(v.angle)+'°',L.launchX+34,L.launchY-8);
-  dragHandle(L.launchX,L.launchY,'height');
-  dragHandle(L.tipX,L.tipY,'angle/speed');
+  ctx.fillStyle='#dceaff';ctx.fillText(fmt(v.angle)+'°',L.launchX+35,L.launchY-10);
+  dragHandle(L.tipX,L.tipY,'drag aim');
  } if(id==='terminal'){
   const t=simTime%8,vt=v.mass*9.81/v.k,speed=vt*(1-Math.exp(-v.k*t/v.mass)),drag=v.k*speed,weight=v.mass*9.81,result=weight-drag;
   const x=w*.30,y=70+(h-150)*(t/8);ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();
@@ -2673,6 +2725,7 @@ $('#showGrid').addEventListener('change',e=>{simDisplay.grid=e.target.checked;dr
 $('#showVectors').addEventListener('change',e=>{simDisplay.vectors=e.target.checked;drawSimSafely();});
 $('#showLiveInfo').addEventListener('change',e=>{simDisplay.live=e.target.checked;updateSimEnhancements();});
 $('#showTrails').addEventListener('change',e=>{simDisplay.trails=e.target.checked;drawSimSafely();});
+$('#projectileCalcTime')?.addEventListener('input',()=>updateProjectileTools());
 $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
 $('#simTimeline').addEventListener('input',e=>{running=false;const id=sims[activeSim].id;$('#playPause').textContent=id==='projectile'?'Resume flight':'Play';setSimScrub(id==='projectile'?projectileStats(simValues).time:simDuration(),Number(e.target.value)/1000);$('#simState').textContent='Timeline scrub';updateReadout();drawSimSafely();drawLinkedView();});
