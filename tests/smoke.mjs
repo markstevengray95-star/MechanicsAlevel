@@ -99,8 +99,8 @@ try {
       const r=el.getBoundingClientRect();
       const fire=(type,fx,fy,buttons)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:901,pointerType:'touch',isPrimary:true,buttons,clientX:r.left+r.width*fx,clientY:r.top+r.height*fy}));
       fire('pointerdown',.72,.24,1);
-      fire('pointermove',.34,.76,1);
-      fire('pointerup',.34,.76,0);
+      fire('pointermove',.34,.45,1);
+      fire('pointerup',.34,.45,0);
     });
     await page.waitForTimeout(20);
     const touchAfter=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
