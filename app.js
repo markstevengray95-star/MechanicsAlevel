@@ -1645,7 +1645,8 @@ function renderSimEnhancements(){
  $('#keyKnowledge').innerHTML='<ul class="key-knowledge-list">'+(profile.knowledge||[]).map(x=>'<li>'+x+'</li>').join('')+'</ul>';
  $('#simPresets').innerHTML=(profile.presets||[]).map((p,i)=>'<button class="button sim-preset" data-sim-preset="'+i+'">'+p.label+'</button>').join('');
  $('#simChallenge').textContent=profile.challenge?.text||'Explore how changing one variable affects the model.';
- $$('[data-sim-preset]').forEach(b=>b.addEventListener('click',()=>{
+ $('#simCanvasHint').textContent=simCanvasHints[id]||'Use the sliders, presets and data recorder to investigate one variable at a time.';
+ $('[data-sim-preset]').forEach(b=>b.addEventListener('click',()=>{
   const preset=profile.presets[Number(b.dataset.simPreset)];if(!preset)return;
   Object.entries(preset.values).forEach(([key,value])=>{
    simValues[key]=value;
@@ -1655,6 +1656,87 @@ function renderSimEnhancements(){
  }));
  renderSimData();updateSimEnhancements();
 }
+
+const simCanvasHints={
+ vectors:'Drag on the canvas to set the vector magnitude and direction directly.',
+ moments:'Drag horizontally along the beam to change the perpendicular moment arm.',
+ couplecom:'Drag across the beam to move the centre of mass left or right of the pivot.',
+ projectile:'Drag from the launch region to change launch angle and speed.',
+ impulse:'Drag inside the force–time graph to change contact time and peak force together.',
+ workgraph:'Drag inside the graph to change displacement and final force.',
+ motor:'Drag vertically in the lift region to change the lift height.',
+ springenergy:'Drag across the force–extension graph to set the extension.',
+ elasticity:'Drag vertically near the hanging mass to change the tension.',
+ stressstrain:'Drag across the stress–strain graph to move through elastic, plastic and fracture regions.'
+};
+
+function setSimControl(key,value,{resetTime=true}={}){
+ const s=sims[activeSim],control=s.controls.find(x=>x.key===key);
+ if(!control)return;
+ const v=clamp(Number(value),Number(control.min),Number(control.max));
+ const snapped=control.step?Math.round(v/Number(control.step))*Number(control.step):v;
+ simValues[key]=Number(snapped.toFixed(8));
+ const input=$('[data-control="'+key+'"]'),out=$('[data-output="'+key+'"]');
+ if(input)input.value=simValues[key];
+ if(out)out.textContent=simValues[key];
+ if(resetTime)simTime=0;
+}
+let simPointerActive=false;
+function handleSimPointer(event){
+ if(!simPointerActive&&event.type!=='pointerdown')return;
+ const rect=canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
+ const x=clamp(event.clientX-rect.left,0,w),y=clamp(event.clientY-rect.top,0,h),id=sims[activeSim].id;
+ let changed=false;
+ if(id==='vectors'){
+  const ox=w*.22,oy=h*.72,dx=Math.max(0,x-ox),dy=Math.max(0,oy-y),scale=Math.min(w,h)*.006;
+  setSimControl('mag',Math.hypot(dx,dy)/Math.max(scale,.001),{resetTime:false});
+  setSimControl('angle',Math.atan2(dy,Math.max(dx,.001))*180/Math.PI,{resetTime:false});changed=true;
+ }
+ if(id==='moments'){
+  const cx=w*.46,len=Math.min(w*.72,620),distance=Math.abs(x-cx)/(len*.42)*1.2;
+  setSimControl('distance',distance,{resetTime:false});changed=true;
+ }
+ if(id==='couplecom'){
+  const cx=w*.48,beam=Math.min(w*.62,520),com=(x-cx)/(beam*.45);
+  setSimControl('com',com,{resetTime:false});changed=true;
+ }
+ if(id==='projectile'){
+  const ox=45,oy=h-45,dx=Math.max(1,x-ox),dy=Math.max(0,oy-y),angle=Math.atan2(dy,dx)*180/Math.PI;
+  const frac=clamp(Math.hypot(dx,dy)/(Math.min(w,h)*.42),0,1);
+  setSimControl('angle',angle,{resetTime:false});setSimControl('speed',5+30*frac,{resetTime:false});changed=true;
+ }
+ if(id==='impulse'){
+  const gx=70,gy=55,gw=w-130,gh=h-110;
+  setSimControl('time',.01+.29*clamp((x-gx)/Math.max(gw,1),0,1),{resetTime:false});
+  setSimControl('peak',100+4900*(1-clamp((y-gy)/Math.max(gh,1),0,1)),{resetTime:false});changed=true;
+ }
+ if(id==='workgraph'){
+  const gx=70,gy=55,gw=w-130,gh=h-110;
+  setSimControl('distance',.5+7.5*clamp((x-gx)/Math.max(gw,1),0,1),{resetTime:false});
+  setSimControl('f1',120*(1-clamp((y-gy)/Math.max(gh,1),0,1)),{resetTime:false});changed=true;
+ }
+ if(id==='motor'){
+  const top=60,ground=h-65,frac=1-clamp((y-top)/Math.max(ground-top,1),0,1);
+  setSimControl('height',.5+4.5*frac,{resetTime:false});changed=true;
+ }
+ if(id==='springenergy'){
+  const gx=70,gw=w*.56;
+  setSimControl('ext',.30*clamp((x-gx)/Math.max(gw,1),0,1),{resetTime:false});changed=true;
+ }
+ if(id==='elasticity'){
+  const frac=1-clamp((y-65)/Math.max(h*.6,1),0,1);
+  setSimControl('force',120*frac,{resetTime:false});changed=true;
+ }
+ if(id==='stressstrain'){
+  const gx=70,gw=w-130,br=simValues.break;
+  setSimControl('strain',br*1.08*clamp((x-gx)/Math.max(gw,1),0,1),{resetTime:false});changed=true;
+ }
+ if(changed){simTime=0;updateReadout();drawSimSafely();event.preventDefault();}
+}
+canvas.addEventListener('pointerdown',e=>{simPointerActive=true;canvas.setPointerCapture?.(e.pointerId);handleSimPointer(e);});
+canvas.addEventListener('pointermove',handleSimPointer);
+canvas.addEventListener('pointerup',e=>{simPointerActive=false;canvas.releasePointerCapture?.(e.pointerId);});
+canvas.addEventListener('pointercancel',()=>{simPointerActive=false;});
 
 function renderSim(){
  const s=sims[activeSim]; simValues={}; s.controls.forEach(c=>simValues[c.key]=c.value); simTime=0;
@@ -1705,11 +1787,13 @@ function sizeCanvas(){
 }
 window.addEventListener('resize',sizeCanvas);setTimeout(sizeCanvas,0);
 function arrow(x1,y1,x2,y2,label,color='#67c7ff'){
+ if(!simDisplay.vectors)return;
  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
  const a=Math.atan2(y2-y1,x2-x1),h=10;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.5),y2-h*Math.sin(a-.5));ctx.lineTo(x2-h*Math.cos(a+.5),y2-h*Math.sin(a+.5));ctx.closePath();ctx.fill();
  if(label){ctx.font='13px system-ui';ctx.fillText(label,(x1+x2)/2+6,(y1+y2)/2-6);}
 }
 function grid(w,h){
+ if(!simDisplay.grid)return;
  ctx.strokeStyle='rgba(120,160,200,.10)';ctx.lineWidth=1;for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
 }
 function drawAxes(x,y,w,h,xLabel,yLabel){
@@ -1884,6 +1968,12 @@ function animate(now){
 requestAnimationFrame(animate);
 $('#playPause').addEventListener('click',()=>{running=!running;$('#playPause').textContent=running?'Pause':'Play';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
 $('#slowMotion').addEventListener('click',()=>{slow=!slow;$('#slowMotion').textContent=slow?'Normal speed':'Slow motion';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
+$('#stepSim').addEventListener('click',()=>{running=false;$('#playPause').textContent='Play';simTime+=.25;$('#simState').textContent='Stepped to '+fmt(simTime)+' s';updateReadout();drawSimSafely();});
+$('#recordSim').addEventListener('click',()=>{const id=sims[activeSim].id;if(!simDataRecords[id])simDataRecords[id]=[];simDataRecords[id].push({variables:simVariablesText(),results:simResultsText()});if(simDataRecords[id].length>20)simDataRecords[id].shift();renderSimData();});
+$('#clearSimData').addEventListener('click',()=>{simDataRecords[sims[activeSim].id]=[];renderSimData();});
+$('#showGrid').addEventListener('change',e=>{simDisplay.grid=e.target.checked;drawSimSafely();});
+$('#showVectors').addEventListener('change',e=>{simDisplay.vectors=e.target.checked;drawSimSafely();});
+$('#showLiveInfo').addEventListener('change',e=>{simDisplay.live=e.target.checked;updateSimEnhancements();});
 $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
 const formulas = [
