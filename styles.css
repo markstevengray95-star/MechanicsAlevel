@@ -273,6 +273,9 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}bu
 .key-box{border-color:rgba(103,199,255,.28);background:rgba(103,199,255,.055)}
 .key-knowledge-list{margin:0;padding-left:18px;display:grid;gap:7px}
 .key-knowledge-list li{line-height:1.48}
-#simCanvas{touch-action:pan-y;cursor:crosshair}
+#simCanvas{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#simCanvas.dragging{cursor:grabbing}
 .viewer-controls{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:700px){.sim-metrics{grid-template-columns:1fr}.viewer-controls .button{flex:1 1 calc(50% - 8px)}.sim-display-options{display:grid;grid-template-columns:1fr 1fr}}
+
+.sim-canvas-hint::before{content:'Drag the white handles · ';font-weight:800;color:var(--accent)}
