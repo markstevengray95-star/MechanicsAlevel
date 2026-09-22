@@ -1824,9 +1824,9 @@ function refreshSimControlRanges(){
  });
 }
 function updateTimelineUI(){
- const duration=simDuration(),fraction=clamp(simTime/duration,0,.9999);
+ const duration=simDuration(),phase=((simTime%duration)+duration)%duration,fraction=clamp(phase/duration,0,.9999);
  if($('#simTimeline'))$('#simTimeline').value=Math.round(fraction*1000);
- if($('#timelineOutput'))$('#timelineOutput').textContent=fmt(simTime)+' s';
+ if($('#timelineOutput'))$('#timelineOutput').textContent=fmt(phase)+' s';
 }
 
 function drawRelationshipGraph(canvasEl,profile,values,records=null){
@@ -2500,8 +2500,8 @@ $('#lockPrediction').addEventListener('click',()=>{
  $('#simPredictionFeedback').textContent=text?'Prediction locked. Test it with the model before revealing the explanation.':'Prediction locked without text—try writing a reason next time.';
 });
 $('#revealPrediction').addEventListener('click',()=>{
- const id=sims[activeSim].id,profile=simPedagogy[id];
- $('#simPredictionFeedback').innerHTML='<strong>Physics explanation:</strong> '+profile.explain+(simPredictions[id]?.text?'<br><span class="muted">Your prediction: '+simPredictions[id].text+'</span>':'');
+ const id=sims[activeSim].id,profile=simPedagogy[id],box=$('#simPredictionFeedback');
+ box.textContent='Physics explanation: '+profile.explain+(simPredictions[id]?.text?' Your prediction: '+simPredictions[id].text:'');
 });
 $('#addFbdForce').addEventListener('click',()=>{
  const id=sims[activeSim].id;if(!simFbdState[id])simFbdState[id]=[];
