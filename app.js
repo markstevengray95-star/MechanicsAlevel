@@ -1610,7 +1610,7 @@ function getSimMetrics(id,v,t=simTime){
  if(id==='newton'){const F=v.drive-v.resist;add('Resultant force',fmt(F)+' N');add('Acceleration',fmt(F/v.mass)+' m s⁻²');add('Mass',fmt(v.mass)+' kg');add('Force balance',F===0?'Balanced':'Unbalanced');}
  if(id==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,V=p/(v.m1+v.m2),ki=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kf=.5*(v.m1+v.m2)*V*V;add('Total momentum',fmt(p)+' kg m s⁻¹');add('Joined velocity',fmt(V)+' m s⁻¹');add('KE before',fmt(ki)+' J');add('KE after',fmt(kf)+' J');}
  if(id==='impulse'){const J=.5*v.peak*v.time;add('Impulse',fmt(J)+' N s');add('Δp',fmt(J)+' kg m s⁻¹');add('Δv magnitude',fmt(J/v.mass)+' m s⁻¹');add('Average force',fmt(J/v.time)+' N');}
- if(id==='energy'){const G=v.mass*9.81*v.height,K=G*(1-v.loss/100);add('Initial GPE',fmt(G)+' J');add('Final KE available',fmt(K)+' J');add('Dissipated',fmt(G-K)+' J');add('Final speed',fmt(Math.sqrt(Math.max(0,2*K/v.mass)))+' m s⁻¹');}
+ if(id==='energy'){const p=(t%6)/6,total=v.mass*9.81*v.height,gpe=total*(1-p),transferred=total*p,diss=transferred*(v.loss/100),ke=transferred-diss;add('Current GPE',fmt(gpe)+' J');add('Current KE',fmt(ke)+' J');add('Dissipated so far',fmt(diss)+' J');add('Current speed',fmt(Math.sqrt(Math.max(0,2*ke/v.mass)))+' m s⁻¹');}
  if(id==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;add('Work / graph area',fmt(W)+' J');add('Mean force',fmt((v.f0+v.f1)/2)+' N');add('Displacement',fmt(v.distance)+' m');}
  if(id==='motor'){const E=v.mass*9.81*v.height,P=E/v.time,eff=100*P/v.input;add('Useful GPE',fmt(E)+' J');add('Useful output power',fmt(P)+' W');add('Input power',fmt(v.input)+' W');add('Efficiency',fmt(eff)+'%');}
  if(id==='springenergy'){const linear=v.ext<=v.limit,F=linear?v.k*v.ext:v.k*v.limit+v.k*.35*(v.ext-v.limit),E=linear?.5*v.k*v.ext*v.ext:.5*v.k*v.limit*v.limit+(v.ext-v.limit)*(v.k*v.limit+F)/2;add('Force',fmt(F)+' N');add('Elastic energy',fmt(E)+' J');add('F/extension',v.ext?fmt(F/v.ext)+' N m⁻¹':'—');add('Region',linear?'Hookean':'Non-linear');}
@@ -1927,7 +1927,7 @@ function updateReadout(){
  if(s==='newton'){const r=v.drive-v.resist,a=r/v.mass;txt='Resultant force = '+fmt(r)+' N   |   a = '+fmt(a)+' m s⁻²';}
  if(s==='momentum'){const p=v.m1*v.v1+v.m2*v.v2,fin=p/(v.m1+v.m2),kei=.5*v.m1*v.v1*v.v1+.5*v.m2*v.v2*v.v2,kef=.5*(v.m1+v.m2)*fin*fin;txt='Total p = '+fmt(p)+' kg m s⁻¹   |   final v = '+fmt(fin)+' m s⁻¹   |   KE change = '+fmt(kef-kei)+' J';}
  if(s==='impulse'){const J=.5*v.peak*v.time,dv=J/v.mass;txt='Impulse = area = '+fmt(J)+' N s   |   |Δp| = '+fmt(J)+' kg m s⁻¹   |   |Δv| = '+fmt(dv)+' m s⁻¹';}
- if(s==='energy'){const gpe=v.mass*9.81*v.height,ke=gpe*(1-v.loss/100),speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='Initial GPE = '+fmt(gpe)+' J   |   final KE available = '+fmt(ke)+' J   |   final v ≈ '+fmt(speed)+' m s⁻¹';}
+ if(s==='energy'){const p=(simTime%6)/6,total=v.mass*9.81*v.height,gpe=total*(1-p),transferred=total*p,diss=transferred*(v.loss/100),ke=transferred-diss,speed=Math.sqrt(Math.max(0,2*ke/v.mass));txt='progress = '+fmt(100*p)+'%   |   GPE = '+fmt(gpe)+' J   |   KE = '+fmt(ke)+' J   |   dissipated = '+fmt(diss)+' J   |   v ≈ '+fmt(speed)+' m s⁻¹';}
  if(s==='workgraph'){const W=.5*(v.f0+v.f1)*v.distance;txt='Work = area = ½('+fmt(v.f0)+' + '+fmt(v.f1)+') × '+fmt(v.distance)+' = '+fmt(W)+' J';}
  if(s==='motor'){const usefulE=v.mass*9.81*v.height,usefulP=usefulE/v.time,eff=100*usefulP/v.input;txt='useful E = '+fmt(usefulE)+' J   |   useful P = '+fmt(usefulP)+' W   |   efficiency = '+fmt(eff)+'%';}
  if(s==='springenergy'){const linear=v.ext<=v.limit,F=linear?v.k*v.ext:v.k*v.limit+v.k*.35*(v.ext-v.limit),E=linear?.5*v.k*v.ext*v.ext:.5*v.k*v.limit*v.limit+(v.ext-v.limit)*(v.k*v.limit+F)/2;txt='force ≈ '+fmt(F)+' N   |   stored/transferred energy ≈ '+fmt(E)+' J   |   '+(linear?'Hookean region':'non-linear region');}
@@ -2074,7 +2074,7 @@ function drawSim(){
  if(id==='energy'){
   const ground=h-70,left=50,right=w*.63,top=70,p=(simTime%6)/6,x=left+(right-left)*p,y=top+(ground-top)*(1-Math.pow(1-p,2));
   ctx.strokeStyle='#7d91a9';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(left,top);ctx.quadraticCurveTo(w*.32,ground-20,right,ground);ctx.stroke();ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(x,y-12,13,0,Math.PI*2);ctx.fill();dragHandle(x,y-12,'scrub');
-  const total=v.mass*9.81*v.height,frac=1-p,gpe=total*frac,usable=total*(1-v.loss/100),ke=Math.max(0,usable-gpe*(1-v.loss/100)),diss=total-ke-gpe;
+  const total=v.mass*9.81*v.height,gpe=total*(1-p),transferred=total*p,diss=transferred*(v.loss/100),ke=transferred-diss;
   const bx=w*.70,bw=w*.22,maxH=h*.55;[['GPE',gpe,'#67c7ff'],['KE',ke,'#63d9a4'],['diss.',Math.max(0,diss),'#ffd56a']].forEach((b,i)=>{const bh=maxH*(b[1]/Math.max(1,total));ctx.fillStyle=b[2];ctx.fillRect(bx+i*bw/3,ground-bh,bw/4,bh);ctx.fillStyle='#dceaff';ctx.fillText(b[0],bx+i*bw/3,ground+20);});
  }
  if(id==='workgraph'){
