@@ -103,6 +103,13 @@ jobs:
           grep -q 'id="fbdCanvas"' index.html
           grep -q 'id="investigationCanvas"' index.html
           grep -q 'id="sandboxToggle"' index.html
+      - name: Check projectile launch-height upgrade
+        run: |
+          grep -q "Launch height above ground" app.js
+          grep -q "projectileStats" app.js
+          grep -q "projectileLayout" app.js
+          grep -q "lessonExtraTextbook" app.js
+          grep -q "Launching from a height" app.js
       - name: Install browser test dependencies
         run: |
           npm install --no-audit --no-fund
