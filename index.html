@@ -7,7 +7,7 @@
   <title>AQA Mechanics & Materials Learning Lab</title>
   <meta name="description" content="Interactive AQA A-level Physics 7408 Mechanics and Materials learning lab with guided lessons, simulations, calculations, practicals and exam practice.">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
 <header class="topbar">
@@ -127,7 +127,48 @@
             <input id="projectileCalcTime" type="range" min="0" max="1" step="0.01" value="0">
           </label>
           <div class="projectile-calc-grid" id="projectileCalcGrid"></div>
+
           <p class="muted small" id="projectileCalcNote"></p>
+
+          <section class="projectile-practice" id="projectilePractice" aria-labelledby="projectilePracticeTitle">
+            <div class="projectile-practice-head">
+              <div>
+                <span class="eyebrow">Graph-linked calculation practice</span>
+                <h3 id="projectilePracticeTitle">Use the current trajectory data</h3>
+              </div>
+              <div class="projectile-practice-score"><strong id="projectilePracticeScore">0 / 0</strong><span>correct</span></div>
+            </div>
+
+            <div class="projectile-graph-data" id="projectileGraphData" aria-label="Current projectile graph data"></div>
+
+            <div class="projectile-practice-toolbar">
+              <label class="field compact-field">
+                <span>Difficulty</span>
+                <select id="projectilePracticeDifficulty">
+                  <option value="foundation">Core</option>
+                  <option value="standard" selected>A-level</option>
+                  <option value="challenge">Challenge</option>
+                </select>
+              </label>
+              <button class="button" id="newProjectileQuestion" type="button">New question</button>
+            </div>
+
+            <article class="projectile-question-card">
+              <span class="pill" id="projectileQuestionSkill">Projectile calculation</span>
+              <p class="projectile-question" id="projectileQuestion"></p>
+              <div class="projectile-answer-row">
+                <label class="field">
+                  <span>Your answer <span id="projectileAnswerUnitLabel"></span></span>
+                  <input id="projectileAnswer" type="number" step="any" inputmode="decimal" placeholder="Enter value">
+                </label>
+                <button class="button primary" id="checkProjectileAnswer" type="button">Check answer</button>
+              </div>
+              <div class="projectile-practice-feedback" id="projectilePracticeFeedback" aria-live="polite"></div>
+              <button class="text-button hidden" id="showProjectileWorking" type="button">Show worked solution</button>
+              <div class="worked hidden" id="projectileWorkedSolution"></div>
+            </article>
+            <p class="muted small" id="projectilePracticeModelNote">Questions update from the current trajectory whenever you change the launch conditions.</p>
+          </section>
         </article>
         <div class="sim-experiment-grid">
           <details class="panel sim-mode-panel" open>
@@ -397,6 +438,6 @@
 </main>
 
 <footer class="wrap footer">Built as an educational model for AQA A-level Physics 7408. Simulation scales are schematic rather than literal.</footer>
-<script src="app.js?v=13"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>
