@@ -81,9 +81,10 @@ try {
     // Real mouse drag across the simulation canvas.
     const beforeDrag=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
     const beforeReadout=(await page.locator('#simReadout').innerText()).trim();
-    await page.mouse.move(box.x+box.width*.25,box.y+box.height*.25);
+    const canvas=page.locator('#simCanvas');
+    await canvas.hover({position:{x:box.width*.25,y:box.height*.25}});
     await page.mouse.down();
-    await page.mouse.move(box.x+box.width*.72,box.y+box.height*.64,{steps:5});
+    await canvas.hover({position:{x:box.width*.72,y:box.height*.64}});
     await page.mouse.up();
     await page.waitForTimeout(20);
     const afterDrag=await page.locator('#simControls input[type="range"]').evaluateAll(xs=>xs.map(x=>x.value).join('|'));
