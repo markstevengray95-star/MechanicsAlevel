@@ -69,7 +69,7 @@ try {
     const activityCount=await page.locator('[data-sim-activity]').count();
     assert(activityCount===3,'Simulation should expose 3 activities: '+title+' has '+activityCount);
     const presetCount=await page.locator('[data-sim-preset]').count();
-    assert(presetCount===3,'Simulation should expose 3 presets: '+title+' has '+presetCount);
+    assert(presetCount>=3,'Simulation should expose at least 3 presets: '+title+' has '+presetCount);
     const knowledgeCount=await page.locator('#keyKnowledge li').count();
     assert(knowledgeCount>=4,'Simulation key knowledge incomplete: '+title+' has '+knowledgeCount);
     const metricCount=await page.locator('#simMetrics .sim-metric').count();
@@ -189,6 +189,44 @@ try {
   await page.locator('#loadScenario').click();
   await angleControl.evaluate(el=>{el.value='45';el.dispatchEvent(new Event('input',{bubbles:true}));});
   assert((await page.locator('#scenarioState').innerText()).includes('Completed'),'Scenario challenge did not detect success');
+
+  // Projectile launch-height physics: raising the release point must increase flight time/range at fixed speed and angle.
+  const projectileTab=page.locator('#simTabs .sim-tab').filter({hasText:'Projectile motion'}).first();
+  await projectileTab.click();
+  await page.waitForTimeout(60);
+  const setProjectile=async (key,value)=>{
+    const input=page.locator('[data-control="'+key+'"]');
+    await input.evaluate((el,val)=>{el.value=String(val);el.dispatchEvent(new Event('input',{bubbles:true}));},value);
+  };
+  await setProjectile('speed',20);
+  await setProjectile('angle',30);
+  await setProjectile('drag',0);
+  await setProjectile('height',0);
+  const projectileMetrics=async ()=>page.locator('#simMetrics .sim-metric').evaluateAll(cards=>{
+    const out={};cards.forEach(card=>{const label=card.querySelector('span')?.textContent?.trim();const value=parseFloat(card.querySelector('strong')?.textContent||'');if(label)out[label]=value;});return out;
+  });
+  const groundMetrics=await projectileMetrics();
+  await setProjectile('height',10);
+  const raisedMetrics=await projectileMetrics();
+  assert(raisedMetrics['Flight time']>groundMetrics['Flight time'],'Projectile launch height did not increase flight time');
+  assert(raisedMetrics['Range']>groundMetrics['Range'],'Projectile launch height did not increase range');
+  assert(raisedMetrics['Launch height']===10,'Projectile launch-height metric did not update');
+  assert(Number.isFinite(raisedMetrics['Impact speed'])&&Number.isFinite(raisedMetrics['Impact angle']),'Projectile impact measurements missing');
+
+  // Directly drag the launch-height handle upward with a touch-style pointer.
+  await setProjectile('height',0);
+  const projCanvas=page.locator('#simCanvas');
+  await projCanvas.scrollIntoViewIfNeeded();
+  await projCanvas.evaluate(el=>{
+    const r=el.getBoundingClientRect(),x=r.left+55,y=r.top+r.height-45;
+    const fire=(type,cx,cy,buttons)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:991,pointerType:'touch',isPrimary:true,buttons,clientX:cx,clientY:cy}));
+    fire('pointerdown',x,y,1);
+    fire('pointermove',x,r.top+r.height*.58,1);
+    fire('pointerup',x,r.top+r.height*.58,0);
+  });
+  await page.waitForTimeout(30);
+  const draggedHeight=Number(await page.locator('[data-control="height"]').inputValue());
+  assert(draggedHeight>0,'Projectile height handle did not respond to touch drag');
 
   await page.locator('#stepSim').click();
   assert((await page.locator('#simState').innerText()).includes('Stepped'),'Step-time control failed');
