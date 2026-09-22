@@ -2489,7 +2489,7 @@ $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#s
 
 $('#simTimeline').addEventListener('input',e=>{running=false;$('#playPause').textContent='Play';setSimScrub(simDuration(),Number(e.target.value)/1000);$('#simState').textContent='Timeline scrub';updateReadout();drawSimSafely();drawLinkedView();});
 $('#sandboxToggle').addEventListener('click',()=>{simSandbox=!simSandbox;$('#sandboxToggle').textContent='Sandbox: '+(simSandbox?'on':'off');$('#sandboxToggle').classList.toggle('primary',simSandbox);refreshSimControlRanges();$('#simState').textContent=simSandbox?'Sandbox mode':'Paused';running=false;$('#playPause').textContent='Play';});
-$$$('[data-measure-tool]').forEach(btn=>btn.addEventListener('click',()=>{
+$('[data-measure-tool]').forEach(btn=>btn.addEventListener('click',()=>{
  simMeasureTool=btn.dataset.measureTool;measureState={a:null,b:null,active:false};
  $$('[data-measure-tool]').forEach(x=>x.classList.toggle('active',x===btn));
  updateMeasureReadout();drawSimSafely();
