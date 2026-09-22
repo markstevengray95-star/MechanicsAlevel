@@ -2026,7 +2026,7 @@ const simCanvasHints={
  couplecom:'Drag the yellow centre-of-mass marker, or drag a couple force to alter separation and force.',
  motion:'Drag the start or end of the velocity–time line to change initial velocity or acceleration. Drag the car/graph horizontally to scrub time.',
  bounce:'Drag the ball up/down to set drop height. Drag on the graph to change rebound percentage or scrub through the bounce.',
- projectile:'Drag from the launch point to set launch speed and angle directly.',
+ projectile:'Drag the height handle up/down to change launch height. Drag the launch-vector tip to change launch angle and speed. The ground, range and impact measurements update live.',
  terminal:'Drag the falling object vertically to scrub time; drag the terminal-speed line on the graph to change drag coefficient.',
  vehicle:'Drag the driving-force line vertically, or drag the graph intersection horizontally to target a different maximum speed.',
  newton:'Drag the green driving-force arrow or red resistance arrow horizontally to change the forces.',
@@ -2084,7 +2084,10 @@ function chooseSimDragTarget(id,x,y,w,h){
   return dist2(x,y,gx,leftY)<2500?'u':(y>h*.48?'a':'time');
  }
  if(id==='bounce')return x<w*.48?'drop':(y<h*.5?'retain':'time');
- if(id==='projectile')return 'launch';
+ if(id==='projectile'){
+  const L=projectileLayout(simValues,w,h);
+  return dist2(x,y,L.launchX,L.launchY)<=dist2(x,y,L.tipX,L.tipY)?'height':'launch';
+ }
  if(id==='terminal')return x<w*.48?'time':'terminal';
  if(id==='vehicle')return y<h*.35?'drive':'vmax';
  if(id==='newton'){
@@ -2158,9 +2161,15 @@ function handleSimPointer(event){
   changed=true;
  }
  if(id==='projectile'){
-  const ox=45,oy=h-45,dx=Math.max(1,x-ox),dy=Math.max(0,oy-y),angle=Math.atan2(dy,dx)*180/Math.PI;
-  const frac=clamp(Math.hypot(dx,dy)/(Math.min(w,h)*.42),0,1);
-  setSimControl('angle',angle,{resetTime:false});setSimControl('speed',5+30*frac,{resetTime:false});changed=true;
+  const L=projectileLayout(simValues,w,h);
+  if(target==='height'){
+   setSimControl('height',(L.base-y)/Math.max(L.sy,.001),{resetTime:false});
+  }else{
+   const dx=Math.max(1,x-L.launchX),dy=Math.max(0,L.launchY-y),angle=Math.atan2(dy,dx)*180/Math.PI;
+   const speed=clamp(Math.hypot(dx,dy)/3,5,35);
+   setSimControl('angle',angle,{resetTime:false});setSimControl('speed',speed,{resetTime:false});
+  }
+  changed=true;
  }
  if(id==='terminal'){
   if(target==='time'){setSimScrub(8,(y-70)/Math.max(h-150,1));}
