@@ -2418,9 +2418,173 @@ function idealProjectileStats(v){
  const impactAngle=Math.atan2(Math.abs(impactVy),Math.max(1e-9,Math.abs(ux)))*180/Math.PI;
  return {g,ux,uy,flight,timeToMax,rise,maxHeight,range,impactVy,impactSpeed,impactAngle};
 }
+let projectilePracticeState={question:null,correct:0,attempts:0,signature:'',lastType:''};
+
+function projectilePracticeSignature(v){
+ return [Number(v.speed).toFixed(3),Number(v.angle).toFixed(3),Number(v.height).toFixed(3),Number(v.drag).toFixed(4)].join('|');
+}
+function projectilePracticeData(v){
+ const ideal=idealProjectileStats(v),sim=projectileStats(v),dragOn=Number(v.drag)>1e-6;
+ const source=dragOn?sim:ideal;
+ return {
+  dragOn,ideal,sim,
+  speed:Number(v.speed),angle:Number(v.angle),height:Number(v.height),
+  ux:ideal.ux,uy:ideal.uy,
+  flight:source.time??source.flight,
+  range:source.range,
+  maxHeight:source.maxY??source.maxHeight,
+  impactVx:sim.impactVx,
+  impactVy:sim.impactVy,
+  impactSpeed:sim.impactSpeed,
+  impactAngle:sim.impactAngle
+ };
+}
+function projectilePracticeQuestionBank(v,difficulty='standard'){
+ const d=projectilePracticeData(v),g=9.81;
+ const safe=(n)=>Number.isFinite(n)?n:0;
+ const common=[
+  {
+   id:'ux',skill:'Resolve velocity',unit:'m s⁻¹',
+   q:'The trajectory was launched at '+fmt(d.speed)+' m s⁻¹ at '+fmt(d.angle)+'° above the horizontal. Calculate the horizontal component of the initial velocity.',
+   answer:d.ux,tol:.025,
+   work:'uₓ = u cosθ = '+fmt(d.speed)+' × cos('+fmt(d.angle)+'°) = '+fmt(d.ux)+' m s⁻¹.'
+  },
+  {
+   id:'uy',skill:'Resolve velocity',unit:'m s⁻¹',
+   q:'Using the launch data on the current graph, calculate the initial vertical component of velocity.',
+   answer:d.uy,tol:.025,
+   work:'uᵧ = u sinθ = '+fmt(d.speed)+' × sin('+fmt(d.angle)+'°) = '+fmt(d.uy)+' m s⁻¹.'
+  },
+  {
+   id:'avgvx',skill:'Graph data → horizontal velocity',unit:'m s⁻¹',
+   q:'The graph gives a horizontal range of '+fmt(d.range)+' m and a flight time of '+fmt(d.flight)+' s. Calculate the average horizontal velocity.',
+   answer:safe(d.range/d.flight),tol:.03,
+   work:'average horizontal velocity = range ÷ time = '+fmt(d.range)+' ÷ '+fmt(d.flight)+' = '+fmt(safe(d.range/d.flight))+' m s⁻¹.'
+  },
+  {
+   id:'rise',skill:'Read vertical displacement',unit:'m',
+   q:'The launch height is '+fmt(d.height)+' m and the graph reaches a maximum height of '+fmt(d.maxHeight)+' m above the ground. Calculate the vertical rise above the launch point.',
+   answer:Math.max(0,d.maxHeight-d.height),tol:.025,
+   work:'vertical rise = maximum height − launch height = '+fmt(d.maxHeight)+' − '+fmt(d.height)+' = '+fmt(Math.max(0,d.maxHeight-d.height))+' m.'
+  }
+ ];
+ const standard=[
+  {
+   id:'tmax',skill:'SUVAT to maximum height',unit:'s',
+   q:'Using the initial vertical velocity '+fmt(d.uy)+' m s⁻¹ and g = 9.81 m s⁻², calculate the time taken to reach maximum height.',
+   answer:Math.max(0,d.uy/g),tol:.03,
+   work:'At maximum height vᵧ = 0. Using v = u + at: 0 = '+fmt(d.uy)+' − 9.81t, so t = '+fmt(Math.max(0,d.uy/g))+' s.'
+  },
+  {
+   id:'range',skill:'Horizontal motion',unit:'m',
+   q:'For the ideal no-drag model, use uₓ = '+fmt(d.ux)+' m s⁻¹ and flight time '+fmt(d.ideal.flight)+' s to calculate the horizontal range.',
+   answer:d.ideal.range,tol:.03,
+   work:'x = uₓt = '+fmt(d.ux)+' × '+fmt(d.ideal.flight)+' = '+fmt(d.ideal.range)+' m.'
+  },
+  {
+   id:'impactSpeed',skill:'Combine velocity components',unit:'m s⁻¹',
+   q:'At impact the simulator gives vₓ = '+fmt(d.impactVx)+' m s⁻¹ and vᵧ = '+fmt(d.impactVy)+' m s⁻¹. Calculate the resultant impact speed.',
+   answer:d.impactSpeed,tol:.025,
+   work:'v = √(vₓ² + vᵧ²) = √('+fmt(d.impactVx)+'² + '+fmt(d.impactVy)+'²) = '+fmt(d.impactSpeed)+' m s⁻¹.'
+  },
+  {
+   id:'impactAngle',skill:'Impact direction',unit:'°',
+   q:'At impact, |vᵧ| = '+fmt(Math.abs(d.impactVy))+' m s⁻¹ and |vₓ| = '+fmt(Math.abs(d.impactVx))+' m s⁻¹. Calculate the impact angle below the horizontal.',
+   answer:d.impactAngle,tol:.025,
+   work:'tanθ = |vᵧ| / |vₓ|, so θ = tan⁻¹('+fmt(Math.abs(d.impactVy))+' ÷ '+fmt(Math.abs(d.impactVx))+') = '+fmt(d.impactAngle)+'° below the horizontal.'
+  }
+ ];
+ const challenge=[
+  {
+   id:'uyFromHeight',skill:'Reverse SUVAT from graph',unit:'m s⁻¹',
+   q:'The ideal graph rises from '+fmt(d.height)+' m to '+fmt(d.ideal.maxHeight)+' m. Use v² = u² + 2as with v = 0 at the top to calculate the initial vertical velocity.',
+   answer:d.uy,tol:.035,
+   work:'Δy = '+fmt(d.ideal.maxHeight-d.height)+' m. At the top v = 0, a = −9.81 m s⁻². 0 = uᵧ² − 2gΔy, so uᵧ = √(2gΔy) = '+fmt(d.uy)+' m s⁻¹.'
+  },
+  {
+   id:'angleFromComponents',skill:'Recover launch angle',unit:'°',
+   q:'The resolved launch components are uₓ = '+fmt(d.ux)+' m s⁻¹ and uᵧ = '+fmt(d.uy)+' m s⁻¹. Calculate the launch angle above the horizontal.',
+   answer:d.angle,tol:.025,
+   work:'tanθ = uᵧ/uₓ = '+fmt(d.uy)+'/'+fmt(d.ux)+'. Therefore θ = tan⁻¹(uᵧ/uₓ) = '+fmt(d.angle)+'°.'
+  },
+  {
+   id:'speedFromComponents',skill:'Recover launch speed',unit:'m s⁻¹',
+   q:'The launch components are uₓ = '+fmt(d.ux)+' m s⁻¹ and uᵧ = '+fmt(d.uy)+' m s⁻¹. Calculate the original launch speed.',
+   answer:d.speed,tol:.025,
+   work:'u = √(uₓ² + uᵧ²) = √('+fmt(d.ux)+'² + '+fmt(d.uy)+'²) = '+fmt(d.speed)+' m s⁻¹.'
+  },
+  {
+   id:'flightFromVertical',skill:'Solve vertical displacement',unit:'s',
+   q:'For the ideal trajectory, use y = h + uᵧt − ½gt² with h = '+fmt(d.height)+' m and uᵧ = '+fmt(d.uy)+' m s⁻¹. Calculate the positive time when the projectile reaches the ground.',
+   answer:d.ideal.flight,tol:.035,
+   work:'Set y = 0: 0 = '+fmt(d.height)+' + '+fmt(d.uy)+'t − 4.905t². Solving the quadratic and taking the positive root gives t = '+fmt(d.ideal.flight)+' s.'
+  }
+ ];
+ if(difficulty==='foundation')return common;
+ if(difficulty==='challenge')return common.concat(standard,challenge);
+ return common.concat(standard);
+}
+function renderProjectileGraphData(){
+ const host=$('#projectileGraphData');if(!host||sims[activeSim]?.id!=='projectile')return;
+ const d=projectilePracticeData(simValues);
+ const chips=[
+  ['Launch speed',fmt(d.speed)+' m s⁻¹'],
+  ['Angle',fmt(d.angle)+'°'],
+  ['Launch height',fmt(d.height)+' m'],
+  ['Range',fmt(d.range)+' m'],
+  ['Maximum height',fmt(d.maxHeight)+' m'],
+  ['Flight time',fmt(d.flight)+' s'],
+  ['Impact speed',fmt(d.impactSpeed)+' m s⁻¹'],
+  ['Impact angle',fmt(d.impactAngle)+'°']
+ ];
+ host.innerHTML=chips.map(x=>'<div class="projectile-data-chip"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
+ const note=$('#projectilePracticeModelNote');
+ if(note)note.textContent=d.dragOn
+  ?'The data chips follow the current drag trajectory. Standard SUVAT questions are explicitly labelled as ideal no-drag calculations.'
+  :'Questions are generated from the current ideal trajectory and update whenever speed, angle or launch height changes.';
+}
+function newProjectilePracticeQuestion(forceDifferent=true){
+ if(sims[activeSim]?.id!=='projectile')return;
+ const difficulty=$('#projectilePracticeDifficulty')?.value||'standard',bank=projectilePracticeQuestionBank(simValues,difficulty);
+ if(!bank.length)return;
+ let choices=bank;
+ if(forceDifferent&&bank.length>1)choices=bank.filter(q=>q.id!==projectilePracticeState.lastType);
+ const q=choices[Math.floor(Math.random()*choices.length)]||bank[0];
+ projectilePracticeState.question=q;projectilePracticeState.lastType=q.id;
+ const qEl=$('#projectileQuestion'),skill=$('#projectileQuestionSkill'),unit=$('#projectileAnswerUnitLabel'),answer=$('#projectileAnswer'),feedback=$('#projectilePracticeFeedback'),worked=$('#projectileWorkedSolution'),show=$('#showProjectileWorking');
+ if(qEl)qEl.textContent=q.q;if(skill)skill.textContent=q.skill;if(unit)unit.textContent=q.unit?'('+q.unit+')':'';
+ if(answer)answer.value='';if(feedback){feedback.textContent='';feedback.className='projectile-practice-feedback';}
+ if(worked){worked.textContent='';worked.classList.add('hidden');}if(show){show.classList.add('hidden');show.textContent='Show worked solution';}
+}
+function syncProjectilePractice(){
+ const active=sims[activeSim]?.id==='projectile',section=$('#projectilePractice');if(section)section.classList.toggle('hidden',!active);if(!active)return;
+ renderProjectileGraphData();
+ const sig=projectilePracticeSignature(simValues);
+ if(sig!==projectilePracticeState.signature||!projectilePracticeState.question){
+  projectilePracticeState.signature=sig;newProjectilePracticeQuestion(false);
+ }
+ const score=$('#projectilePracticeScore');if(score)score.textContent=projectilePracticeState.correct+' / '+projectilePracticeState.attempts;
+}
+function checkProjectilePracticeAnswer(){
+ const q=projectilePracticeState.question,input=$('#projectileAnswer'),feedback=$('#projectilePracticeFeedback'),show=$('#showProjectileWorking'),worked=$('#projectileWorkedSolution');
+ if(!q||!input||!feedback)return;
+ const value=Number(input.value);
+ if(!Number.isFinite(value)){feedback.textContent='Enter a numerical answer first.';feedback.className='projectile-practice-feedback incorrect';return;}
+ projectilePracticeState.attempts++;
+ const absTol=Math.max(.02,Math.abs(q.answer)*(q.tol||.03)),ok=Math.abs(value-q.answer)<=absTol;
+ if(ok){projectilePracticeState.correct++;feedback.textContent='Correct. '+fmt(q.answer)+(q.unit?' '+q.unit:'')+'.';feedback.className='projectile-practice-feedback correct';}
+ else{feedback.textContent='Not quite. Check the graph data, choose the equation, substitute carefully and try again.';feedback.className='projectile-practice-feedback incorrect';}
+ if(worked)worked.textContent=q.work;if(show)show.classList.remove('hidden');
+ const score=$('#projectilePracticeScore');if(score)score.textContent=projectilePracticeState.correct+' / '+projectilePracticeState.attempts;
+}
+function toggleProjectileWorkedSolution(){
+ const el=$('#projectileWorkedSolution'),btn=$('#showProjectileWorking');if(!el||!btn)return;
+ const hidden=el.classList.toggle('hidden');btn.textContent=hidden?'Show worked solution':'Hide worked solution';
+}
+
 function updateProjectileTools(){
  const panel=$('#projectileTools');if(!panel)return;
- const active=sims[activeSim]?.id==='projectile';panel.classList.toggle('hidden',!active);if(!active)return;
+ const active=sims[activeSim]?.id==='projectile';panel.classList.toggle('hidden',!active);if($('#projectilePractice'))$('#projectilePractice').classList.toggle('hidden',!active);if(!active)return;
  const v=simValues,ideal=idealProjectileStats(v),sim=projectileStats(v),dragOn=Number(v.drag)>1e-6;
  const badge=$('#projectileModelBadge');badge.textContent=dragOn?'SUVAT + drag comparison':'Ideal SUVAT';badge.classList.toggle('warning',dragOn);
  const eq=$('#projectileEquationGrid');
@@ -2456,6 +2620,7 @@ function updateProjectileTools(){
  ];
  calc.innerHTML=rows.map(x=>'<div class="projectile-calc-card"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
  const note=$('#projectileCalcNote');
+ syncProjectilePractice();
  note.textContent=dragOn
   ?'The calculation cards above use the ideal no-drag SUVAT model. With drag switched on, use the live simulation values for comparison: simulated flight '+fmt(sim.time)+' s, range '+fmt(sim.range)+' m, impact speed '+fmt(sim.impactSpeed)+' m s⁻¹.'
   :'These calculations assume uniform gravitational acceleration g = 9.81 m s⁻², level ground and negligible air resistance.';
@@ -2728,6 +2893,11 @@ $('#showVectors').addEventListener('change',e=>{simDisplay.vectors=e.target.chec
 $('#showLiveInfo').addEventListener('change',e=>{simDisplay.live=e.target.checked;updateSimEnhancements();});
 $('#showTrails').addEventListener('change',e=>{simDisplay.trails=e.target.checked;drawSimSafely();});
 $('#projectileCalcTime')?.addEventListener('input',()=>updateProjectileTools());
+$('#newProjectileQuestion')?.addEventListener('click',()=>newProjectilePracticeQuestion(true));
+$('#projectilePracticeDifficulty')?.addEventListener('change',()=>newProjectilePracticeQuestion(false));
+$('#checkProjectileAnswer')?.addEventListener('click',checkProjectilePracticeAnswer);
+$('#projectileAnswer')?.addEventListener('keydown',e=>{if(e.key==='Enter')checkProjectilePracticeAnswer();});
+$('#showProjectileWorking')?.addEventListener('click',toggleProjectileWorkedSolution);
 $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
 $('#simTimeline').addEventListener('input',e=>{running=false;const id=sims[activeSim].id;$('#playPause').textContent=id==='projectile'?'Resume flight':'Play';setSimScrub(id==='projectile'?projectileStats(simValues).time:simDuration(),Number(e.target.value)/1000);$('#simState').textContent='Timeline scrub';updateReadout();drawSimSafely();drawLinkedView();});
