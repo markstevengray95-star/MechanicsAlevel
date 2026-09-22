@@ -1692,7 +1692,7 @@ function setSimControl(key,value,{resetTime=true}={}){
  if(out)out.textContent=simValues[key];
  if(resetTime)simTime=0;
 }
-let simPointerActive=false,simDragTarget=null;
+let simPointerActive=false,simDragTarget=null,simInputSource=null;
 
 function simPoint(event){
  const rect=canvas.getBoundingClientRect();
@@ -1869,15 +1869,32 @@ function handleSimPointer(event){
   event.preventDefault();
  }
 }
-canvas.addEventListener('pointerdown',e=>{
+function beginSimDrag(e,source){
  const p=simPoint(e);
  running=false;$('#playPause').textContent='Play';$('#simState').textContent='Direct control';
- simPointerActive=true;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
- canvas.classList.add('dragging');try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}handleSimPointer(e);
-});
-canvas.addEventListener('pointermove',handleSimPointer);
-canvas.addEventListener('pointerup',e=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){}});
-canvas.addEventListener('pointercancel',()=>{simPointerActive=false;simDragTarget=null;canvas.classList.remove('dragging');});
+ simPointerActive=true;simInputSource=source;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
+ canvas.classList.add('dragging');
+ if(source==='pointer')try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
+ handleSimPointer(e);
+}
+function endSimDrag(e){
+ if(simInputSource==='pointer'&&e)try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){}
+ simPointerActive=false;simDragTarget=null;simInputSource=null;canvas.classList.remove('dragging');
+}
+canvas.addEventListener('pointerdown',e=>{if(!simPointerActive)beginSimDrag(e,'pointer');});
+canvas.addEventListener('pointermove',e=>{if(simPointerActive&&simInputSource==='pointer')handleSimPointer(e);});
+canvas.addEventListener('pointerup',e=>{if(simInputSource==='pointer')endSimDrag(e);});
+canvas.addEventListener('pointercancel',e=>{if(simInputSource==='pointer')endSimDrag(e);});
+
+// Fallbacks make dragging reliable in browsers/webviews that do not dispatch Pointer Events consistently.
+canvas.addEventListener('mousedown',e=>{if(!simPointerActive)beginSimDrag(e,'mouse');});
+canvas.addEventListener('mousemove',e=>{if(simPointerActive&&simInputSource==='mouse')handleSimPointer(e);});
+window.addEventListener('mouseup',e=>{if(simInputSource==='mouse')endSimDrag(e);});
+function touchProxy(t,original,type){return {clientX:t.clientX,clientY:t.clientY,type,preventDefault:()=>original.preventDefault()};}
+canvas.addEventListener('touchstart',e=>{if(simPointerActive)return;const t=e.touches[0];if(t)beginSimDrag(touchProxy(t,e,'touchstart'),'touch');},{passive:false});
+canvas.addEventListener('touchmove',e=>{if(simInputSource!=='touch')return;const t=e.touches[0];if(t)handleSimPointer(touchProxy(t,e,'touchmove'));},{passive:false});
+canvas.addEventListener('touchend',e=>{if(simInputSource==='touch')endSimDrag(e);},{passive:false});
+canvas.addEventListener('touchcancel',e=>{if(simInputSource==='touch')endSimDrag(e);},{passive:false});
 
 function renderSim(){
  const s=sims[activeSim]; simValues={}; s.controls.forEach(c=>simValues[c.key]=c.value); simTime=0;
