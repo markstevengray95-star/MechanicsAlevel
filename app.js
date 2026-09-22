@@ -2036,7 +2036,7 @@ function drawSim(){
   ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-28,140,48);ctx.fillStyle='#081422';ctx.beginPath();ctx.arc(x-45,y+23,15,0,Math.PI*2);ctx.arc(x+45,y+23,15,0,Math.PI*2);ctx.fill();
   arrow(x-20,y-62,x+clamp(v.drive/30,30,180),y-62,'drive','#63d9a4');arrow(x+15,y-100,x-clamp(res/30,20,160),y-100,'resistance','#ff7b87');
   const gx=w*.55,gy=55,gw=w*.37,gh=h-110;drawAxes(gx,gy,gw,gh,'speed','force');
-  const maxV=Math.max(5,vmax*1.25),maxF=Math.max(v.drive,v.roll+v.drag*maxV*maxV)*1.12;ctx.strokeStyle='#63d9a4';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx,gy+gh-v.drive/maxF*gh);ctx.lineTo(gx+gw,gy+gh-v.drive/maxF*gh);ctx.stroke();ctx.strokeStyle='#ff7b87';ctx.beginPath();for(let i=0;i<=80;i++){const ss=maxV*i/80,rr=v.roll+v.drag*ss*ss,px=gx+gw*i/80,py=gy+gh-rr/maxF*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();ctx.fillStyle='#dceaff';ctx.fillText('intersection = maximum steady speed',gx+5,gy+18);
+  const maxV=Math.max(5,vmax*1.25),maxF=Math.max(v.drive,v.roll+v.drag*maxV*maxV)*1.12;ctx.strokeStyle='#63d9a4';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx,gy+gh-v.drive/maxF*gh);ctx.lineTo(gx+gw,gy+gh-v.drive/maxF*gh);ctx.stroke();ctx.strokeStyle='#ff7b87';ctx.beginPath();for(let i=0;i<=80;i++){const ss=maxV*i/80,rr=v.roll+v.drag*ss*ss,px=gx+gw*i/80,py=gy+gh-rr/maxF*gh;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.stroke();const ix=gx+gw*clamp(vmax/maxV,0,1),iy=gy+gh-v.drive/maxF*gh;dragHandle(ix,iy,'max v');ctx.fillStyle='#dceaff';ctx.fillText('intersection = maximum steady speed',gx+5,gy+18);
  }
  if(id==='newton'){
   const y=h*.52,x=w*.5,r=v.drive-v.resist,a=r/v.mass;ctx.fillStyle='#67c7ff';ctx.fillRect(x-70,y-30,140,50);ctx.fillStyle='#07111f';ctx.beginPath();ctx.arc(x-45,y+24,16,0,Math.PI*2);ctx.arc(x+45,y+24,16,0,Math.PI*2);ctx.fill();
@@ -2098,7 +2098,7 @@ function drawSim(){
   ctx.strokeStyle='#c7d4e2';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(wireX,base);ctx.lineTo(wireX,base+pix);ctx.stroke();ctx.fillStyle='#60748a';ctx.fillRect(wireX-50,base+pix,100,48);ctx.fillStyle='#fff';ctx.fillText(v.force+' N',wireX-17,base+pix+30);
   const gx=w*.52,gy=55,gw=w*.40,gh=h-110;drawAxes(gx,gy,gw,gh,'strain','stress');
   const maxStr=Math.max(.0005,strain*1.5),maxStress=Math.max(1e6,stress*1.5);ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,gy+gh);ctx.lineTo(gx+gw*(strain/maxStr),gy+gh-gh*(stress/maxStress));ctx.stroke();
-  ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(gx+gw*(strain/maxStr),gy+gh-gh*(stress/maxStress),6,0,Math.PI*2);ctx.fill();
+  const hx=gx+gw*(strain/maxStr),hy=gy+gh-gh*(stress/maxStress);ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(hx,hy,6,0,Math.PI*2);ctx.fill();dragHandle(hx,hy,'wire');
  }
  if(id==='stressstrain'){
   const E=v.young*1e9,yieldPa=v.yield*1e6,epsY=yieldPa/E,br=v.break,maxStress=yieldPa*1.55,gx=70,gy=55,gw=w-130,gh=h-110;drawAxes(gx,gy,gw,gh,'strain','stress');
