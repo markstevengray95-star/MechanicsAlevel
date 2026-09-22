@@ -67,14 +67,32 @@ try {
     assert(controlCount>0,'Simulation has no controls: '+title);
     const activityCount=await page.locator('[data-sim-activity]').count();
     assert(activityCount===3,'Simulation should expose 3 activities: '+title+' has '+activityCount);
+    const presetCount=await page.locator('[data-sim-preset]').count();
+    assert(presetCount===3,'Simulation should expose 3 presets: '+title+' has '+presetCount);
+    const knowledgeCount=await page.locator('#keyKnowledge li').count();
+    assert(knowledgeCount>=4,'Simulation key knowledge incomplete: '+title+' has '+knowledgeCount);
+    const metricCount=await page.locator('#simMetrics .sim-metric').count();
+    assert(metricCount>=3,'Simulation live metrics incomplete: '+title+' has '+metricCount);
+    assert((await page.locator('#simChallenge').innerText()).trim().length>15,'Simulation challenge missing: '+title);
+    await page.locator('[data-sim-preset]').first().click();
+    assert((await page.locator('#simReadout').innerText()).trim().length>0,'Preset failed to update readout: '+title);
     const first=page.locator('#simControls input[type="range"]').first();
     const min=Number(await first.getAttribute('min'));
     const max=Number(await first.getAttribute('max'));
     const value=String(min+(max-min)*0.6);
     await first.evaluate((el,val)=>{el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));},value);
     assert((await page.locator('#simReadout').innerText()).trim().length>0,'Simulation readout empty: '+title);
+    await page.locator('#recordSim').click();
+    assert(await page.locator('#simDataRows tr').count()>=1,'Simulation data logging failed: '+title);
+    await page.locator('#clearSimData').click();
   }
 
+  await page.locator('#stepSim').click();
+  assert((await page.locator('#simState').innerText()).includes('Stepped'),'Step-time control failed');
+  await page.locator('#showGrid').uncheck();
+  await page.locator('#showGrid').check();
+  await page.locator('#showVectors').uncheck();
+  await page.locator('#showVectors').check();
   await page.locator('[data-view="formula"]').click();
   const formulaCount=await page.locator('#formulaSelect option').count();
   assert(formulaCount===42,'Expected 42 formula tools, found '+formulaCount);
