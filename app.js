@@ -1110,8 +1110,15 @@ function renderLesson(){
 }
 
 function openView(name){
- $$('.view').forEach(v=>v.classList.toggle('active-view',v.id==='view-'+name));
- $$('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+ $('.view').forEach(v=>v.classList.toggle('active-view',v.id==='view-'+name));
+ $('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+ if(name==='lab'){
+  requestAnimationFrame(()=>{
+   syncSimCanvas();
+   renderSim();
+   drawSimSafely();
+  });
+ }
 }
 $$('.nav-button').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.view)));
 $$('[data-jump]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.jump)));
@@ -1366,6 +1373,30 @@ function bindSimActivities(){
 
 let activeSim=0, simValues={}, running=true, slow=false, simTime=0, last=performance.now();
 const canvas=$('#simCanvas'), ctx=canvas.getContext('2d');
+let simRenderError=null;
+function syncSimCanvas(){
+ const rect=canvas.getBoundingClientRect();
+ const cssW=Math.max(320,Math.round(rect.width||canvas.parentElement?.clientWidth||900));
+ const cssH=Math.max(360,Math.round(rect.height||430));
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ const pixelW=Math.max(320,Math.round(cssW*dpr)),pixelH=Math.max(360,Math.round(cssH*dpr));
+ if(canvas.width!==pixelW||canvas.height!==pixelH){
+  canvas.width=pixelW;canvas.height=pixelH;
+ }
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ return {w:cssW,h:cssH,dpr};
+}
+function showSimError(error){
+ simRenderError=error;
+ const state=$('#simState');if(state){state.textContent='Simulation error';state.classList.add('error');}
+ const readout=$('#simReadout');if(readout)readout.textContent='The simulation could not draw. Reset the model or reload the latest build.';
+ console.error('Simulation render error:',error);
+}
+function drawSimSafely(){
+ try{syncSimCanvas();drawSim();simRenderError=null;}catch(error){showSimError(error);}
+}
+const simResizeObserver=typeof ResizeObserver!=='undefined'?new ResizeObserver(()=>{if($('#view-lab')?.classList.contains('active-view'))drawSimSafely();}):null;
+if(simResizeObserver)simResizeObserver.observe(canvas);
 
 function setSimById(id){
  const i=sims.findIndex(s=>s.id===id); if(i>=0){activeSim=i;renderSim();}
@@ -1443,7 +1474,7 @@ function projectileFlight(v){
  while(t<20){t+=.02;const p=projectileState(t,v);if(p.y<0&&t>.1)return t;last=p;} return 20;
 }
 function drawSim(){
- const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);grid(w,h);
+ const size=syncSimCanvas(),w=size.w,h=size.h;ctx.clearRect(0,0,w,h);grid(w,h);
  const id=sims[activeSim].id,v=simValues;
  ctx.fillStyle='#dceaff';ctx.font='14px system-ui';
  if(id==='vectors'){
@@ -1592,12 +1623,15 @@ function drawSim(){
 
 function drawCart(x,y,width,label){ctx.fillStyle='#67c7ff';ctx.fillRect(x-width/2,y-24,width,38);ctx.fillStyle='#081422';ctx.beginPath();ctx.arc(x-width*.28,y+20,11,0,Math.PI*2);ctx.arc(x+width*.28,y+20,11,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText(label,x-8,y);}
 function animate(now){
- const dt=Math.min(.05,(now-last)/1000);last=now;if(running)simTime+=dt*(slow?.3:1);drawSim();updateReadout();requestAnimationFrame(animate);
+ const dt=Math.min(.05,(now-last)/1000);last=now;if(running)simTime+=dt*(slow?.3:1);
+ if(!simRenderError)drawSimSafely();
+ updateReadout();
+ requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 $('#playPause').addEventListener('click',()=>{running=!running;$('#playPause').textContent=running?'Pause':'Play';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
 $('#slowMotion').addEventListener('click',()=>{slow=!slow;$('#slowMotion').textContent=slow?'Normal speed':'Slow motion';$('#simState').textContent=running?(slow?'Slow motion':'Running'):'Paused';});
-$('#resetSim').addEventListener('click',()=>{simTime=0;renderSim();});
+$('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
 const formulas = [
 {id:'resultant',topic:'Vectors',name:'Perpendicular resultant',desc:'R = √(x² + y²)',when:'Use when two perpendicular vector components are known and you need the magnitude of the resultant.',assumptions:'The two components are at 90°.',common:'Do not add perpendicular magnitudes directly.',rearrange:'R = √(x²+y²)',inputs:[['x','x component',6,'N'],['y','y component',8,'N']],calc:v=>({steps:['Identify the perpendicular components: x = '+v.x+' N, y = '+v.y+' N.','R = √(x² + y²)','R = √('+v.x+'² + '+v.y+'²)'],answer:Math.hypot(v.x,v.y),unit:'N'})},
