@@ -2414,7 +2414,7 @@ function bounceHeightAt(v,t){
 function simTrailPoint(id,v,t,w,h){
  if(id==='motion'){const tt=((t%8)+8)%8,pos=v.u*tt+.5*v.a*tt*tt,min=-80,max=220;return {x:40+(clamp(pos,min,max)-min)/(max-min)*(w-80),y:h*.32};}
  if(id==='bounce'){const base=h*.42,scale=(h*.30)/Math.max(.5,v.drop);return {x:w*.25,y:base-bounceHeightAt(v,t)*scale};}
- if(id==='projectile'){const T=projectileFlight(v),tt=clamp(t,0,Math.max(.2,T)),pts=[];let maxX=1,maxY=1;for(let i=0;i<=80;i++){const p=projectileState(T*i/80,v);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}const p=projectileState(Math.min(tt%Math.max(.2,T),T),v),sx=(w-90)/(maxX*1.08),sy=(h-105)/(maxY*1.35);return {x:45+p.x*sx,y:h-45-p.y*sy};}
+ if(id==='projectile'){const L=projectileLayout(v,w,h),tt=Math.min(((t%Math.max(.2,L.stats.time))+Math.max(.2,L.stats.time))%Math.max(.2,L.stats.time),L.stats.time),p=projectileState(tt,v);return {x:L.launchX+p.x*L.sx,y:L.base-p.y*L.sy};}
  if(id==='terminal'){const tt=((t%8)+8)%8;return {x:w*.30,y:70+(h-150)*(tt/8)};}
  if(id==='energy'){const p=((t%6)+6)%6/6,left=50,right=w*.63,top=70,ground=h-70;return {x:left+(right-left)*p,y:top+(ground-top)*(1-Math.pow(1-p,2))-12};}
  if(id==='motor'){const period=Math.max(v.time,1),p=Math.min(1,(((t%period)+period)%period)/period);return {x:w*.30,y:(h-65)-((h-65)-60)*p};}
@@ -2479,14 +2479,37 @@ function drawSim(){
   ctx.stroke();dragHandle(x,ballY,'ball');ctx.fillStyle='#dceaff';ctx.fillText('free-flight gradient ≈ −g',gx+8,gy+18);
  }
  if(id==='projectile'){
-  const T=projectileFlight(v),pts=[];let maxX=1,maxY=1;
-  for(let i=0;i<=160;i++){const tt=T*i/160,p=projectileState(tt,v);pts.push(p);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
-  const sx=(w-90)/(maxX*1.08),sy=(h-105)/(maxY*1.35),base=h-45;
-  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>{const x=45+p.x*sx,y=base-p.y*sy;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
-  const t=simTime%Math.max(.2,T),p=projectileState(t,v),px=45+p.x*sx,py=base-p.y*sy;
+  const L=projectileLayout(v,w,h),T=L.stats.time,base=L.base;
+  ctx.strokeStyle='#6f8197';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(18,base+10);ctx.lineTo(w-18,base+10);ctx.stroke();
+  ctx.fillStyle='#7f93a8';ctx.fillRect(22,L.launchY,26,Math.max(4,base-L.launchY+10));
+  ctx.fillStyle='#dceaff';ctx.font='12px system-ui';ctx.fillText('ground',w-66,base+28);
+
+  ctx.strokeStyle='#67c7ff';ctx.lineWidth=3;ctx.beginPath();
+  L.pts.forEach((p,i)=>{const x=L.launchX+p.x*L.sx,y=base-p.y*L.sy;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+
+  const tt=simTime%Math.max(.2,T),p=projectileState(tt,v),px=L.launchX+p.x*L.sx,py=base-p.y*L.sy;
   ctx.fillStyle='#ffd56a';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();
-  arrow(px,py,px+clamp(p.vx*3,-85,85),py,'vₓ','#63d9a4');arrow(px,py,px,py-clamp(p.vy*3,-85,85),'vᵧ','#ffb66a');dragHandle(45,base,'launch');
-  ctx.strokeStyle='#6f8197';ctx.beginPath();ctx.moveTo(20,base+10);ctx.lineTo(w-20,base+10);ctx.stroke();
+  arrow(px,py,px+clamp(p.vx*3,-85,85),py,'vₓ','#63d9a4');arrow(px,py,px,py-clamp(p.vy*3,-85,85),'vᵧ','#ffb66a');
+
+  ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(255,213,106,.75)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(L.launchX,L.launchY);ctx.lineTo(L.launchX,base);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(L.launchX,base-2);ctx.lineTo(L.launchX+L.stats.range*L.sx,base-2);ctx.stroke();
+  const maxPoint=projectileState(L.stats.timeAtMax,v),mx=L.launchX+maxPoint.x*L.sx,my=base-L.stats.maxY*L.sy;
+  ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx,base);ctx.stroke();ctx.setLineDash([]);
+
+  ctx.fillStyle='#ffd56a';ctx.font='12px system-ui';
+  ctx.fillText('height '+fmt(v.height)+' m',L.launchX+8,(L.launchY+base)/2);
+  ctx.fillText('range '+fmt(L.stats.range)+' m',L.launchX+Math.max(20,L.stats.range*L.sx*.42),base-10);
+  ctx.fillText('max '+fmt(L.stats.maxY)+' m',mx+8,Math.max(24,my-8));
+  ctx.fillStyle='#ffb66a';ctx.beginPath();ctx.arc(L.launchX+L.stats.range*L.sx,base,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#dceaff';ctx.fillText('impact '+fmt(L.stats.impactSpeed)+' m s⁻¹',Math.min(w-155,L.launchX+L.stats.range*L.sx-45),base-20);
+
+  arrow(L.launchX,L.launchY,L.tipX,L.tipY,'u','#a8e4ff');
+  ctx.strokeStyle='#a8e4ff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(L.launchX,L.launchY,30,-v.angle*Math.PI/180,0);ctx.stroke();
+  ctx.fillStyle='#dceaff';ctx.fillText(fmt(v.angle)+'°',L.launchX+34,L.launchY-8);
+
+  dragHandle(L.launchX,L.launchY,'height');
+  dragHandle(L.tipX,L.tipY,'angle/speed');
  }
  if(id==='terminal'){
   const t=simTime%8,vt=v.mass*9.81/v.k,speed=vt*(1-Math.exp(-v.k*t/v.mass)),drag=v.k*speed,weight=v.mass*9.81,result=weight-drag;
