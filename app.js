@@ -1646,7 +1646,7 @@ function renderSimEnhancements(){
  $('#simPresets').innerHTML=(profile.presets||[]).map((p,i)=>'<button class="button sim-preset" data-sim-preset="'+i+'">'+p.label+'</button>').join('');
  $('#simChallenge').textContent=profile.challenge?.text||'Explore how changing one variable affects the model.';
  $('#simCanvasHint').textContent=simCanvasHints[id]||'Use the sliders, presets and data recorder to investigate one variable at a time.';
- $('[data-sim-preset]').forEach(b=>b.addEventListener('click',()=>{
+ $$('[data-sim-preset]').forEach(b=>b.addEventListener('click',()=>{
   const preset=profile.presets[Number(b.dataset.simPreset)];if(!preset)return;
   Object.entries(preset.values).forEach(([key,value])=>{
    simValues[key]=value;
@@ -1750,7 +1750,7 @@ function renderSim(){
  $('#revealSimCheck').addEventListener('click',e=>{const a=e.target.nextElementSibling;a.classList.toggle('visible');e.target.textContent=a.classList.contains('visible')?'Hide answer':'Show answer';});
  bindSimActivities();
  $('#simControls').innerHTML=s.controls.map(c=>'<label class="field"><span>'+c.label+'</span><input type="range" data-control="'+c.key+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.value+'"><output data-output="'+c.key+'">'+c.value+'</output></label>').join('');
- $('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();drawSimSafely();}));
+ $$('[data-control]').forEach(inp=>inp.addEventListener('input',()=>{simValues[inp.dataset.control]=Number(inp.value);$('[data-output="'+inp.dataset.control+'"]').textContent=inp.value;simTime=0;updateReadout();drawSimSafely();}));
  renderSimEnhancements();
  updateReadout();
 }
