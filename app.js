@@ -964,7 +964,9 @@ const lessonPractice = {
  ],
  projectiles:[
   {q:'A ball is launched horizontally at 8.0 m s⁻¹ for 0.60 s. Ignoring drag, calculate horizontal displacement.',type:'number',answer:4.8,tol:.03,unit:'m',explain:'x=uₓt=8.0×0.60=4.8 m.'},
-  {q:'Why is acceleration not zero at the top of a projectile path?',type:'text',keywords:['gravity','down'],answerText:'Gravity still acts downward, so acceleration remains g downward.'}
+  {q:'A ball is launched horizontally at 12.0 m s⁻¹ from 4.9 m above level ground. Using g=9.81 m s⁻², calculate the horizontal range.',type:'number',answer:12,tol:.12,unit:'m',explain:'Vertical motion gives 4.9=½gt², so t≈1.00 s. Horizontal motion is constant speed, so range≈12.0×1.00=12.0 m.'},
+  {q:'Why is acceleration not zero at the top of a projectile path?',type:'text',keywords:['gravity','down'],answerText:'Gravity still acts downward, so acceleration remains g downward.'},
+  {q:'Why can the same launch speed and angle give a larger range when the projectile is released from a higher point?',type:'text',keywords:['time','horizontal'],answerText:'The larger downward vertical displacement gives a longer flight time, so the horizontal component acts for longer and the projectile travels farther horizontally.'}
  ],
  newton:[
   {q:'A 4.0 kg object experiences a resultant force of 18 N. Calculate acceleration.',type:'number',answer:4.5,tol:.03,unit:'m s⁻²',explain:'a=F/m=18/4=4.5 m s⁻².'},
@@ -1316,7 +1318,7 @@ const simTeaching = {
  couplecom:{watch:'A pure couple produces rotation with zero resultant force. Moving the centre of mass changes the weight moment about the pivot.',assume:'The body is rigid and weight is represented as a single force through the centre of mass.'},
  motion:{watch:'Compare the moving object with the velocity–time line: graph gradient is acceleration and signed area is displacement.',assume:'Acceleration is constant throughout each run.'},
  bounce:{watch:'Free-flight sections have gradient approximately −g; impacts reverse velocity quickly and reduce the next peak speed.',assume:'Air resistance and finite collision duration are simplified; the retained-speed control is a teaching model.'},
- projectile:{watch:'Separate horizontal and vertical velocity vectors. Adding drag shortens the range and destroys the ideal symmetry.',assume:'Gravity is uniform. The optional drag uses a simplified linear model rather than a full aerodynamic calculation.'},
+ projectile:{watch:'Separate horizontal and vertical velocity vectors, then compare the launch-height ruler with the ground level. Raising the launch point increases the vertical displacement available before impact; changing angle changes the split between uₓ and uᵧ. Adding drag reduces horizontal speed and destroys ideal symmetry.',assume:'Gravity is uniform and ground is horizontal. The optional drag uses a simplified linear model rather than a full aerodynamic calculation. The launch height is measured vertically above the ground reference line.'},
  terminal:{watch:'Drag increases with speed, shrinking the resultant force until acceleration tends toward zero.',assume:'Drag is modelled as proportional to speed so the approach to terminal speed is easy to see.'},
  vehicle:{watch:'The resistive-force curve rises with speed until it crosses the driving-force line: that intersection is the maximum steady speed.',assume:'Driving force is constant and aerodynamic drag is represented by a quadratic speed term plus constant rolling resistance.'},
  newton:{watch:'The acceleration arrow follows the resultant force, not the driving force alone. Increasing mass reduces acceleration for fixed resultant force.',assume:'Mass is constant and motion is one-dimensional.'},
@@ -1691,9 +1693,9 @@ const simActivities = {
   ['Apply','Use the graph to explain why the collision produces a large acceleration even though the collision time is short.']
  ],
  projectile:[
-  ['Predict','At fixed speed compare 30°, 45° and 60° with zero drag. Predict range and maximum height trends.'],
-  ['Measure','Add drag and compare flight time, range and the horizontal velocity component with the no-drag case.'],
-  ['Apply','Explain why the descending branch is not a mirror image of the ascending branch when drag is present.']
+  ['Predict','Keep speed and angle fixed, then raise the launch point from 0 m to 5 m and 10 m. Predict how flight time, range and impact speed will change before moving the height handle.'],
+  ['Measure','At zero drag, record flight time, range, maximum height and impact speed for at least three launch heights. Then repeat one height at two different launch angles.'],
+  ['Apply','Use the vertical equation y=h+uᵧt−½gt² to explain why a higher launch point usually increases range without changing the initial horizontal component.']
  ],
  terminal:[
   ['Predict','Increase mass but keep drag coefficient fixed. Predict terminal speed.'],
