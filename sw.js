@@ -9,15 +9,8 @@ self.addEventListener('install',event=>{
 self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    const hadOldMechanicsCache=keys.some(key=>key.startsWith('mechanics-lab-')&&key!==CACHE);
     await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
     await self.clients.claim();
-    if(hadOldMechanicsCache){
-      const windows=await self.clients.matchAll({type:'window'});
-      for(const client of windows){
-        try{ await client.navigate(client.url); }catch(_){}
-      }
-    }
   })());
 });
 
