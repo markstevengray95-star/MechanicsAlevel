@@ -87,9 +87,28 @@
         </div>
         <div class="viewer-controls">
           <button class="button" id="playPause">Pause</button>
+          <button class="button" id="stepSim">Step 0.25 s</button>
           <button class="button" id="resetSim">Reset</button>
           <button class="button" id="slowMotion">Slow motion</button>
+          <button class="button" id="recordSim">Record data</button>
         </div>
+        <div class="sim-display-options" aria-label="Simulation display options">
+          <label><input type="checkbox" id="showGrid" checked> Grid</label>
+          <label><input type="checkbox" id="showVectors" checked> Force/vector arrows</label>
+          <label><input type="checkbox" id="showLiveInfo" checked> Live information</label>
+        </div>
+        <div class="sim-presets" id="simPresets"></div>
+        <div class="sim-metrics" id="simMetrics"></div>
+        <article class="panel sim-challenge-card">
+          <div class="sim-challenge-head"><span class="eyebrow">Interactive challenge</span><span class="pill" id="simChallengeState">In progress</span></div>
+          <p id="simChallenge"></p>
+        </article>
+        <article class="panel sim-data-panel">
+          <div class="sim-data-head"><div><span class="eyebrow">Investigation data</span><h3>Recorded trials</h3></div><button class="text-button" id="clearSimData">Clear</button></div>
+          <div class="sim-data-scroll">
+            <table class="sim-data-table"><thead><tr><th>Trial</th><th>Variables</th><th>Key results</th></tr></thead><tbody id="simDataRows"></tbody></table>
+          </div>
+        </article>
         <p class="model-note">Models are schematic teaching representations. Distances, object sizes and timescales may be rescaled for clarity.</p>
       </div>
       <aside class="lab-side">
@@ -100,6 +119,7 @@
         </article>
         <div class="control-stack" id="simControls"></div>
         <div class="equation" id="simReadout"></div>
+        <article class="panel learning-box key-box"><h3>Key knowledge</h3><div id="keyKnowledge"></div></article>
         <article class="panel learning-box watch-box"><h3>What to watch</h3><div id="watchExplain"></div></article>
         <article class="panel learning-box simple-box"><h3>In simple words</h3><div id="simpleExplain"></div></article>
         <article class="panel learning-box exam-box"><h3>Say it like this in an exam</h3><div id="examExplain"></div></article>
