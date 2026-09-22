@@ -1388,13 +1388,14 @@ const simEnhancements = {
   challenge:{text:'Make the second peak height less than 1.0 m while starting from at least 2.5 m.',check:(v)=>v.drop>=2.5&&v.drop*Math.pow(v.retain/100,2)<1}
  },
  projectile:{
-  knowledge:['Horizontal and vertical motion share the same time but can be analysed independently.','Without drag, horizontal acceleration is zero and vertical acceleration is −g.','At maximum height, vertical velocity is zero but acceleration is still −g.','Air resistance reduces range and destroys ideal trajectory symmetry.'],
+  knowledge:['Horizontal and vertical motion share the same time but can be analysed independently.','Launch height changes the vertical displacement to the ground, so it changes flight time and range even when speed and angle are unchanged.','Without drag, horizontal acceleration is zero and vertical acceleration is −g.','At maximum height, vertical velocity is zero but acceleration is still −g.','If landing height differs from launch height, solve the vertical equation for impact time instead of using the same-height range formula.','Air resistance reduces horizontal speed and destroys ideal trajectory symmetry.'],
   presets:[
-   {label:'Ideal 45°',values:{speed:20,angle:45,drag:0}},
-   {label:'Low-angle fast',values:{speed:28,angle:25,drag:0}},
-   {label:'With drag',values:{speed:20,angle:45,drag:.12}}
+   {label:'Ground 45°',values:{speed:20,angle:45,height:0,drag:0}},
+   {label:'Platform launch',values:{speed:20,angle:25,height:8,drag:0}},
+   {label:'Horizontal from 12 m',values:{speed:16,angle:0,height:12,drag:0}},
+   {label:'Height + drag',values:{speed:22,angle:35,height:8,drag:.12}}
   ],
-  challenge:{text:'With zero drag, set a launch that has horizontal and vertical initial velocity components equal.',check:(v)=>v.drag===0&&Math.abs(v.speed*Math.cos(v.angle*Math.PI/180)-v.speed*Math.sin(v.angle*Math.PI/180))<.5}
+  challenge:{text:'With zero drag and launch height at least 5 m, adjust angle and speed so the projectile lands 30–32 m away.',check:(v)=>{if(v.drag!==0||v.height<5)return false;const s=projectileStats(v);return s.range>=30&&s.range<=32}}
  },
  terminal:{
   knowledge:['Weight is constant while drag increases with speed.','Resultant force decreases as drag approaches weight.','Terminal speed occurs when drag = weight.','At terminal speed acceleration is zero, but the object continues moving.'],
@@ -1559,11 +1560,11 @@ const simPedagogy = {
   scenario:{story:'Choose a protective floor that keeps the second bounce below 0.8 m from a 3 m drop.',goal:'Reduce rebound enough to meet the safety target.',values:{drop:3,retain:80},check:v=>v.drop*Math.pow(v.retain/100,2)<.8}
  },
  projectile:{
-  predict:'Without drag, which launch angle gives the greatest range when launch and landing heights are equal?',
-  explain:'For equal launch/landing height with no drag, range is maximised near 45°. Drag changes the optimum and reduces range.',
+  predict:'Keep launch speed and angle fixed. If the launch point is raised above the landing ground, what happens to flight time and horizontal range? Explain using the vertical motion.',
+  explain:'A greater launch height means the projectile must travel through a larger downward vertical displacement before reaching the ground. With the same initial velocity components, this gives more flight time and therefore usually a greater horizontal range. The angle still controls how the launch speed is split into horizontal and vertical components.',
   fbd:v=>v.drag>0?[{type:'Weight',dir:90},{type:'Drag',dir:180}]:[{type:'Weight',dir:90}],
-  investigation:{xKey:'angle',xLabel:'launch angle / °',yLabel:'ideal range / m',question:'How does launch angle affect range at fixed launch speed?',steps:['Set drag to zero.','Keep launch speed fixed.','Record range across several angles including 45°.'],y:v=>v.speed*v.speed*Math.sin(2*v.angle*Math.PI/180)/9.81},
-  scenario:{story:'Launch a package through a target 30 m away at the same height as release.',goal:'Adjust speed and angle so the ideal range is within 1 m of 30 m.',values:{speed:20,angle:30,drag:0},check:v=>Math.abs(v.speed*v.speed*Math.sin(2*v.angle*Math.PI/180)/9.81-30)<1}
+  investigation:{xKey:'height',xLabel:'launch height / m',yLabel:'range / m',question:'How does launch height affect horizontal range when launch speed and angle are held constant?',steps:['Set drag to zero.','Choose one launch speed and angle and keep both fixed.','Increase launch height in regular steps.','Record flight time and range for each height.','Then repeat at a second angle and compare the two trends.'],y:v=>projectileStats({...v,drag:0}).range},
+  scenario:{story:'A ball is launched from an 8 m platform and must land about 35 m from the base.',goal:'Keep drag at zero and tune speed and angle until the range is 34–36 m. Use the height handle to verify the 8 m release point.',values:{speed:20,angle:30,height:8,drag:0},check:v=>{if(v.drag!==0||Math.abs(v.height-8)>.25)return false;const s=projectileStats(v);return s.range>=34&&s.range<=36}}
  },
  terminal:{
   predict:'If mass increases while the drag coefficient stays unchanged, what happens to terminal speed?',
