@@ -1439,6 +1439,149 @@ const simEnhancements = {
  }
 };
 
+const simPedagogy = {
+ vectors:{
+  predict:'If the vector magnitude stays fixed and its angle increases from 20° toward 70°, what happens to the horizontal and vertical components? Explain before testing.',
+  explain:'Increasing the angle from the horizontal reduces Fₓ = Fcosθ and increases Fᵧ = Fsinθ. At 45° the perpendicular components are equal.',
+  fbd:[{type:'Applied',dir:0}],
+  investigation:{xKey:'angle',xLabel:'angle / °',yLabel:'vertical component / N',question:'How does vector angle affect the vertical component at fixed magnitude?',steps:['Keep vector magnitude fixed.','Record at least five different angles.','Plot angle against vertical component and describe the non-linear trend.'],y:v=>v.mag*Math.sin(v.angle*Math.PI/180)},
+  scenario:{story:'A rescue line must provide equal horizontal and vertical pull components.',goal:'Set the force direction so the two components are approximately equal.',values:{mag:80,angle:25},check:v=>Math.abs(v.mag*Math.cos(v.angle*Math.PI/180)-v.mag*Math.sin(v.angle*Math.PI/180))<1}
+ },
+ equilibrium:{
+  predict:'If one force is rotated while its magnitude stays fixed, how must the balancing force change?',
+  explain:'The balancing force is always equal and opposite to the resultant of the other forces, so both its magnitude and direction can change.',
+  fbd:[{type:'Tension',dir:180},{type:'Tension',dir:0},{type:'Weight',dir:90}],
+  investigation:{xKey:'a1',xLabel:'force 1 angle / °',yLabel:'balancing force / N',question:'How does changing one force direction affect the balancing force?',steps:['Keep both force magnitudes fixed.','Change force 1 angle systematically.','Record the balancing force and identify where it is smallest.'],y:v=>{const a=v.a1*Math.PI/180,b=v.a2*Math.PI/180;return Math.hypot(v.f1*Math.cos(a)+v.f2*Math.cos(b),v.f1*Math.sin(a)+v.f2*Math.sin(b))}},
+  scenario:{story:'Three support cables hold a sign. Minimise the load in the third cable.',goal:'Adjust the first two cable directions so the balancing force is below 20 N.',values:{f1:60,a1:20,f2:60,a2:120},check:v=>{const a=v.a1*Math.PI/180,b=v.a2*Math.PI/180;return Math.hypot(v.f1*Math.cos(a)+v.f2*Math.cos(b),v.f1*Math.sin(a)+v.f2*Math.sin(b))<20}}
+ },
+ moments:{
+  predict:'What happens to moment if the force stays fixed but its perpendicular distance from the pivot doubles?',
+  explain:'Moment M=Fd, so at fixed force doubling perpendicular distance doubles the turning effect.',
+  fbd:[{type:'Applied',dir:90},{type:'Normal',dir:-90},{type:'Weight',dir:90}],
+  investigation:{xKey:'distance',xLabel:'perpendicular distance / m',yLabel:'moment / N m',question:'How does perpendicular distance affect moment for a constant force?',steps:['Keep force fixed.','Record moment at several distances.','Plot M against d and use the gradient to identify the force.'],y:v=>v.force*v.distance},
+  scenario:{story:'A technician needs 45 N m of turning effect without increasing the applied force above 60 N.',goal:'Choose a suitable perpendicular distance.',values:{force:60,distance:.3},check:v=>Math.abs(v.force*v.distance-45)<1}
+ },
+ couplecom:{
+  predict:'If the two forces in a couple keep the same magnitude but move farther apart, what happens to the couple moment?',
+  explain:'Couple moment = F × perpendicular separation, so increasing separation increases moment linearly while the resultant force remains zero.',
+  fbd:[{type:'Applied',dir:-90},{type:'Applied',dir:90},{type:'Weight',dir:90}],
+  investigation:{xKey:'sep',xLabel:'force separation / m',yLabel:'couple moment / N m',question:'How does force separation affect the moment of a couple?',steps:['Keep force fixed.','Change separation through a broad range.','Record couple moment and test proportionality.'],y:v=>v.force*v.sep},
+  scenario:{story:'Design a steering control that produces 24 N m with the smallest force you can manage.',goal:'Use separation efficiently to reach about 24 N m.',values:{force:40,sep:.3,com:0},check:v=>Math.abs(v.force*v.sep-24)<1}
+ },
+ motion:{
+  predict:'With positive initial velocity and negative acceleration, what determines when the object stops and reverses?',
+  explain:'The stop occurs when v=u+at reaches zero, so t=-u/a for negative acceleration.',
+  fbd:[{type:'Driving',dir:0},{type:'Drag',dir:180},{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'a',xLabel:'acceleration / m s⁻²',yLabel:'velocity after 5 s / m s⁻¹',question:'How does acceleration affect velocity after a fixed time?',steps:['Choose a fixed initial velocity.','Record results for several accelerations.','Plot acceleration against velocity after 5 s.'],y:v=>v.u+5*v.a},
+  scenario:{story:'A test car must come to rest after about 4 s without reversing before then.',goal:'Choose u and a so stopping time is close to 4 s.',values:{u:12,a:-2},check:v=>v.a<0&&Math.abs((-v.u/v.a)-4)<.25}
+ },
+ bounce:{
+  predict:'If a ball retains 70% rather than 90% of its speed after impact, how will the next peak height change?',
+  explain:'Peak height depends on speed squared, so reducing rebound speed has an even larger fractional effect on the next height.',
+  fbd:[{type:'Weight',dir:90}],
+  investigation:{xKey:'retain',xLabel:'speed retained / %',yLabel:'second peak height / m',question:'How does rebound speed retention affect the next peak height?',steps:['Keep drop height fixed.','Change rebound percentage.','Record the second peak height and look for a squared relationship.'],y:v=>v.drop*Math.pow(v.retain/100,2)},
+  scenario:{story:'Choose a protective floor that keeps the second bounce below 0.8 m from a 3 m drop.',goal:'Reduce rebound enough to meet the safety target.',values:{drop:3,retain:80},check:v=>v.drop*Math.pow(v.retain/100,2)<.8}
+ },
+ projectile:{
+  predict:'Without drag, which launch angle gives the greatest range when launch and landing heights are equal?',
+  explain:'For equal launch/landing height with no drag, range is maximised near 45°. Drag changes the optimum and reduces range.',
+  fbd:v=>v.drag>0?[{type:'Weight',dir:90},{type:'Drag',dir:180}]:[{type:'Weight',dir:90}],
+  investigation:{xKey:'angle',xLabel:'launch angle / °',yLabel:'ideal range / m',question:'How does launch angle affect range at fixed launch speed?',steps:['Set drag to zero.','Keep launch speed fixed.','Record range across several angles including 45°.'],y:v=>v.speed*v.speed*Math.sin(2*v.angle*Math.PI/180)/9.81},
+  scenario:{story:'Launch a package through a target 30 m away at the same height as release.',goal:'Adjust speed and angle so the ideal range is within 1 m of 30 m.',values:{speed:20,angle:30,drag:0},check:v=>Math.abs(v.speed*v.speed*Math.sin(2*v.angle*Math.PI/180)/9.81-30)<1}
+ },
+ terminal:{
+  predict:'If mass increases while the drag coefficient stays unchanged, what happens to terminal speed?',
+  explain:'In this model terminal speed satisfies kv=mg, so vₜ=mg/k. Increasing mass increases terminal speed.',
+  fbd:[{type:'Weight',dir:90},{type:'Drag',dir:-90}],
+  investigation:{xKey:'mass',xLabel:'mass / kg',yLabel:'terminal speed / m s⁻¹',question:'How does mass affect terminal speed for a fixed drag coefficient?',steps:['Keep drag coefficient fixed.','Change mass over a wide range.','Record terminal speed and identify the proportional trend.'],y:v=>v.mass*9.81/v.k},
+  scenario:{story:'Design a falling sensor package with a terminal speed below 6 m s⁻¹.',goal:'Choose mass and drag coefficient to meet the limit.',values:{mass:2,k:2},check:v=>v.mass*9.81/v.k<6}
+ },
+ vehicle:{
+  predict:'If aerodynamic drag coefficient doubles while driving force stays the same, what happens to maximum steady speed?',
+  explain:'Maximum steady speed occurs when drive equals rolling resistance plus quadratic drag; increasing drag lowers the speed at that intersection.',
+  fbd:[{type:'Driving',dir:0},{type:'Drag',dir:180},{type:'Friction',dir:180},{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'drag',xLabel:'drag coefficient',yLabel:'maximum speed / m s⁻¹',question:'How does aerodynamic drag affect maximum steady speed?',steps:['Keep drive force and rolling resistance fixed.','Increase drag coefficient.','Record maximum steady speed and describe the inverse trend.'],y:v=>Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag))},
+  scenario:{story:'Tune an electric vehicle to sustain at least 30 m s⁻¹ without increasing drive above 5000 N.',goal:'Reduce resistance enough to achieve the target.',values:{drive:4500,drag:7,roll:400,mass:1200},check:v=>v.drive<=5000&&Math.sqrt(Math.max(0,(v.drive-v.roll)/v.drag))>=30}
+ },
+ newton:{
+  predict:'At fixed mass, what happens to acceleration if resultant force doubles?',
+  explain:'Newton II gives a=ΣF/m, so acceleration is directly proportional to resultant force at constant mass.',
+  fbd:[{type:'Driving',dir:0},{type:'Drag',dir:180},{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'drive',xLabel:'driving force / N',yLabel:'acceleration / m s⁻²',question:'How does driving force affect acceleration when mass and resistance are fixed?',steps:['Keep mass and resistance fixed.','Change driving force.','Plot driving force against acceleration and interpret the gradient.'],y:v=>(v.drive-v.resist)/v.mass},
+  scenario:{story:'Accelerate a 1200 kg vehicle at 2.0 m s⁻² against 600 N resistance.',goal:'Set the driving force to achieve the target acceleration.',values:{drive:2000,resist:600,mass:1200},check:v=>Math.abs((v.drive-v.resist)/v.mass-2)<.1}
+ },
+ momentum:{
+  predict:'If two trolleys stick, how does increasing the stationary trolley mass affect their shared final speed?',
+  explain:'Momentum before equals momentum after. Increasing the combined mass while keeping initial momentum fixed reduces the shared final speed.',
+  fbd:[{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'m2',xLabel:'second mass / kg',yLabel:'joined speed / m s⁻¹',question:'How does the second trolley mass affect final speed in a sticking collision?',steps:['Keep trolley 1 conditions fixed.','Change trolley 2 mass.','Record joined speed and relate it to conservation of momentum.'],y:v=>(v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2)},
+  scenario:{story:'Design a collision where the joined trolleys finish almost stationary.',goal:'Adjust masses and velocities so |vfinal| < 0.1 m s⁻¹.',values:{m1:1,v1:5,m2:2,v2:-1},check:v=>Math.abs((v.m1*v.v1+v.m2*v.v2)/(v.m1+v.m2))<.1}
+ },
+ impulse:{
+  predict:'For the same impulse, what must happen to peak force if contact time is increased?',
+  explain:'Impulse is force–time area. For a triangular pulse J=½FpeakΔt, so increasing time allows a lower peak force for the same impulse.',
+  fbd:[{type:'Applied',dir:180},{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'time',xLabel:'contact time / s',yLabel:'impulse / N s',question:'How does contact time affect impulse for fixed peak force?',steps:['Keep peak force fixed.','Change contact time.','Record impulse and confirm the triangular-area relationship.'],y:v=>.5*v.peak*v.time},
+  scenario:{story:'A helmet design must deliver the same 80 N s impulse while keeping peak force below 1800 N.',goal:'Increase impact duration enough to meet both conditions.',values:{peak:2500,time:.06,mass:.8},check:v=>Math.abs(.5*v.peak*v.time-80)<5&&v.peak<1800}
+ },
+ energy:{
+  predict:'If the same object loses a greater percentage of energy to resistance, what happens to its final speed?',
+  explain:'More energy transferred to internal stores means less kinetic energy remains, so final speed decreases.',
+  fbd:v=>v.loss>0?[{type:'Weight',dir:90},{type:'Normal',dir:-90},{type:'Friction',dir:180}]:[{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'loss',xLabel:'energy dissipated / %',yLabel:'final speed / m s⁻¹',question:'How does dissipated-energy percentage affect final speed?',steps:['Keep mass and height fixed.','Change the loss percentage.','Record final speed and explain the square-root relationship.'],y:v=>Math.sqrt(Math.max(0,2*(v.mass*9.81*v.height*(1-v.loss/100))/v.mass))},
+  scenario:{story:'A coaster must arrive at the bottom above 7 m s⁻¹ despite resistive losses.',goal:'Choose height and loss percentage to meet the speed target.',values:{height:3,mass:2,loss:30},check:v=>Math.sqrt(Math.max(0,2*9.81*v.height*(1-v.loss/100)))>7}
+ },
+ workgraph:{
+  predict:'If force increases linearly with displacement, why is final force × distance too large for the work done?',
+  explain:'Work is the area under the F–s graph. For a straight line from F₀ to F₁ the area is the trapezium ½(F₀+F₁)s.',
+  fbd:[{type:'Applied',dir:0},{type:'Friction',dir:180},{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'f1',xLabel:'final force / N',yLabel:'work / J',question:'How does final force affect work for a fixed displacement and starting force?',steps:['Keep distance and starting force fixed.','Change final force.','Record graph area/work and identify the linear trend.'],y:v=>.5*(v.f0+v.f1)*v.distance},
+  scenario:{story:'A machine may transfer no more than 300 J over a 4 m movement.',goal:'Set the force profile so total work is close to 300 J.',values:{f0:40,f1:100,distance:4},check:v=>Math.abs(.5*(v.f0+v.f1)*v.distance-300)<10}
+ },
+ motor:{
+  predict:'If a motor lifts the same mass through the same height in half the time, what happens to useful output power?',
+  explain:'Useful energy mgh is unchanged, but dividing by half the time doubles useful output power.',
+  fbd:[{type:'Tension',dir:-90},{type:'Weight',dir:90}],
+  investigation:{xKey:'time',xLabel:'lift time / s',yLabel:'useful power / W',question:'How does lift time affect useful output power for fixed mass and height?',steps:['Keep mass and height fixed.','Change lift time.','Record useful power and identify the inverse relationship.'],y:v=>v.mass*9.81*v.height/v.time},
+  scenario:{story:'Lift a 12 kg load by 2 m with at least 70% efficiency while input power stays below 500 W.',goal:'Tune lift time and input power to satisfy both constraints.',values:{mass:12,height:2,time:5,input:500},check:v=>{const p=v.mass*9.81*v.height/v.time,e=100*p/v.input;return e>=70&&e<=100&&v.input<=500}}
+ },
+ springenergy:{
+  predict:'Within the Hookean region, what happens to stored elastic energy if extension doubles?',
+  explain:'E=½kx², so doubling extension multiplies elastic energy by four while Hooke’s law remains valid.',
+  fbd:[{type:'Applied',dir:90},{type:'Tension',dir:-90}],
+  investigation:{xKey:'ext',xLabel:'extension / m',yLabel:'elastic energy / J',question:'How does extension affect stored energy in the Hookean region?',steps:['Keep k fixed and stay below the proportional limit.','Change extension.','Record energy and look for a squared relationship.'],y:v=>.5*v.k*v.ext*v.ext},
+  scenario:{story:'Store between 1.8 J and 2.2 J without exceeding the proportional limit.',goal:'Adjust k and extension to hit the target safely.',values:{k:160,ext:.1,limit:.18},check:v=>v.ext<=v.limit&&.5*v.k*v.ext*v.ext>=1.8&&.5*v.k*v.ext*v.ext<=2.2}
+ },
+ collisiontypes:{
+  predict:'Which interaction conserves kinetic energy as well as momentum: sticking, elastic collision or explosion?',
+  explain:'All closed-system cases conserve momentum. Only the ideal elastic collision conserves kinetic energy; an explosion can increase kinetic energy by converting internal energy.',
+  fbd:[{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'mode',xLabel:'interaction mode',yLabel:'KE after / J',question:'How does interaction type change kinetic energy while momentum remains conserved?',steps:['Keep masses and speed fixed.','Compare all three interaction modes.','Record kinetic energy and explain where energy is transferred in each case.'],y:v=>{const m=Math.round(v.mode);if(m===0){const V=v.m1*v.speed/(v.m1+v.m2);return .5*(v.m1+v.m2)*V*V}if(m===1){const a=(v.m1-v.m2)/(v.m1+v.m2)*v.speed,b=2*v.m1/(v.m1+v.m2)*v.speed;return .5*v.m1*a*a+.5*v.m2*b*b}const a=v.speed,b=-v.m1*a/v.m2;return .5*v.m1*a*a+.5*v.m2*b*b}},
+  scenario:{story:'Select the interaction used to model an ideal collision where neither total momentum nor kinetic energy changes.',goal:'Choose the correct interaction mode.',values:{m1:1,m2:1.5,speed:4,mode:0},check:v=>Math.round(v.mode)===1}
+ },
+ density:{
+  predict:'At constant mass, what happens to density if the sample volume doubles?',
+  explain:'Density ρ=m/V, so doubling volume at fixed mass halves density.',
+  fbd:[{type:'Weight',dir:90},{type:'Normal',dir:-90}],
+  investigation:{xKey:'length',xLabel:'length / cm',yLabel:'density / kg m⁻³',question:'How does increasing one dimension change density when mass is fixed?',steps:['Keep mass, width and height fixed.','Change length.','Record density and identify the inverse relationship.'],y:v=>(v.mass/1000)/(v.length*v.width*v.height*1e-6)},
+  scenario:{story:'Resize a 270 g sample until its density is close to aluminium at about 2700 kg m⁻³.',goal:'Adjust dimensions to reach 2600–2800 kg m⁻³.',values:{mass:270,length:5,width:5,height:3},check:v=>{const rho=(v.mass/1000)/(v.length*v.width*v.height*1e-6);return rho>=2600&&rho<=2800}}
+ },
+ elasticity:{
+  predict:'If wire length doubles while force, area and material stay unchanged, what happens to extension?',
+  explain:'From E=FL/(AΔL), extension ΔL=FL/(AE), so extension is directly proportional to original length.',
+  fbd:[{type:'Tension',dir:-90},{type:'Weight',dir:90}],
+  investigation:{xKey:'length',xLabel:'original length / m',yLabel:'extension / mm',question:'How does original wire length affect extension?',steps:['Keep force, area and Young modulus fixed.','Change original length.','Record extension and test proportionality.'],y:v=>1000*v.force*v.length/(v.area*1e-6*v.young*1e9)},
+  scenario:{story:'Choose dimensions for a steel-like wire so extension stays below 1.0 mm under load.',goal:'Adjust length, area and force while keeping Young modulus fixed.',values:{force:70,length:2,area:.3,young:200},check:v=>1000*v.force*v.length/(v.area*1e-6*v.young*1e9)<1}
+ },
+ stressstrain:{
+  predict:'How does increasing Young modulus change the initial straight-line part of a stress–strain graph?',
+  explain:'Young modulus is the gradient of the linear elastic region, so a larger E gives a steeper initial gradient.',
+  fbd:[{type:'Tension',dir:180},{type:'Tension',dir:0}],
+  investigation:{xKey:'strain',xLabel:'strain',yLabel:'stress / MPa',question:'How does stress change as strain moves from elastic to plastic behaviour?',steps:['Keep material settings fixed.','Increase strain gradually.','Record stress and identify yield and fracture regions.'],y:v=>{const E=v.young*1e9,y=v.yield*1e6,epsY=y/E;if(v.strain<=epsY)return E*v.strain/1e6;if(v.strain<v.break)return (y+(v.strain-epsY)/(v.break-epsY)*.35*y)/1e6;return 0}},
+  scenario:{story:'Load a ductile test sample beyond yield without fracturing it.',goal:'Move into the plastic region but remain below breaking strain.',values:{strain:.005,young:120,yield:220,break:.08},check:v=>{const ey=(v.yield*1e6)/(v.young*1e9);return v.strain>ey&&v.strain<v.break}}
+ }
+};
+
 const simActivities = {
  vectors:[
   ['Predict','Before moving the angle slider, predict which component will increase as the angle rises from 20° to 70° while magnitude stays fixed.'],
