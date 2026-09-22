@@ -2159,32 +2159,55 @@ function handleSimPointer(event){
   event.preventDefault();
  }
 }
-function beginSimDrag(e,source){
+function canvasMeasureMode(){return ['ruler','angle','cursor'].includes(simMeasureTool);}
+function handleMeasurementPointer(e,phase){
  const p=simPoint(e);
- running=false;$('#playPause').textContent='Play';$('#simState').textContent='Direct control';
- simPointerActive=true;simInputSource=source;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
- canvas.classList.add('dragging');
+ if(phase==='start'){
+  measureState={a:{x:p.x,y:p.y},b:{x:p.x,y:p.y},active:true};
+ }else if(phase==='move'&&measureState.active){
+  measureState.b={x:p.x,y:p.y};
+ }else if(phase==='end'){
+  measureState.b={x:p.x,y:p.y};measureState.active=false;
+ }
+ updateMeasureReadout();drawSimSafely();e.preventDefault?.();
+}
+function beginSimDrag(e,source){
+ const p=simPoint(e);running=false;$('#playPause').textContent='Play';
+ simPointerActive=true;canvas.classList.add('dragging');
+ if(canvasMeasureMode()){
+  simInputSource='measure-'+source;$('#simState').textContent='Measurement mode';
+  if(source==='pointer')try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
+  handleMeasurementPointer(e,'start');return;
+ }
+ $('#simState').textContent='Direct control';simInputSource=source;simDragTarget=chooseSimDragTarget(sims[activeSim].id,p.x,p.y,p.w,p.h);
  if(source==='pointer')try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
  handleSimPointer(e);
 }
-function endSimDrag(e){
- if(simInputSource==='pointer'&&e)try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){}
+function moveSimInput(e,source){
+ if(!simPointerActive)return;
+ if(simInputSource==='measure-'+source){handleMeasurementPointer(e,'move');return;}
+ if(simInputSource===source)handleSimPointer(e);
+}
+function endSimDrag(e,source){
+ if(!simPointerActive)return;
+ if(simInputSource==='measure-'+source)handleMeasurementPointer(e,'end');
+ if((source==='pointer'||simInputSource==='measure-pointer')&&e)try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){}
  simPointerActive=false;simDragTarget=null;simInputSource=null;canvas.classList.remove('dragging');
 }
 canvas.addEventListener('pointerdown',e=>{if(!simPointerActive)beginSimDrag(e,'pointer');});
-canvas.addEventListener('pointermove',e=>{if(simPointerActive&&simInputSource==='pointer')handleSimPointer(e);});
-canvas.addEventListener('pointerup',e=>{if(simInputSource==='pointer')endSimDrag(e);});
-canvas.addEventListener('pointercancel',e=>{if(simInputSource==='pointer')endSimDrag(e);});
+canvas.addEventListener('pointermove',e=>moveSimInput(e,'pointer'));
+canvas.addEventListener('pointerup',e=>endSimDrag(e,'pointer'));
+canvas.addEventListener('pointercancel',e=>endSimDrag(e,'pointer'));
 
-// Fallbacks make dragging reliable in browsers/webviews that do not dispatch Pointer Events consistently.
+// Fallbacks keep direct manipulation working in older browsers and embedded webviews.
 canvas.addEventListener('mousedown',e=>{if(!simPointerActive)beginSimDrag(e,'mouse');});
-canvas.addEventListener('mousemove',e=>{if(simPointerActive&&simInputSource==='mouse')handleSimPointer(e);});
-window.addEventListener('mouseup',e=>{if(simInputSource==='mouse')endSimDrag(e);});
+canvas.addEventListener('mousemove',e=>moveSimInput(e,'mouse'));
+window.addEventListener('mouseup',e=>{if(simInputSource==='mouse'||simInputSource==='measure-mouse')endSimDrag(e,'mouse');});
 function touchProxy(t,original,type){return {clientX:t.clientX,clientY:t.clientY,type,preventDefault:()=>original.preventDefault()};}
 canvas.addEventListener('touchstart',e=>{if(simPointerActive)return;const t=e.touches[0];if(t)beginSimDrag(touchProxy(t,e,'touchstart'),'touch');},{passive:false});
-canvas.addEventListener('touchmove',e=>{if(simInputSource!=='touch')return;const t=e.touches[0];if(t)handleSimPointer(touchProxy(t,e,'touchmove'));},{passive:false});
-canvas.addEventListener('touchend',e=>{if(simInputSource==='touch')endSimDrag(e);},{passive:false});
-canvas.addEventListener('touchcancel',e=>{if(simInputSource==='touch')endSimDrag(e);},{passive:false});
+canvas.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)moveSimInput(touchProxy(t,e,'touchmove'),'touch');},{passive:false});
+canvas.addEventListener('touchend',e=>{if(simInputSource==='touch'||simInputSource==='measure-touch'){const t=e.changedTouches?.[0];endSimDrag(t?touchProxy(t,e,'touchend'):e,'touch');}},{passive:false});
+canvas.addEventListener('touchcancel',e=>{if(simInputSource==='touch'||simInputSource==='measure-touch')endSimDrag(e,'touch');},{passive:false});
 
 function renderSim(){
  const s=sims[activeSim]; simValues={}; s.controls.forEach(c=>simValues[c.key]=c.value); simTime=0;
