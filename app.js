@@ -2438,6 +2438,40 @@ $('#showLiveInfo').addEventListener('change',e=>{simDisplay.live=e.target.checke
 $('#showTrails').addEventListener('change',e=>{simDisplay.trails=e.target.checked;drawSimSafely();});
 $('#resetSim').addEventListener('click',()=>{simTime=0;simRenderError=null;$('#simState')?.classList.remove('error');renderSim();requestAnimationFrame(drawSimSafely);});
 
+$('#simTimeline').addEventListener('input',e=>{running=false;$('#playPause').textContent='Play';setSimScrub(simDuration(),Number(e.target.value)/1000);$('#simState').textContent='Timeline scrub';updateReadout();drawSimSafely();drawLinkedView();});
+$('#sandboxToggle').addEventListener('click',()=>{simSandbox=!simSandbox;$('#sandboxToggle').textContent='Sandbox: '+(simSandbox?'on':'off');$('#sandboxToggle').classList.toggle('primary',simSandbox);refreshSimControlRanges();$('#simState').textContent=simSandbox?'Sandbox mode':'Paused';running=false;$('#playPause').textContent='Play';});
+$('[data-measure-tool]').forEach(btn=>btn.addEventListener('click',()=>{
+ simMeasureTool=btn.dataset.measureTool;measureState={a:null,b:null,active:false};
+ $('[data-measure-tool]').forEach(x=>x.classList.toggle('active',x===btn));
+ updateMeasureReadout();drawSimSafely();
+}));
+$('#lockPrediction').addEventListener('click',()=>{
+ const id=sims[activeSim].id,text=$('#simPrediction').value.trim();
+ simPredictions[id]={text,locked:true};localStorage.setItem('mechanicsSimPredictions',JSON.stringify(simPredictions));
+ $('#simPredictionFeedback').textContent=text?'Prediction locked. Test it with the model before revealing the explanation.':'Prediction locked without text—try writing a reason next time.';
+});
+$('#revealPrediction').addEventListener('click',()=>{
+ const id=sims[activeSim].id,profile=simPedagogy[id];
+ $('#simPredictionFeedback').innerHTML='<strong>Physics explanation:</strong> '+profile.explain+(simPredictions[id]?.text?'<br><span class="muted">Your prediction: '+simPredictions[id].text+'</span>':'');
+});
+$('#addFbdForce').addEventListener('click',()=>{
+ const id=sims[activeSim].id;if(!simFbdState[id])simFbdState[id]=[];
+ simFbdState[id].push({type:$('#fbdForceType').value,dir:Number($('#fbdDirection').value)});drawFbd();$('#fbdFeedback').textContent='';
+});
+$('#undoFbdForce').addEventListener('click',()=>{const id=sims[activeSim].id;(simFbdState[id]||[]).pop();drawFbd();$('#fbdFeedback').textContent='';});
+$('#checkFbd').addEventListener('click',checkFbd);
+$('#startInvestigation').addEventListener('click',()=>{
+ investigationRunning=true;const id=sims[activeSim].id;simDataRecords[id]=[];renderSimData();renderInvestigationGraph();
+ $('#investigationFeedback').textContent='Investigation started. Follow the steps, change only the named independent variable, and use Record data after each trial.';
+});
+$('#analyseInvestigation').addEventListener('click',analyseInvestigation);
+$('#loadScenario').addEventListener('click',()=>{
+ const id=sims[activeSim].id,profile=simPedagogy[id];if(!profile)return;
+ Object.entries(profile.scenario.values||{}).forEach(([key,value])=>setSimControl(key,value,{resetTime:false}));
+ simTime=0;running=false;$('#playPause').textContent='Play';$('#simState').textContent='Scenario loaded';updateReadout();drawSimSafely();drawLinkedView();
+});
+
+
 const formulas = [
 {id:'resultant',topic:'Vectors',name:'Perpendicular resultant',desc:'R = √(x² + y²)',when:'Use when two perpendicular vector components are known and you need the magnitude of the resultant.',assumptions:'The two components are at 90°.',common:'Do not add perpendicular magnitudes directly.',rearrange:'R = √(x²+y²)',inputs:[['x','x component',6,'N'],['y','y component',8,'N']],calc:v=>({steps:['Identify the perpendicular components: x = '+v.x+' N, y = '+v.y+' N.','R = √(x² + y²)','R = √('+v.x+'² + '+v.y+'²)'],answer:Math.hypot(v.x,v.y),unit:'N'})},
 {id:'resultant-angle',topic:'Vectors',name:'Resultant direction',desc:'θ = tan⁻¹(y/x)',when:'Use with perpendicular components to find the direction of the resultant relative to the x-direction.',assumptions:'x and y are perpendicular and signs/directions have been chosen consistently.',common:'State the reference direction, such as “north of east”.',rearrange:'θ = tan⁻¹(opposite/adjacent)',inputs:[['x','horizontal component',6,'N'],['y','vertical component',8,'N']],calc:v=>({steps:['tanθ = y/x','θ = tan⁻¹('+v.y+'/'+v.x+')'],answer:Math.atan2(v.y,v.x)*180/Math.PI,unit:'°'})},
