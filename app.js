@@ -1116,7 +1116,6 @@ function openView(name){
   requestAnimationFrame(()=>{
    try{
     syncSimCanvas();
-    renderSim();
     drawSimSafely();
    }catch(error){
     showSimError(error);
