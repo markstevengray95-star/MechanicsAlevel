@@ -17,6 +17,13 @@ Interactive teaching app for **AQA A-level Physics 7408, section 3.4 Mechanics a
 - Responsive PWA-style layout matching the companion Nuclear Physics Learning Lab
 - Automated Chromium browser smoke test covering all lessons, simulations, formulas, practicals, skills and exam sections
 - Direct-interaction validation: visible draggable handles plus mouse and touch gesture tests across all 20 simulations
+- Predict → test → explain mode with saved student predictions and physics explanations
+- Built-in measurement toolbelt: ruler, angle, stopwatch, force/velocity readouts and contextual graph cursor
+- Frame-by-frame timeline scrubbing, motion trails and linked relationship graphs
+- Free-body diagram builder with force/direction checking for each simulation context
+- Guided investigation mode with trial recording, automatic graphs and trend analysis
+- Real-world scenario challenges with automatic success detection
+- Sandbox mode with extended parameter ranges for open exploration
 
 ## AQA coverage
 The course covers scalars and vectors, moments, straight-line motion, projectile motion, Newton's laws, momentum, work, energy, power, conservation of energy, bulk properties of solids and Young modulus.
