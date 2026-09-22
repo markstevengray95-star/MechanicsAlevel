@@ -2362,14 +2362,36 @@ function drawAxes(x,y,w,h,xLabel,yLabel){
  ctx.fillStyle='#9fb2c8';ctx.font='12px system-ui';ctx.fillText(xLabel,x+w-30,y+h-8);ctx.fillText(yLabel,x+7,y+14);
 }
 function projectileState(t,v){
- const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r),k=v.drag;
- if(k<1e-6) return {x:ux*t,y:uy*t-.5*9.81*t*t,vx:ux,vy:uy-9.81*t};
+ const r=v.angle*Math.PI/180,ux=v.speed*Math.cos(r),uy=v.speed*Math.sin(r),k=v.drag,h0=Number(v.height)||0;
+ if(k<1e-6) return {x:ux*t,y:h0+uy*t-.5*9.81*t*t,vx:ux,vy:uy-9.81*t};
  const e=Math.exp(-k*t);
- return {x:ux*(1-e)/k,y:(uy+9.81/k)*(1-e)/k-9.81*t/k,vx:ux*e,vy:(uy+9.81/k)*e-9.81/k};
+ return {x:ux*(1-e)/k,y:h0+(uy+9.81/k)*(1-e)/k-9.81*t/k,vx:ux*e,vy:(uy+9.81/k)*e-9.81/k};
 }
 function projectileFlight(v){
- let t=.02,last=projectileState(t,v);
- while(t<20){t+=.02;const p=projectileState(t,v);if(p.y<0&&t>.1)return t;last=p;} return 20;
+ let lastT=0,lastY=projectileState(0,v).y;
+ for(let t=.01;t<=30;t+=.01){
+  const p=projectileState(t,v);
+  if(p.y<=0&&t>.005){
+   const span=Math.max(1e-9,lastY-p.y),fraction=clamp(lastY/span,0,1);
+   return lastT+(t-lastT)*fraction;
+  }
+  lastT=t;lastY=p.y;
+ }
+ return 30;
+}
+function projectileStats(v){
+ const T=projectileFlight(v),impact=projectileState(T,v);
+ let maxY=Math.max(0,Number(v.height)||0),timeAtMax=0;
+ for(let i=0;i<=180;i++){const tt=T*i/180,p=projectileState(tt,v);if(p.y>maxY){maxY=p.y;timeAtMax=tt;}}
+ const impactSpeed=Math.hypot(impact.vx,impact.vy),impactAngle=Math.atan2(Math.abs(impact.vy),Math.max(1e-9,Math.abs(impact.vx)))*180/Math.PI;
+ return {time:T,range:Math.max(0,impact.x),maxY,timeAtMax,impactSpeed,impactAngle,impactVx:impact.vx,impactVy:impact.vy};
+}
+function projectileLayout(v,w,h){
+ const stats=projectileStats(v),pts=[];let maxX=Math.max(1,stats.range),maxY=Math.max(1,stats.maxY);
+ for(let i=0;i<=160;i++){const tt=stats.time*i/160,p=projectileState(tt,v);pts.push(p);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
+ const base=h-45,sx=(w-105)/(Math.max(1,maxX)*1.08),sy=(h-105)/(Math.max(1,maxY)*1.18),launchX=55,launchY=base-(Number(v.height)||0)*sy;
+ const rad=v.angle*Math.PI/180,vecLen=clamp(v.speed*3,24,105),tipX=launchX+Math.cos(rad)*vecLen,tipY=launchY-Math.sin(rad)*vecLen;
+ return {stats,pts,maxX,maxY,sx,sy,base,launchX,launchY,tipX,tipY};
 }
 function drawCanvasBackdrop(w,h){
  const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#10253c');grad.addColorStop(.65,'#0a1827');grad.addColorStop(1,'#07111d');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
