@@ -1,0 +1,65 @@
+name: Integrate lesson equation coach v2
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/integrate-equation-coach-v2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Integrate equation coach
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          index=Path('index.html')
+          html=index.read_text()
+          script='<script src="equation-coach-v2.js?v=1"></script>'
+          if script not in html:
+              anchor='<script src="textbook-expansion-v1.js?v=1"></script>'
+              if anchor not in html:
+                  raise SystemExit('textbook expansion script anchor missing')
+              html=html.replace(anchor, anchor+'\n'+script)
+              index.write_text(html)
+
+          sw=Path('sw.js')
+          text=sw.read_text()
+          text=text.replace("const CACHE='mechanics-lab-v16'","const CACHE='mechanics-lab-v17'")
+          asset="'./equation-coach-v2.js?v=1'"
+          if asset not in text:
+              text=text.replace("'./textbook-expansion-v1.js?v=1'", "'./textbook-expansion-v1.js?v=1',"+asset)
+          if "url.pathname.endsWith('/equation-coach-v2.js')" not in text:
+              text=text.replace("url.pathname.endsWith('/textbook-expansion-v1.js') ||", "url.pathname.endsWith('/textbook-expansion-v1.js') ||\n    url.pathname.endsWith('/equation-coach-v2.js') ||")
+          sw.write_text(text)
+          PY
+      - name: Validate equation coach
+        run: |
+          node --check equation-coach-v2.js
+          grep -q 'equation-coach-v2.js?v=1' index.html
+          grep -q "mechanics-lab-v17" sw.js
+          grep -q "equation-coach-v2.js?v=1" sw.js
+          grep -q "Full equation breakdown" equation-coach-v2.js
+          grep -q "Conditions and assumptions" equation-coach-v2.js
+          grep -q "AQA exam technique" equation-coach-v2.js
+          grep -q "Quick practice" equation-coach-v2.js
+      - name: Commit integration
+        run: |
+          if git diff --quiet -- index.html sw.js; then
+            echo 'Already integrated'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js
+          git commit -m 'Integrate full lesson equation breakdown coach'
+          git push
