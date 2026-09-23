@@ -1,0 +1,26 @@
+name: Verify assessment enhancements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mechanics-assessment-enhancements.js'
+      - '.github/workflows/verify-assessment-enhancements.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check mechanics-assessment-enhancements.js
+      - name: Check app integration
+        shell: bash
+        run: |
+          grep -q 'mechanics-assessment-enhancements.js?v=1' index.html
+          grep -q 'mechanics-assessment-enhancements.js?v=1' sw.js
+          grep -q 'app.js?v=15' index.html
+          grep -q 'mechanics-lab-v15' sw.js
