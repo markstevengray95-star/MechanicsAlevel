@@ -1,0 +1,59 @@
+name: Integrate full textbook expansion
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "textbook-expansion-v1.js"
+      - ".github/workflows/integrate-full-textbook.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check textbook JavaScript
+        run: node --check textbook-expansion-v1.js
+      - name: Wire textbook module into app and service worker
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          let html=fs.readFileSync('index.html','utf8');
+          const script='<script src="textbook-expansion-v1.js?v=1"></script>';
+          if(!html.includes(script)){
+            const assessment='<script src="mechanics-assessment-enhancements.js?v=1"></script>';
+            if(html.includes(assessment)) html=html.replace(assessment,assessment+'\n'+script);
+            else html=html.replace('</body>',script+'\n</body>');
+          }
+          fs.writeFileSync('index.html',html);
+
+          let sw=fs.readFileSync('sw.js','utf8');
+          sw=sw.replace(/mechanics-lab-v\d+/, 'mechanics-lab-v16');
+          if(!sw.includes("./textbook-expansion-v1.js?v=1")){
+            sw=sw.replace("'./mechanics-assessment-enhancements.js?v=1'","'./mechanics-assessment-enhancements.js?v=1','./textbook-expansion-v1.js?v=1'");
+          }
+          if(!sw.includes("url.pathname.endsWith('/textbook-expansion-v1.js')")){
+            sw=sw.replace("url.pathname.endsWith('/app.js') ||", "url.pathname.endsWith('/app.js') ||\n    url.pathname.endsWith('/mechanics-assessment-enhancements.js') ||\n    url.pathname.endsWith('/textbook-expansion-v1.js') ||");
+          }
+          fs.writeFileSync('sw.js',sw);
+          NODE
+      - name: Verify integration
+        run: |
+          grep -q 'textbook-expansion-v1.js?v=1' index.html
+          grep -q 'textbook-expansion-v1.js?v=1' sw.js
+          grep -q 'mechanics-lab-v16' sw.js
+          grep -q "'Scalars and vectors'" textbook-expansion-v1.js
+          grep -q "'Required Practical 4: Young modulus'" textbook-expansion-v1.js
+          grep -q "'Mechanics mastery and synoptic problems'" textbook-expansion-v1.js
+      - name: Commit integration
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html sw.js
+          git commit -m "Integrate full textbook chapters and diagrams"
+          git push
