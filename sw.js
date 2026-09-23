@@ -1,5 +1,5 @@
-const CACHE='mechanics-lab-v16';
-const CORE=['./','./index.html','./styles.css?v=15','./app.js?v=15','./mechanics-assessment-enhancements.js?v=1','./textbook-expansion-v1.js?v=1','./manifest.webmanifest'];
+const CACHE='mechanics-lab-v17';
+const CORE=['./','./index.html','./styles.css?v=15','./app.js?v=15','./mechanics-assessment-enhancements.js?v=1','./textbook-expansion-v1.js?v=1','./equation-coach-v2.js?v=1','./manifest.webmanifest'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
@@ -25,6 +25,7 @@ self.addEventListener('fetch',event=>{
     url.pathname.endsWith('/app.js') ||
     url.pathname.endsWith('/mechanics-assessment-enhancements.js') ||
     url.pathname.endsWith('/textbook-expansion-v1.js') ||
+    url.pathname.endsWith('/equation-coach-v2.js') ||
     url.pathname.endsWith('/styles.css') ||
     url.pathname.endsWith('/manifest.webmanifest')
   );
