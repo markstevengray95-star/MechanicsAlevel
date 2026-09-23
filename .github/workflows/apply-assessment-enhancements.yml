@@ -1,0 +1,54 @@
+name: Apply assessment enhancements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mechanics-assessment-enhancements.js'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch app shell and cache
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+          text = re.sub(r'styles\.css\?v=\d+', 'styles.css?v=15', text)
+          text = re.sub(r'app\.js\?v=\d+', 'app.js?v=15', text)
+          tag = '<script src="mechanics-assessment-enhancements.js?v=1"></script>'
+          if tag not in text:
+              text = text.replace('</body>', tag + '\n</body>')
+          index.write_text(text, encoding='utf-8')
+
+          sw = Path('sw.js')
+          s = sw.read_text(encoding='utf-8')
+          s = re.sub(r"mechanics-lab-v\d+", 'mechanics-lab-v15', s)
+          s = re.sub(r"styles\.css\?v=\d+", 'styles.css?v=15', s)
+          s = re.sub(r"app\.js\?v=\d+", 'app.js?v=15', s)
+          asset = "'./mechanics-assessment-enhancements.js?v=1'"
+          if asset not in s:
+              s = s.replace("'./manifest.webmanifest'", asset + ",'./manifest.webmanifest'")
+          sw.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit integration
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No integration changes needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html sw.js
+          git commit -m "Integrate extended response, lesson marking and equation coach"
+          git push
